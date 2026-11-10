@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>مشروع التخرّج — تقرير التدقيق الأمني الشخصي الشامل | تويتكود</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { tkBlue: '#009EE2', tkYellow: '#F7B228', tkDark: '#1F3E3D', tkLightBg: '#F4F9FA', tkCardBg: '#FFFFFF', tkGreen: '#25D366' },
+        fontFamily: { sans: ['Tajawal', 'sans-serif'] }
+      }
+    }
+  }
+</script>
+<style>
+  :root{
+    --tkBlue:#009EE2; --tkYellow:#F7B228; --tkDark:#1F3E3D; --tkLightBg:#F4F9FA; --tkCardBg:#FFFFFF; --tkGreen:#25D366;
+    --ok:#16a34a; --warn:#F7B228; --bad:#e11d48; --line:#E5EEF0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:'Tajawal',sans-serif;background:var(--tkLightBg);color:var(--tkDark);overflow:hidden}
+  #deck{height:100dvh;display:flex;flex-direction:column}
+  .stage{flex:1;position:relative;overflow:hidden;min-height:0}
+  .slide{position:absolute;inset:0;padding:clamp(16px,3vw,28px) clamp(16px,6vw,6vw) clamp(84px,12vh,96px);overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;transform:translateX(-24px);pointer-events:none;transition:opacity .35s,transform .35s}
+  .slide.active{opacity:1;transform:none;pointer-events:auto}
+  .card{background:var(--tkCardBg);border:1px solid var(--line);border-radius:20px;padding:clamp(14px,2.2vw,22px);margin:12px 0;box-shadow:0 1px 3px rgba(31,62,61,.05)}
+  ul.clean{list-style:none;padding:0;margin:0}
+  ul.clean li{padding:9px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;align-items:flex-start;font-size:.95rem}
+  ul.clean li:last-child{border-bottom:none}
+  .tag{display:inline-block;font-size:.76rem;padding:3px 12px;border-radius:99px;background:var(--tkLightBg);border:1px solid var(--line);color:#5b7573;font-weight:700}
+  .btn{background:var(--tkYellow);color:var(--tkDark);border:none;border-radius:14px;padding:11px 20px;font-weight:900;cursor:pointer;font-family:inherit;font-size:clamp(.85rem,1.6vw,.95rem);box-shadow:0 4px 14px rgba(247,178,40,.35);transition:.15s;min-height:44px}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--tkDark);box-shadow:none}
+  .btn.blue{background:var(--tkBlue);color:#fff;box-shadow:0 4px 14px rgba(0,158,226,.3)}
+  .btn.sm{padding:8px 14px;font-size:.8rem;min-height:36px}
+  .nav{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:5;flex-wrap:wrap;padding:0 10px}
+  .toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--tkLightBg);border:1px solid var(--line);border-radius:12px;margin:8px 0;cursor:pointer;font-size:.9rem;font-weight:700;min-height:44px}
+  .sw{width:46px;height:26px;border-radius:99px;background:#cbd5d4;position:relative;transition:.2s;flex:none}
+  .sw::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .toggle.on{background:rgba(37,211,102,.1);border-color:var(--tkGreen)}
+  .toggle.on .sw{background:var(--tkGreen)}
+  .toggle.on .sw::after{right:23px}
+  .note{font-size:.85rem;color:#9a6b00;background:rgba(247,178,40,.12);border:1px solid rgba(247,178,40,.4);border-radius:12px;padding:10px 14px;margin-top:10px}
+  .tip{font-size:.85rem;color:#0d6b3f;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.4);border-radius:12px;padding:10px 14px;margin-top:10px;font-weight:700}
+  .flagline{background:rgba(225,29,72,.08);border:1px solid rgba(225,29,72,.3);color:#9f1239;border-radius:10px;padding:7px 12px;margin:6px 0;font-size:.86rem;font-weight:600}
+  .big{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900}
+  .emoji{font-size:clamp(1.8rem,5vw,2.4rem)}
+  .center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;min-height:calc(100dvh - 220px)}
+  .kicker{color:var(--tkBlue);font-weight:900;letter-spacing:1px;font-size:.85rem;margin-bottom:6px}
+  .lead{font-size:clamp(.95rem,1.6vw,1.08rem);color:#4a635f;max-width:800px;line-height:1.85}
+  h1.slideH{font-size:clamp(1.4rem,5vw,2rem);margin:.2em 0;line-height:1.25;font-weight:900;color:var(--tkDark)}
+  h2.slideH{font-size:clamp(1.15rem,3.2vw,1.45rem);margin:.1em 0 .5em;display:flex;align-items:center;gap:10px;font-weight:900;color:var(--tkDark);flex-wrap:wrap}
+  .slideH .en{display:block;font-size:.46em;color:#7a9290;font-weight:600;margin-top:4px}
+  .meter{height:16px;border-radius:99px;background:var(--tkLightBg);overflow:hidden;margin:12px 0;border:1px solid var(--line)}
+  .meter > i{display:block;height:100%;width:0;transition:width .4s,background .4s}
+  .req{background:rgba(0,158,226,.07);border:1px solid rgba(0,158,226,.3);border-radius:12px;padding:10px 14px;margin:10px 0;font-size:.85rem;line-height:1.7}
+  .req b{color:var(--tkBlue)}
+  .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px;border-radius:12px}
+  table.tbl{width:100%;min-width:460px;border-collapse:collapse;font-size:.83rem}
+  table.tbl th{background:var(--tkLightBg);text-align:right;padding:8px 10px;font-weight:900;color:var(--tkBlue);border-bottom:2px solid var(--line);white-space:nowrap}
+  table.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .taskcard{border:1px solid var(--line);border-radius:16px;padding:16px;margin:10px 0;background:#fff}
+  .taskcard .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--tkBlue);color:#fff;font-weight:900;font-size:.85rem;flex:none}
+  .taskcard .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .taskcard .modname{font-weight:900;color:var(--tkDark);font-size:.95rem}
+  .taskcard .desc{font-size:.87rem;color:#4a635f;line-height:1.75;margin-bottom:8px}
+  .taskcard .deliver{font-size:.8rem;color:#0d6b3f;background:rgba(37,211,102,.08);border-radius:8px;padding:6px 10px;margin-bottom:10px;font-weight:700}
+  .checkline{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--tkLightBg);border:1px solid var(--line);border-radius:10px;cursor:pointer;min-height:40px;font-size:.85rem;font-weight:700}
+  .checkline .sw{width:40px;height:22px}
+  .checkline .sw::after{width:16px;height:16px;top:2px}
+  .checkline.on .sw::after{right:20px}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .anim-fade{animation:fadeIn .45s ease both}
+</style>
+</head>
+<body>
+<div id="deck">
+  <div class="h-1.5 w-full bg-gradient-to-l from-tkBlue via-tkYellow to-tkBlue"></div>
+  <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <img src="https://tweetkod.com/wp-content/uploads/2024/05/Tweetkod.png" alt="Tweetkod" class="h-7 sm:h-8 w-auto object-contain max-w-[110px] sm:max-w-[140px] flex-shrink-0">
+        <div class="border-r border-gray-200 pr-2 sm:pr-3 hidden sm:block min-w-0">
+          <span class="text-xs font-black text-tkYellow block truncate">مشروع التخرّج</span>
+          <span class="text-[11px] font-bold text-tkBlue block truncate">تقرير التدقيق الأمني الشخصي الشامل (الوحدات 1-10)</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-3 flex-1 max-w-[55%] sm:max-w-xs">
+        <div class="flex-1 h-2 bg-tkLightBg rounded-full overflow-hidden border border-gray-100"><i id="bar" class="block h-full bg-gradient-to-l from-tkBlue to-tkYellow" style="width:0%"></i></div>
+        <span class="text-xs font-bold text-tkDark min-w-[40px] text-center" id="counter">1 / 1</span>
+      </div>
+    </div>
+  </header>
+  <div class="stage" id="stage"></div>
+  <div class="nav">
+    <button class="btn ghost" onclick="go(-1)">◀ السابق</button>
+    <button class="btn blue" onclick="go(1)">التالي ▶</button>
+  </div>
+</div>
+
+<script>
+const slides = [];
+const S = (html)=>slides.push(html);
+
+/* 1 — Title */
+S(`<div class="center">
+  <div class="emoji">🎓</div>
+  <div class="kicker">TweetKod · مشروع التخرّج</div>
+  <h1 class="slideH">تقرير التدقيق الأمني الشخصي الشامل<span class="en">Personal Security Audit Report</span></h1>
+  <p class="lead">مشروع تخرّج مخصّص للطلاب الذين أنهوا الوحدات 1 – 10 من الدورة العملية في الأمن السيبراني: تجميع كل ما تعلّمته في مخرَج واحد ملموس يطبَّق على حياتك الرقمية الخاصة.</p>
+  <div class="flex gap-2 flex-wrap justify-center mt-3">
+    <span class="tag">🧩 10 وحدات مغطّاة</span><span class="tag">👤 عمل فردي</span><span class="tag">📄 تسليم واحد شامل</span>
+  </div>
+</div>`);
+
+/* 2 — Overview table */
+S(`<h2 class="slideH">نظرة عامة على المشروع</h2>
+<div class="tblwrap"><table class="tbl">
+<tr><th>التفصيل</th><th>القيمة</th></tr>
+<tr><td>عنوان المشروع</td><td>تقرير التدقيق الأمني الشخصي الشامل (Personal Security Audit Report)</td></tr>
+<tr><td>الوحدات المغطّاة</td><td>الوحدة 1 حتى الوحدة 10</td></tr>
+<tr><td>شكل التسليم</td><td>ملف واحد (Word أو PDF) يجمع نتائج 10 مهام + ملخص تنفيذي + خطة تحسين</td></tr>
+<tr><td>المدة التقديرية</td><td>3 – 5 أيام عمل فردي خارج وقت الوحدات</td></tr>
+<tr><td>طبيعة العمل</td><td>فردي، تطبيقي بالكامل داخل مختبرك الآمن وعلى حياتك الرقمية الخاصة (لا بيانات لأي طرف ثالث)</td></tr>
+</table></div>
+<div class="req">✅ <b>قبل البدء:</b> تصفّح كل مهمة من المهام العشر القادمة، ثم نفّذها بنفسك، وأشّر عليها كمكتملة لتتبّع تقدّمك داخل هذه الصفحة.</div>`);
+
+/* Tasks data for slides 4-13 */
+const tasksData = [
+  { m: 'الوحدة 1: انطلاقة المدافع والمختبر الآمن',
+    desc: 'وثّق خطوات بناء مختبرك الآمن (VirtualBox + VM معزولة بشبكة Host-Only) بلقطة شاشة واحدة، واكتب فقرة تشرح مثلث CIA بأمثلة من بياناتك الخاصة.',
+    del: 'لقطة إعداد المختبر + فقرة شرح CIA بثلاثة أمثلة شخصية.' },
+  { m: 'الوحدة 2: Linux من الصفر',
+    desc: 'نفّذ 5 أوامر Linux أساسية داخل مختبرك (ls، cd، grep، find، chmod) على ملف من اختيارك، ووثّق ماذا تفعل كل أداة ولماذا استخدمتها.',
+    del: 'قائمة الأوامر الخمسة مع مخرجاتها وشرح مختصر لكل واحد.' },
+  { m: 'الوحدة 3: كلمات المرور والمصادقة',
+    desc: 'دقّق 5 من حساباتك الحقيقية: احسب الإنتروبيا التقريبية لكلمة مرور كل حساب، وتحقّق هل مفعّل عليه مصادقة ثنائية (MFA) أم لا.',
+    del: 'جدول من 5 صفوف (الحساب / قوة كلمة المرور / حالة MFA) + خطوات التحسين.' },
+  { m: 'الوحدة 4: استخبارات المصادر المفتوحة (OSINT)',
+    desc: 'ابحث عن نفسك بنفس التقنيات التي تعلّمتها (Google Dorking، بحث عكسي بالصور، فحص EXIF، فحص Have I Been Pwned) ووثّق كل ما يمكن لأي شخص غريب معرفته عنك علنياً.',
+    del: 'قائمة بالمعلومات المكتشَفة + 3 إجراءات لتقليل ظهورك الرقمي.' },
+  { m: 'الوحدة 5: الشبكات من الداخل',
+    desc: 'التقط حزمة بيانات واحدة بـWireshark من اتصالك الخاص (مثل زيارة موقع HTTP)، وحدّد في تقريرك: المنفذ المستخدم، نوع البروتوكول، وهل البيانات ظهرت واضحة أم مشفّرة.',
+    del: 'لقطة من Wireshark + تحليل مكتوب لثلاث حقول من الحزمة.' },
+  { m: 'الوحدة 6: مختبر الخداع الرقمي',
+    desc: 'ابحث عن نموذج حقيقي واحد (بريد/رسالة نصية) تشتبه أنه تصيّد، وحلّله بالطريقة التي تعلمتها: رؤوس البريد، الروابط، ومبدأ الإقناع المستخدم.',
+    del: 'لقطة أو نص النموذج (مع حجب البيانات الحساسة) + تحليل مكتوب + التصنيف.' },
+  { m: 'الوحدة 7: البرمجيات الخبيثة والملفات',
+    desc: 'طبّق قاعدة النسخ الاحتياطي 3-2-1 على بياناتك الحقيقية، وافحص هاش ملف واحد تنزّله مؤخراً عبر VirusTotal.',
+    del: 'وصف خطة 3-2-1 + نتيجة فحص VirusTotal.' },
+  { m: 'الوحدة 8: أمن الويب والتصفح',
+    desc: 'دقّق عادات تصفّحك، وافحص شهادة SSL لموقع تستخدمه بانتظام، وتحقق من عدم وجود امتدادات متصفح مشبوهة الصلاحيات.',
+    del: 'نتيجة فحص الشهادة + قائمة إضافات المتصفح وتقييم صلاحياتها.' },
+  { m: 'الوحدة 9: الجوال والألعاب والخصوصية',
+    desc: 'دقّق صلاحيات 5 تطبيقات على جوالك، وراجع أمان حساب واحد على منصة ألعاب أو تطبيق تستخدمه (كلمة المرور + MFA + نشاط الدخول الأخير).',
+    del: 'جدول صلاحيات 5 تطبيقات + تقييم أمان حساب المنصة المختارة.' },
+  { m: 'الوحدة 10: التحدي الختامي CTF',
+    desc: 'سجّل في picoCTF وحل 3 تحديات حقيقية من قسم General Skills، ووثّق منهجية حلّك لكل تحدٍّ خطوة بخطوة.',
+    del: 'الأعلام (Flags) الثلاثة + شرح منهجية الحل لكل واحد.' },
+];
+
+tasksData.forEach((t, i) => {
+  S(`<h2 class="slideH">مهمة ${i+1} من 10<span class="en">Task ${i+1} of 10</span></h2>
+  <div class="taskcard anim-fade">
+    <div class="head"><span class="num">${i+1}</span><span class="modname">${t.m}</span></div>
+    <p class="desc">${t.desc}</p>
+    <div class="deliver">📦 التسليم: ${t.del}</div>
+    <div class="checkline" onclick="toggleTask(${i})" id="checkline${i}">
+      <span>أنجزتُ هذه المهمة فعلياً</span>
+      <span class="sw"></span>
+    </div>
+  </div>
+  <div class="req mt-3">💡 وثّق نتيجة هذه المهمة كقسم مستقل داخل تقريرك النهائي الموحّد.</div>`);
+});
+
+/* 14 — Progress summary */
+S(`<h2 class="slideH">📊 تقدّمك في المشروع<span class="en">Your project progress</span></h2>
+<div class="card">
+  <p class="lead" style="margin:0 0 10px">كل مهمة تُشّرها كمكتملة في الشرائح السابقة تنعكس هنا مباشرة.</p>
+  <div class="meter"><i id="progMeter" style="background:var(--tkBlue)"></i></div>
+  <p id="progText" class="big" style="font-size:1.3rem;margin-top:8px">0 / 10 مهام مكتملة</p>
+</div>
+<div class="note">📌 هذه الصفحة لا تحفظ تقدّمك بعد إغلاقها — تأكد من توثيق نتائج كل مهمة في ملف تقريرك النهائي فور إنجازها.</div>`);
+
+/* 15 — Final report structure */
+S(`<h2 class="slideH">هيكل التقرير النهائي المطلوب تسليمه</h2>
+<div class="card"><ul class="clean">
+<li>📘 غلاف: اسمك، تاريخ التسليم، عنوان "تقرير التدقيق الأمني الشخصي الشامل".</li>
+<li>📝 ملخّص تنفيذي (نصف صفحة): أهم 3 نقاط قوة اكتشفتها في أمانك الرقمي، وأهم 3 نقاط ضعف.</li>
+<li>📂 10 أقسام — نتيجة كل مهمة من المهام السابقة، بالترتيب من الوحدة 1 إلى الوحدة 10.</li>
+<li>🗓️ خطة تحسين شخصية لمدة 30 يوماً: 5 إجراءات محددة وقابلة للتنفيذ، مستخرجة من نقاط الضعف التي اكتشفتها.</li>
+<li>🎯 خاتمة قصيرة (3-4 جمل): ماذا تغيّر في وعيك الأمني بعد هذا المشروع؟</li>
+</ul></div>
+<div class="flagline">⚖️ ملاحظة أمنية: احجب أو عتِّم أي بيانات حساسة فعلية (كلمات مرور، أرقام حسابات، أرقام هوية) قبل تضمين أي لقطة شاشة في التقرير النهائي.</div>`);
+
+/* 16 — Rubric */
+S(`<h2 class="slideH">معايير التقييم<span class="en">Evaluation rubric</span></h2>
+<div class="tblwrap"><table class="tbl">
+<tr><th>المعيار</th><th>الوزن</th></tr>
+<tr><td>اكتمال المهام العشر جميعها بأدلة حقيقية (لقطات/بيانات فعلية)</td><td><b class="text-tkBlue">40%</b></td></tr>
+<tr><td>الدقة التقنية في تطبيق المفاهيم (الإنتروبيا، CIA، تحليل الحزم، إلخ)</td><td><b class="text-tkBlue">25%</b></td></tr>
+<tr><td>وضوح وتنظيم التقرير (الملخص التنفيذي، الترتيب، الخطة الختامية)</td><td><b class="text-tkBlue">20%</b></td></tr>
+<tr><td>جودة خطة التحسين الشخصية لـ30 يوماً وواقعيّتها</td><td><b class="text-tkBlue">15%</b></td></tr>
+</table></div>`);
+
+/* 17 — Closing */
+S(`<div class="center"><div class="emoji">🏆</div>
+<h1 class="slideH">بالتوفيق في مشروع تخرّجك!</h1>
+<p class="lead">أنهيت 10 وحدات عملية كاملة، وهذا المشروع هو دليلك الملموس على أنك خرجت بمهارات أمنية حقيقية تحمي بها نفسك يومياً.</p>
+<p class="tag mt-4">فريق تويتكود التعليمية 💙</p>
+</div>`);
+
+/* ===== ENGINE ===== */
+let cur=0;
+const stage=document.getElementById('stage');
+slides.forEach((html)=>{const d=document.createElement('section');d.className='slide';d.innerHTML=html;stage.appendChild(d);});
+const els=[...document.querySelectorAll('.slide')];
+function render(){
+  els.forEach((e,i)=>e.classList.toggle('active',i===cur));
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('bar').style.width=((cur+1)/slides.length*100)+'%';
+  paintProgress();
+}
+function go(d){cur=Math.max(0,Math.min(slides.length-1,cur+d));render();}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(1);if(e.key==='ArrowRight')go(-1);});
+
+/* ---- task completion tracking ---- */
+const taskDone = new Array(tasksData.length).fill(false);
+function toggleTask(i){
+  taskDone[i] = !taskDone[i];
+  const el = document.getElementById('checkline'+i);
+  if(el) el.classList.toggle('on', taskDone[i]);
+  paintProgress();
+}
+function paintProgress(){
+  const meter = document.getElementById('progMeter');
+  const text = document.getElementById('progText');
+  if(!meter || !text) return;
+  const done = taskDone.filter(Boolean).length;
+  const pct = Math.round(done/tasksData.length*100);
+  meter.style.width = pct+'%';
+  meter.style.background = pct>=80 ? '#16a34a' : pct>=40 ? '#F7B228' : '#009EE2';
+  text.textContent = done+' / '+tasksData.length+' مهام مكتملة';
+}
+
+render();
+</script>
+</body>
+</html>

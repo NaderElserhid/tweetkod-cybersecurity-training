@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>المستوى الثاني — الوحدة 2: الشبكات المتقدمة: Subnetting وWireshark وWi-Fi وVPN | تويتكود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script>(function(){try{var t=JSON.parse(localStorage.getItem('tk:theme'));if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<style>
+/* ===== TweetKod Design System v2 — ليل/نهار، RTL أولاً ===== */
+:root{
+  --blue:#009EE2; --yellow:#F7B228; --green:#25D366; --ok:#16a34a; --bad:#e5484d; --warn:#f59e0b;
+  --bg:#EEF6F8; --bg2:#E3F1F5; --surface:rgba(255,255,255,.82); --surface2:#ffffff;
+  --text:#17383A; --muted:#55726f; --line:#d5e5e8; --shadow:0 6px 24px rgba(23,56,58,.08);
+  --code:#0c1f28; --codetext:#e6edf3; --glow1:rgba(0,158,226,.16); --glow2:rgba(247,178,40,.14);
+  --grid:rgba(0,158,226,.07); --chip:#eef7fa; --fs:1;
+}
+html[data-theme="dark"]{
+  --bg:#09141a; --bg2:#0c1d24; --surface:rgba(18,34,41,.78); --surface2:#12252d;
+  --text:#e7f2f3; --muted:#9bb7ba; --line:#223c44; --shadow:0 8px 28px rgba(0,0,0,.45);
+  --code:#050e12; --codetext:#d9e8ee;
+  --chip:#14303a;
+}
+/* خلفية الزينة (توهّج/شبكة/عقد/مسح) ثابتة بين الليل والنهار عمداً — نفس المشهد السيبراني دائماً،
+   وتبديل الوضع يغيّر فقط ألوان المحتوى (البطاقات/النصوص) لراحة القراءة */
+:root{
+  --glow1:rgba(0,158,226,.2); --glow2:rgba(247,178,40,.13);
+  --node1:rgba(0,158,226,.5); --node2:rgba(247,178,40,.38); --node3:rgba(37,211,102,.36);
+  --scan:rgba(0,158,226,.16); --scan-blend:multiply;
+}
+html[data-theme="dark"]{ --scan:rgba(0,158,226,.13); --scan-blend:screen; }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:'Tajawal','IBM Plex Sans Arabic','Noto Sans Arabic','Segoe UI',Tahoma,system-ui,sans-serif;color:var(--text);
+  background:var(--bg);overflow:hidden;font-size:calc(16px * var(--fs));line-height:1.75;-webkit-font-smoothing:antialiased}
+/* خلفية جمالية: تدرّج + شبكة سيبرانية + توهّج متحرك */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(70vmax 70vmax at 90% -15%,var(--glow1),transparent 55%),
+   radial-gradient(60vmax 60vmax at -15% 115%,var(--glow2),transparent 55%),
+   radial-gradient(40vmax 40vmax at 50% 45%,rgba(37,211,102,.06),transparent 60%),
+   linear-gradient(180deg,var(--bg),var(--bg2));}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:46px 46px;mask-image:radial-gradient(ellipse at 50% 30%,#000 25%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 25%,transparent 75%);animation:tkdrift 40s linear infinite}
+@keyframes tkdrift{to{background-position:46px 46px,46px 46px}}
+/* شبكة عقد سيبرانية متوهّجة — إحساس أمان رقمي يتنفّس بهدوء */
+html::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    radial-gradient(2.6px 2.6px at 12% 18%,var(--node1),transparent 60%),
+    radial-gradient(2.2px 2.2px at 82% 12%,var(--node2),transparent 60%),
+    radial-gradient(2.6px 2.6px at 70% 64%,var(--node3),transparent 60%),
+    radial-gradient(2px 2px at 25% 80%,var(--node1),transparent 60%),
+    radial-gradient(2.2px 2.2px at 92% 56%,var(--node3),transparent 60%),
+    radial-gradient(2px 2px at 48% 28%,var(--node2),transparent 60%),
+    radial-gradient(2.2px 2.2px at 38% 92%,var(--node1),transparent 60%),
+    radial-gradient(2px 2px at 6% 52%,var(--node3),transparent 60%),
+    radial-gradient(2px 2px at 58% 8%,var(--node1),transparent 60%),
+    radial-gradient(1.8px 1.8px at 96% 86%,var(--node2),transparent 60%);
+  animation:tkpulse 7s ease-in-out infinite alternate}
+@keyframes tkpulse{from{opacity:.5}to{opacity:1}}
+/* شعاع مسح قطري بطيء — لمسة "رادار" سيبرانية خفيفة جداً */
+html::after{content:"";position:fixed;inset:-25% -25%;z-index:0;pointer-events:none;overflow:hidden;
+  background-image:
+    repeating-linear-gradient(115deg,var(--scan) 0 2px,transparent 2px 190px),
+    repeating-linear-gradient(25deg,var(--scan) 0 1.5px,transparent 1.5px 230px);
+  opacity:.9;mix-blend-mode:var(--scan-blend);animation:tkscan 16s linear infinite}
+@keyframes tkscan{to{transform:translate(7%,7%)}}
+/* طوق توهّج دوّار خلف الإيموجي الكبير في شرائح العنوان */
+.big-emoji{position:relative;display:inline-block}
+.big-emoji::before{
+  content:"";position:absolute;inset:-22px;z-index:-1;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--blue),var(--yellow),var(--green),var(--blue));
+  filter:blur(18px);opacity:.35;animation:tkring 7s linear infinite}
+@keyframes tkring{to{transform:rotate(360deg)}}
+/* دخول ناعم ومتدرّج للعناصر الرئيسية عند ظهور كل شريحة */
+.slide.on .tk-h1,.slide.on .lead,.slide.on .big-emoji,.slide.on .kicker{animation:tkenter .65s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .kicker{animation-delay:.02s}.slide.on .big-emoji{animation-delay:.04s}.slide.on .tk-h1{animation-delay:.08s}.slide.on .lead{animation-delay:.16s}
+.slide.on .tag{animation:tkenter .5s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .tag:nth-of-type(1){animation-delay:.22s}.slide.on .tag:nth-of-type(2){animation-delay:.27s}.slide.on .tag:nth-of-type(3){animation-delay:.32s}
+.slide.on .tag:nth-of-type(4){animation-delay:.37s}.slide.on .tag:nth-of-type(5){animation-delay:.42s}
+@keyframes tkenter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#deck{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column}
+.tk-topbar{height:4px;background:linear-gradient(90deg,var(--blue),var(--yellow),var(--blue));flex:none}
+header.tk-head{flex:none;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.tk-logo{background:#fff;border-radius:10px;padding:3px 8px;display:flex;align-items:center;flex:none}
+.tk-logo img{height:26px;width:auto;max-width:110px;object-fit:contain;display:block}
+.tk-titles{min-width:0;flex:1;line-height:1.3}
+.tk-titles .l{font-size:.72rem;font-weight:900;color:var(--yellow);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk-titles .m{font-size:.82rem;font-weight:700;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk-prog{flex:0 1 180px;display:flex;align-items:center;gap:8px}
+.tk-prog .bar{flex:1;height:8px;border-radius:99px;background:var(--chip);border:1px solid var(--line);overflow:hidden}
+.tk-prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .35s;box-shadow:0 0 10px rgba(0,158,226,.55)}
+.tk-prog span{font-size:.75rem;font-weight:800;min-width:50px;text-align:center;direction:ltr;unicode-bidi:isolate}
+.tk-ic{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);color:var(--text);cursor:pointer;
+  font-size:1rem;display:inline-flex;align-items:center;justify-content:center;flex:none;font-family:inherit;font-weight:800;transition:.15s}
+.tk-ic:hover{border-color:var(--blue);transform:translateY(-1px)}
+@media(max-width:640px){.tk-titles{display:none}.tk-prog{flex:1}}
+
+.tk-stage{position:relative;flex:1;min-height:0;overflow:hidden}
+.slide{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;
+  transform:translateX(-26px) scale(.995);transition:opacity .35s,transform .35s;padding:clamp(14px,2.6vw,26px) clamp(14px,6vw,7vw) clamp(14px,2.6vw,26px)}
+.slide.on{opacity:1;pointer-events:auto;transform:none}
+.slide>.in{max-width:980px;margin:0 auto}
+.tk-nav{flex:none;position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px clamp(14px,4vw,28px);background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line)}
+.tk-nav button{min-width:110px}
+@media(max-width:480px){.tk-nav button{min-width:0;flex:1}}
+
+/* عناصر عامة */
+h1.tk-h1{font-size:clamp(1.5rem,5vw,2.2rem);line-height:1.3;margin:.2em 0;font-weight:900}
+h2.tk-h2{font-size:clamp(1.15rem,3.2vw,1.5rem);margin:.1em 0 .6em;font-weight:900;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tk-h2 .en,.tk-h1 .en{display:block;width:100%;font-size:.5em;font-weight:600;color:var(--muted);direction:ltr;text-align:start;opacity:.9}
+.kicker{color:var(--blue);font-weight:900;letter-spacing:.5px;font-size:.85rem;margin-bottom:4px}
+.lead{font-size:1.05rem;color:var(--muted);line-height:1.9;max-width:820px}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:calc(100dvh - 240px)}
+.big-emoji{font-size:clamp(2.4rem,8vw,3.6rem);filter:drop-shadow(0 6px 14px rgba(0,158,226,.3))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(14px,2.2vw,22px);margin:12px 0;box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:relative;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-3px);border-color:rgba(0,158,226,.4);box-shadow:0 14px 34px rgba(0,158,226,.14),var(--shadow)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.76rem;padding:3px 12px;border-radius:99px;background:var(--chip);border:1px solid var(--line);color:var(--muted);font-weight:700;margin:2px}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:9px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;align-items:flex-start}
+ul.clean li:last-child{border:0}
+.mt{margin-top:12px}.mt2{margin-top:22px}.tc{text-align:center}.sm{font-size:.86rem}.muted{color:var(--muted)}
+.tip,.warn,.note,.flag{border-radius:14px;padding:10px 14px;margin:10px 0;font-size:.9rem;line-height:1.75}
+.tip{background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.45);color:var(--text)}
+.note{background:rgba(247,178,40,.14);border:1px solid rgba(247,178,40,.5)}
+.warn,.flag{background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.4)}
+.tip b:first-child,.note b:first-child,.warn b:first-child{margin-inline-end:4px}
+.codebox{background:var(--code);color:var(--codetext);border-radius:14px;padding:13px 16px;font-family:'Cascadia Code','Courier New',monospace;direction:ltr;text-align:left;
+  font-size:.82rem;line-height:1.85;overflow-x:auto;margin:10px 0;white-space:pre-wrap;word-break:break-word}
+code,.code{font-family:'Cascadia Code','Courier New',monospace;direction:ltr;unicode-bidi:isolate;display:inline-block;background:var(--code);color:#7ee787;padding:1px 8px;border-radius:6px;font-size:.82rem;word-break:break-word}
+table.tbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.tblwrap{overflow-x:auto;border-radius:12px;margin-top:8px;border:1px solid var(--line);background:var(--surface);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+table.tbl th{background:var(--chip);color:var(--blue);padding:9px 12px;text-align:start;border-bottom:2px solid var(--line);white-space:nowrap}
+table.tbl td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;background:var(--surface2)}
+.term{border:1px dashed var(--line);border-radius:14px;padding:10px 14px;margin-top:12px;background:var(--surface)}
+.term dt{font-weight:900;font-size:.88rem;margin-top:6px}.term dd{margin:2px 0 0;color:var(--muted);font-size:.84rem}
+
+/* أزرار */
+.btn{position:relative;overflow:hidden;background:var(--yellow);color:#1b2b2c;border:0;border-radius:14px;padding:10px 20px;font:inherit;font-weight:900;cursor:pointer;min-height:42px;
+  box-shadow:0 4px 14px rgba(247,178,40,.35);transition:.15s;font-size:.92rem}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 48%,transparent 66%);
+  transform:translateX(-120%);transition:transform .55s}
+.btn:hover::after{transform:translateX(120%)}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:none}
+.btn.blue{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(0,158,226,.35)}
+.btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line);box-shadow:none}
+.btn.s{padding:7px 14px;font-size:.8rem;min-height:34px}
+.btn:disabled{opacity:.35;cursor:default}
+input[type=text],textarea,select{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font:inherit;min-height:42px}
+input:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+.ltr{direction:ltr;text-align:left}
+
+/* مكوّن: steps */
+.tk-steps .stage{position:relative;height:170px;border-radius:18px;background:linear-gradient(135deg,var(--chip),var(--surface));border:1px solid var(--line);overflow:hidden}
+.tk-steps .actor{position:absolute;top:50%;transform:translateY(-50%);text-align:center;width:22%;transition:.4s}
+.tk-steps .actor.a{inset-inline-start:3%}.tk-steps .actor.b{inset-inline-end:3%}
+.tk-steps .actor i{font-style:normal;font-size:2.4rem;display:block}
+.tk-steps .actor b{font-size:.78rem;display:block;line-height:1.3}
+.tk-steps .actor em{font-style:normal;font-size:.7rem;color:var(--muted);display:block;min-height:1.2em}
+.tk-steps .mover{position:absolute;top:34%;width:2.8rem;margin-inline-start:-1.4rem;font-size:2rem;text-align:center;transition:inset-inline-start .9s cubic-bezier(.65,.05,.25,1),opacity .3s;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
+.tk-steps .stage.ok{box-shadow:inset 0 0 0 2px var(--ok),0 0 24px rgba(22,163,74,.25)}
+.tk-steps .stage.bad{box-shadow:inset 0 0 0 2px var(--bad),0 0 24px rgba(229,72,77,.3)}
+.tk-steps .dots{display:flex;gap:6px;justify-content:center;margin:12px 0 4px;flex-wrap:wrap}
+.tk-steps .dots i{width:24px;height:6px;border-radius:99px;background:var(--chip);border:1px solid var(--line);transition:.25s}
+.tk-steps .dots i.on{background:var(--blue);border-color:var(--blue)}
+.tk-steps .cap{min-height:56px;text-align:center;font-weight:800;color:var(--blue);margin:6px 0;font-size:.95rem;line-height:1.7}
+.tk-steps .ctrl{text-align:center}
+.tk-steps .ctrl .btn{margin:3px}
+/* cards */
+.tk-cards{display:grid;gap:12px}.tk-cards.c2{grid-template-columns:repeat(2,1fr)}.tk-cards.c3{grid-template-columns:repeat(3,1fr)}.tk-cards.c4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.tk-cards.c3,.tk-cards.c4{grid-template-columns:1fr 1fr}}@media(max-width:480px){.tk-cards.c2,.tk-cards.c3,.tk-cards.c4{grid-template-columns:1fr}}
+.tk-card{border:1.5px solid var(--line);background:var(--surface);border-radius:18px;padding:12px 14px;cursor:pointer;transition:.25s;text-align:center}
+.tk-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,158,226,.16)}
+.tk-card.open{border-color:var(--blue);background:var(--surface2);box-shadow:0 0 0 3px rgba(0,158,226,.15)}
+.tk-card .h{font-weight:900}.tk-card .h i{font-style:normal;font-size:1.8rem;display:block}
+.tk-card .b{max-height:0;opacity:0;overflow:hidden;transition:max-height .4s,opacity .3s;text-align:start;font-size:.86rem;color:var(--muted);line-height:1.7}
+.tk-card.open .b{max-height:420px;opacity:1;margin-top:8px}
+/* compare */
+.tk-cmp .seg{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
+.tk-cmp .pane{display:none;animation:tkfade .4s}.tk-cmp .pane.on{display:block}
+@keyframes tkfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tk-cmp .pane.good{border-inline-start:5px solid var(--ok)}.tk-cmp .pane.badp{border-inline-start:5px solid var(--bad)}
+/* terminal */
+.tk-term,.tk-shell{background:var(--code);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);border:1px solid #1a2f3a}
+.tk-term .bar,.tk-shell .bar{background:#13262f;padding:8px 12px;display:flex;gap:6px;align-items:center}
+.tk-term .bar i,.tk-shell .bar i{width:10px;height:10px;border-radius:50%;display:block}
+.tk-term .bar span,.tk-shell .bar span{margin-inline-start:8px;font-size:.72rem;color:#8fb3c0;direction:ltr}
+.tk-term pre,.tk-shell .out{margin:0;padding:12px 16px;font-family:'Cascadia Code','Courier New',monospace;font-size:.78rem;line-height:1.75;color:#e6edf3;
+  direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-word;min-height:130px;max-height:340px;overflow:auto}
+.tk-term .cmd,.tk-shell .cmd{color:#7ee787}.tk-term .ok,.tk-shell .ok{color:#56d364}.tk-term .bad,.tk-shell .bad{color:#ff7b72}.tk-term .dim,.tk-shell .dim{color:#7d8f99}.tk-term .hl,.tk-shell .hl{color:#f7b228}
+.tk-shell .in{display:flex;gap:8px;align-items:center;border-top:1px solid #1a2f3a;padding:8px 14px;direction:ltr}
+.tk-shell .in span{color:#7ee787;font-family:'Cascadia Code','Courier New',monospace;font-size:.78rem;white-space:nowrap}
+.tk-shell .in input{background:transparent;border:0;color:#fff;font-family:'Cascadia Code','Courier New',monospace;font-size:.82rem;direction:ltr;text-align:left;min-height:30px;padding:2px}
+.tk-shell .in input:focus{outline:none}
+.tk-tasks{margin-top:10px}
+.tk-tasks .t{display:flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:12px;margin:6px 0;background:var(--surface);font-size:.88rem;transition:.3s}
+.tk-tasks .t.done{border-color:var(--ok);background:rgba(22,163,74,.1)}
+.tk-tasks .t .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex:none}
+.tk-tasks .t.done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+/* scan grid */
+.tk-grid .cells{display:grid;gap:7px;max-width:560px;margin:0 auto}
+.tk-grid .c{border-radius:10px;padding:9px 4px;text-align:center;font-family:'Cascadia Code','Courier New',monospace;font-size:.75rem;font-weight:800;background:var(--chip);border:1px solid var(--line);transition:.3s;direction:ltr}
+.tk-grid .c.scan{background:rgba(0,158,226,.25);border-color:var(--blue);transform:scale(1.08)}
+.tk-grid .c.open,.tk-grid .c.ok{background:rgba(22,163,74,.2);border-color:var(--ok);color:var(--ok)}
+.tk-grid .c.closed,.tk-grid .c.bad{background:rgba(229,72,77,.15);border-color:var(--bad);color:var(--bad)}
+.tk-grid .c.filtered{background:rgba(247,178,40,.2);border-color:var(--yellow)}
+.tk-grid .sum{text-align:center;font-weight:800;margin-top:12px;min-height:26px}
+/* transform / gear */
+.tk-tf .row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+@media(max-width:640px){.tk-tf .row{grid-template-columns:1fr}.tk-tf .gear{margin:0 auto}}
+.tk-tf .box{background:var(--code);color:#7ee787;border-radius:12px;padding:12px 14px;font-family:'Cascadia Code','Courier New',monospace;direction:ltr;text-align:left;font-size:.78rem;word-break:break-all;min-height:48px;display:flex;align-items:center}
+.tk-tf .gear{font-size:2.2rem;text-align:center}
+.spinning{animation:tkspin .9s linear infinite}@keyframes tkspin{to{transform:rotate(360deg)}}
+/* lab */
+.tk-lab{border:2px solid var(--blue);border-radius:22px;background:var(--surface);padding:16px 18px;margin:12px 0;box-shadow:var(--shadow);position:relative}
+.tk-lab .lh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.tk-lab .lh b{font-size:1.05rem}.tk-lab .badge{background:var(--blue);color:#fff;border-radius:99px;padding:2px 12px;font-size:.74rem;font-weight:900}
+.tk-lab .req{background:rgba(0,158,226,.09);border:1px solid rgba(0,158,226,.3);border-radius:12px;padding:8px 12px;font-size:.84rem;margin:8px 0}
+.tk-lab .stp{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin:6px 0;cursor:pointer;background:var(--surface2);transition:.2s;font-size:.9rem;line-height:1.7}
+.tk-lab .stp:hover{border-color:var(--blue)}
+.tk-lab .stp .n{width:26px;height:26px;border-radius:50%;background:var(--chip);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.78rem;flex:none}
+.tk-lab .stp.done{border-color:var(--ok);background:rgba(22,163,74,.09)}.tk-lab .stp.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.tk-lab .stp.done .tx{opacity:.75}
+.tk-lab .pm{height:8px;border-radius:99px;background:var(--chip);overflow:hidden;margin-top:10px;border:1px solid var(--line)}.tk-lab .pm i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .3s}
+.tk-tool{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:8px 0;background:var(--surface2)}
+.tk-tool .ti{font-size:1.9rem;flex:none}.tk-tool b{display:block}.tk-tool .w{font-size:.84rem;color:var(--muted)}
+.tk-tool a{color:var(--blue);font-weight:800;text-decoration:none;font-size:.84rem}
+/* challenge */
+.tk-ch{border:2px dashed var(--yellow);border-radius:20px;padding:14px 18px;background:linear-gradient(135deg,rgba(247,178,40,.12),transparent);margin:14px 0;position:relative}
+.tk-ch .chh{font-weight:900;margin-bottom:6px}.tk-ch .chh span{background:var(--yellow);color:#1b2b2c;border-radius:99px;padding:2px 12px;font-size:.74rem;margin-inline-end:8px}
+.tk-ch .row{display:flex;gap:8px;margin-top:8px}.tk-ch .res{margin-top:8px;font-weight:800;min-height:24px}
+.tk-ch.solved{border-style:solid;border-color:var(--ok);background:rgba(22,163,74,.1)}
+/* scenario / classify */
+.tk-sc .opt,.tk-cl .it{display:block;width:100%;text-align:start;padding:12px 16px;margin:8px 0;border-radius:14px;border:1.5px solid var(--line);background:var(--surface2);color:var(--text);font:inherit;font-weight:700;cursor:pointer;transition:.2s}
+.tk-sc .opt:hover,.tk-cl .it:hover{border-color:var(--blue)}
+.tk-sc .opt.ok{border-color:var(--ok);background:rgba(22,163,74,.12)}.tk-sc .opt.no{border-color:var(--bad);background:rgba(229,72,77,.1)}
+.tk-cl .its{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.tk-cl .it{width:auto;margin:0;padding:8px 14px}.tk-cl .it.sel{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(247,178,40,.3)}
+.tk-cl .it.done{opacity:.55;pointer-events:none;border-color:var(--ok)}
+.tk-cl .bks{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tk-cl .bk{border:2px dashed var(--line);border-radius:16px;padding:10px;min-height:90px;text-align:center;cursor:pointer;background:var(--surface)}
+.tk-cl .bk:hover{border-color:var(--blue)}.tk-cl .bk b{display:block}.tk-cl .bk .got{font-size:.78rem;color:var(--ok);margin-top:6px;line-height:1.6}
+.tk-cl .fb{min-height:24px;text-align:center;font-weight:800;margin-top:8px}
+/* live tools */
+.tk-live label{font-size:.8rem;font-weight:800;display:block;margin:10px 0 4px}
+.tk-live .meter{height:14px;border-radius:99px;background:var(--chip);border:1px solid var(--line);overflow:hidden;margin:10px 0}.tk-live .meter i{display:block;height:100%;width:0;transition:width .3s,background .3s}
+.tk-live .out{background:var(--code);color:#7ee787;border-radius:12px;padding:10px 14px;font-family:'Cascadia Code','Courier New',monospace;direction:ltr;text-align:left;font-size:.78rem;word-break:break-all;min-height:44px}
+.wheelwrap{position:relative;width:260px;height:260px;margin:10px auto;background:var(--code);border-radius:50%;box-shadow:inset 0 0 0 2px #1a2f3a}
+.wheelwrap .ring{position:absolute;inset:0;transition:transform .6s ease}.wheelwrap .l{position:absolute;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;font-family:'Courier New',monospace}
+/* quiz / audit / misc */
+.quiz-opt{display:block;width:100%;text-align:start;padding:12px 16px;margin:8px 0;border-radius:14px;border:1.5px solid var(--line);background:var(--surface2);color:var(--text);font:inherit;font-weight:700;cursor:pointer;transition:.15s}
+.quiz-opt:hover{border-color:var(--blue)}.quiz-opt.correct{background:rgba(22,163,74,.14);border-color:var(--ok);color:var(--ok)}.quiz-opt.wrong{background:rgba(229,72,77,.12);border-color:var(--bad);color:var(--bad)}
+/* تحقّق سريع صح/خطأ بعد كل موضوع */
+.tk-quick{border:1.5px dashed var(--blue);border-radius:16px;padding:12px 16px;margin:14px 0;background:rgba(0,158,226,.05)}
+.tk-quick .qh{font-weight:900;font-size:.85rem;color:var(--blue);margin-bottom:6px}
+.tk-quick .qs{font-weight:800;margin:0 0 10px}
+.tk-quick .opts{display:flex;gap:8px;flex-wrap:wrap}
+.tk-quick .opts .quiz-opt{flex:1;min-width:110px;width:auto;margin:0;text-align:center;padding:9px 14px;font-size:.88rem}
+.tk-quick .fb{margin-top:8px}
+.dots{display:flex;gap:6px;flex-wrap:wrap}.dots i{width:22px;height:6px;border-radius:99px;background:var(--chip);border:1px solid var(--line)}.dots i.on{background:var(--blue);border-color:var(--blue)}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:14px;margin:8px 0;cursor:pointer;font-weight:700;font-size:.92rem}
+.toggle .sw{width:46px;height:26px;border-radius:99px;background:#9fb2b6;position:relative;flex:none;transition:.2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on{border-color:var(--green);background:rgba(37,211,102,.1)}.toggle.on .sw{background:var(--green)}.toggle.on .sw::after{inset-inline-start:23px}
+.agenda li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);align-items:center;flex-wrap:wrap;list-style:none}
+.agenda{padding:0;margin:0}.agenda .t{background:var(--blue);color:#fff;font-weight:800;padding:3px 12px;border-radius:99px;font-size:.78rem;white-space:nowrap}
+.timerbig{font-size:clamp(2.6rem,10vw,4.5rem);font-weight:900;color:var(--blue);font-variant-numeric:tabular-nums}
+.reslink{display:block;padding:10px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;margin-top:8px;color:var(--blue);font-weight:800;font-size:.86rem;text-decoration:none}
+.reslink:hover{border-color:var(--blue)}
+.pop{animation:tkpop .45s}@keyframes tkpop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+/* فهرس الشرائح */
+.tk-drawer{position:fixed;inset:0;z-index:50;display:none}.tk-drawer.open{display:block}
+.tk-drawer .bk{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.tk-drawer .pn{position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(360px,88vw);background:var(--surface2);border-inline-start:1px solid var(--line);padding:16px;overflow-y:auto}
+.tk-drawer .pn button.it{display:flex;gap:10px;width:100%;text-align:start;background:none;border:0;border-bottom:1px dashed var(--line);padding:10px 4px;color:var(--text);font:inherit;cursor:pointer;font-size:.88rem}
+.tk-drawer .pn button.it.cur{color:var(--blue);font-weight:900}.tk-drawer .pn .n{color:var(--muted);min-width:24px}
+/* طباعة / PDF: نهاري دائماً */
+@media print{
+  html[data-theme="dark"]{--bg:#fff;--bg2:#fff;--surface:#fff;--surface2:#fff;--text:#111;--muted:#444;--line:#ccc;--code:#f3f3f3;--codetext:#111;--chip:#f2f2f2;--shadow:none}
+  body{overflow:visible;background:#fff}body::before,body::after,html::before,html::after,.tk-nav,header.tk-head .tk-ic,.tk-steps .ctrl,.tk-drawer{display:none!important}
+  #deck{height:auto}.tk-stage{overflow:visible}.slide{position:static;opacity:1;transform:none;pointer-events:auto;page-break-after:always;padding:10px 0;overflow:visible}
+  .card{box-shadow:none;break-inside:avoid}
+}
+
+.tk-shell .out span,.tk-term pre span{unicode-bidi:plaintext}
+
+</style>
+<style>
+
+</style>
+</head>
+<body>
+<div id="deck">
+  <div class="tk-topbar"></div>
+  <header class="tk-head">
+    <div class="tk-logo"><img src="https://tweetkod.com/wp-content/uploads/2024/05/Tweetkod.png" alt="TweetKod" onerror="this.outerHTML='<b style=&quot;color:#009EE2;font-size:.9rem&quot;>TweetKod</b>'"></div>
+    <div class="tk-titles"><div class="l">المستوى الثاني · الوحدة 2</div><div class="m">الشبكات المتقدمة: Subnetting وWireshark وWi-Fi وVPN</div></div>
+    <div class="tk-prog"><div class="bar"><i id="tkBar"></i></div><span id="tkCount">1 / 1</span></div>
+    <span class="tag" id="tkPts" title="نقاط التحديات">🏅 0</span>
+    <button class="tk-ic" id="tkMenu" title="فهرس الشرائح" aria-label="فهرس الشرائح">☰</button>
+    <button class="tk-ic" id="tkFm" title="تصغير الخط" aria-label="تصغير الخط">أ-</button>
+    <button class="tk-ic" id="tkFp" title="تكبير الخط" aria-label="تكبير الخط">أ+</button>
+    <button class="tk-ic" id="tkTheme" title="ليل / نهار" aria-label="تبديل الوضع الليلي">🌙</button>
+  </header>
+  <div class="tk-stage" id="stage"></div>
+  <div class="tk-nav"><button class="btn ghost" id="tkPrev">◀ السابق</button><button class="btn blue" id="tkNext">التالي ▶</button></div>
+</div>
+<div class="tk-drawer" id="tkDrawer"><div class="bk"></div><div class="pn"></div></div>
+<script>
+/* TweetKod lib — مكوّنات نقيّة (تعمل في المتصفح وفي Node للفحص وتوليد GIFT) */
+(function(root){
+  const TK = root.TK = { reg: [], _n: 0 };
+  const nid = p => 'tk' + p + (++TK._n);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  TK.esc = esc;
+  const reg = (k, cfg) => { TK.reg.push(Object.assign({ k }, cfg)); return cfg.id; };
+
+  /* ---------- هيكل الوحدة ---------- */
+  TK.module = function(cfg){ root.TK_MODULE = cfg; return cfg; };
+
+  /* ---------- شرائح عامة ---------- */
+  TK.s = (title, en, body) => '<div class="in"><h2 class="tk-h2">' + title + (en ? '<span class="en">' + en + '</span>' : '') + '</h2>' + body + '</div>';
+  TK.concept = c => (TK._concepts = (TK._concepts || 0) + 1, 0) || TK.s('💡 ' + c.t, c.en || '', '<div class="card"><span class="tag">⏱️ مفهوم سريع · ' + (c.min || '3 د') + '</span><div class="mt">' + c.body + '</div></div>' +
+      (c.key ? '<div class="tip"><b>🎯 الفكرة في جملة:</b> ' + c.key + '</div>' : ''));
+  TK.code = (text, cls) => '<div class="codebox ' + (cls || '') + '">' + esc(text) + '</div>';
+  TK.table = (head, rows) => '<div class="tblwrap"><table class="tbl"><tr>' + head.map(h => '<th>' + h + '</th>').join('') + '</tr>' +
+      rows.map(r => '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</table></div>';
+  TK.terms = list => '<dl class="term"><b>📖 مصطلحات مهمة</b>' + list.map(x => '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>').join('') + '</dl>';
+  TK.tool = c => '<div class="tk-tool"><div class="ti">' + (c.e || '🛠️') + '</div><div><b>' + c.n + (c.free === false ? '' : ' <span class="tag">مجاني</span>') + '</b>' +
+      '<div class="w"><b style="display:inline">ما هي؟</b> ' + c.what + '</div><div class="w"><b style="display:inline">لماذا نستخدمها؟</b> ' + c.why + '</div>' +
+      (c.how ? '<div class="w"><b style="display:inline">كيف؟</b> ' + c.how + '</div>' : '') +
+      (c.url ? '<a href="' + c.url + '" target="_blank" rel="noopener">🔗 ' + c.url.replace(/^https?:\/\//, '') + '</a>' : '') + '</div></div>';
+  TK.breakSlide = next => '<div class="in"><div class="center"><div class="big-emoji">☕</div><div class="kicker">استراحة</div><h1 class="tk-h1">10 دقائق راحة</h1>' +
+      '<div class="timerbig" data-tk-timer>10:00</div><div class="mt"><button class="btn" data-tk-timer-start>▶️ بدء العدّاد</button> <button class="btn ghost" data-tk-timer-reset>↺ إعادة</button></div>' +
+      (next ? '<p class="lead mt2">' + next + '</p>' : '') + '</div></div>';
+  TK.recap = (title, items) => '<div class="in"><div class="center"><div class="big-emoji">✅</div><h2 class="tk-h2" style="justify-content:center">' + title + '</h2><div class="card" style="max-width:640px;text-align:start"><ul class="clean">' +
+      items.map(i => '<li>' + i + '</li>').join('') + '</ul></div></div></div>';
+
+  /* ---------- steps: حركة تنقّل بين طرفين (a = بداية القراءة، b = النهاية) ---------- */
+  TK.steps = c => {
+    const id = nid('st'); reg('steps', { id, steps: c.steps });
+    return '<div class="tk-steps card" id="' + id + '"><div class="stage"><div class="actor a"><i>' + c.a.e + '</i><b>' + c.a.l + '</b><em></em></div>' +
+      '<div class="actor b"><i>' + c.b.e + '</i><b>' + c.b.l + '</b><em></em></div><div class="mover"></div></div><div class="dots"></div><p class="cap"></p>' +
+      '<div class="ctrl"><button class="btn blue s" data-a="next">▶ الخطوة التالية</button><button class="btn ghost s" data-a="prev">◀ السابقة</button><button class="btn ghost s" data-a="reset">↺ من البداية</button></div></div>';
+  };
+  /* ---------- cards: بطاقات كشف (واحدة مفتوحة في كل مرة) ---------- */
+  TK.cards = c => {
+    const id = nid('cd'); reg('cards', { id });
+    return '<div class="tk-cards c' + (c.cols || 3) + '" id="' + id + '">' + c.items.map(i => '<div class="tk-card"><div class="h"><i>' + (i.e || '•') + '</i>' + i.t + '</div><div class="b">' + i.b + '</div></div>').join('') + '</div>';
+  };
+  /* ---------- compare: لوحتان بمفتاح تبديل ---------- */
+  TK.compare = c => {
+    const id = nid('cp'); reg('compare', { id });
+    return '<div class="tk-cmp card" id="' + id + '"><div class="seg"><button class="btn blue s" data-i="0">' + c.a.t + '</button><button class="btn ghost s" data-i="1">' + c.b.t + '</button></div>' +
+      '<div class="pane on ' + (c.a.bad ? 'badp' : 'good') + '">' + c.a.html + '</div><div class="pane ' + (c.b.bad ? 'badp' : 'good') + '">' + c.b.html + '</div></div>';
+  };
+  /* ---------- terminal: عرض متحرّك لمخرجات أداة ---------- */
+  TK.terminal = c => {
+    const id = nid('tm'); reg('terminal', { id, lines: c.lines, ms: c.ms || 420 });
+    return '<div class="tk-term" id="' + id + '"><div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i><span>' + esc(c.title || 'terminal') + '</span></div><pre>اضغط تشغيل لمشاهدة التنفيذ…</pre></div>' +
+      '<div class="tc mt"><button class="btn blue s" data-tk-run="' + id + '">▶ ' + (c.btn || 'شغّل المحاكاة') + '</button></div>';
+  };
+  /* ---------- scan: شبكة فحص متتابع ---------- */
+  TK.scan = c => {
+    const id = nid('sc'); reg('scan', { id, cells: c.cells, labels: c.labels || {} , ms: c.ms || 140 });
+    return '<div class="tk-grid card" id="' + id + '"><div class="cells" style="grid-template-columns:repeat(' + (c.cols || 5) + ',1fr)">' +
+      c.cells.map(x => '<div class="c" title="' + esc(x.tip || '') + '">' + esc(x.t) + '</div>').join('') + '</div><div class="sum"></div><div class="tc"><button class="btn blue s" data-a="go">▶ ' + (c.btn || 'ابدأ الفحص') + '</button> <button class="btn ghost s" data-a="reset">↺</button></div></div>';
+  };
+  /* ---------- transform: مدخل → آلة → مخرج (sha256 حقيقي أو ناتج ثابت) ---------- */
+  TK.transform = c => {
+    const id = nid('tf'); reg('transform', { id, fn: c.fn || 'none', output: c.output || '', after: c.after || '' });
+    return '<div class="tk-tf card" id="' + id + '"><div class="row"><div><label class="sm muted">' + (c.inLabel || 'المُدخل') + '</label>' +
+      (c.editable === false ? '<div class="box">' + esc(c.input) + '</div>' : '<input type="text" class="ltr" value="' + esc(c.input) + '">') + '</div>' +
+      '<div class="gear">' + (c.gear || '⚙️') + '<div class="sm muted">' + (c.label || '') + '</div></div><div><label class="sm muted">' + (c.outLabel || 'المُخرَج') + '</label><div class="box out">—</div></div></div>' +
+      '<div class="tc mt"><button class="btn blue s" data-a="go">▶ ' + (c.btn || 'شغّل') + '</button></div><p class="sm muted tc after"></p></div>';
+  };
+  /* ---------- lab: مختبر بخطوات قابلة للتأشير ---------- */
+  TK.lab = c => {
+    const id = nid('lb'); reg('lab', { id, n: c.steps.length });
+    return '<div class="tk-lab" id="' + id + '"><div class="lh"><span class="badge">🧪 مختبر عملي</span><b>' + c.t + '</b>' + (c.time ? '<span class="tag">⏱️ ' + c.time + '</span>' : '') + '</div>' +
+      (c.req ? '<div class="req">✅ <b>المتطلبات:</b> ' + c.req + '</div>' : '') + c.steps.map((s, i) => '<div class="stp" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span class="tx">' + s + '</span></div>').join('') +
+      (c.tools ? c.tools.map(t => '<a class="reslink" href="' + t.u + '" target="_blank" rel="noopener">🔗 ' + t.n + '</a>').join('') : '') +
+      (c.tip ? '<div class="tip"><b>💡</b> ' + c.tip + '</div>' : '') + (c.warn ? '<div class="warn"><b>⚠️</b> ' + c.warn + '</div>' : '') +
+      '<div class="pm"><i></i></div></div>';
+  };
+  /* ---------- challenge: تحدٍّ بإجابة قابلة للتحقق ---------- */
+  TK.challenge = c => {
+    const id = nid('ch'); reg('challenge', { id, answer: [].concat(c.answer), re: c.re || null, pts: c.pts || 10, explain: c.explain || '' });
+    return '<div class="tk-ch" id="' + id + '"><div class="chh"><span>🏁 تحدٍّ ' + (c.pts || 10) + ' نقاط</span>' + (c.t || '') + '</div><div>' + c.q + '</div>' +
+      '<div class="row"><input type="text" class="ltr" placeholder="' + esc(c.ph || 'اكتب إجابتك هنا…') + '" autocomplete="off"><button class="btn s" data-a="chk">تحقّق</button>' + (c.hint ? '<button class="btn ghost s" data-a="hint">تلميح</button>' : '') + '</div>' +
+      '<div class="res"></div>' + (c.hint ? '<div class="sm muted hint" style="display:none">💡 ' + c.hint + '</div>' : '') + '</div>';
+  };
+  /* ---------- scenario: قرارات متتالية ---------- */
+  TK.scenario = c => {
+    const id = nid('sn'); reg('scenario', { id, steps: c.steps });
+    return '<div class="tk-sc card" id="' + id + '"><div class="sh"></div><div class="so"></div><div class="sf"></div></div>';
+  };
+  /* ---------- classify: صنّف العناصر في صناديق ---------- */
+  TK.classify = c => {
+    const id = nid('cl'); reg('classify', { id, items: c.items, buckets: c.buckets });
+    return '<div class="tk-cl card" id="' + id + '"><p class="sm muted">اختر عنصراً ثم اضغط الصندوق الصحيح.</p><div class="its"></div><div class="bks"></div><div class="fb"></div></div>';
+  };
+  /* ---------- check: تحقّق سريع صح/خطأ بعد كل موضوع (تنشيط فوري، لا يُحتسب في الاختبار النهائي) ---------- */
+  TK.check = c => {
+    const id = nid('ch'); reg('check', { id, s: c.s, t: c.t, why: c.why });
+    return '<div class="tk-quick" id="' + id + '"><div class="qh">🧠 <b>تحقّق سريع</b></div><p dir="auto" class="qs">' + c.s + '</p>' +
+      '<div class="opts"><button class="quiz-opt s" data-v="1">✅ صحيح</button><button class="quiz-opt s" data-v="0">❌ خطأ</button></div><div class="fb"></div></div>';
+  };
+  /* ---------- shell: طرفية Linux تفاعلية بنظام ملفات افتراضي ---------- */
+  TK.shell = c => {
+    const id = nid('sh'); reg('shell', { id, fs: c.fs, cwd: c.cwd || '/home/student', user: c.user || 'student', host: c.host || 'lab', tasks: c.tasks || [], cmds: c.cmds || [], motd: c.motd || 'اكتب help لعرض الأوامر المتاحة.' });
+    return '<div id="' + id + '"><div class="tk-shell"><div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i><span>' + esc(c.title || 'student@lab: ~') + '</span></div>' +
+      '<div class="out"></div><div class="in"><span class="pr"></span><input type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="terminal"></div></div>' +
+      (c.tasks && c.tasks.length ? '<div class="tk-tasks">' + c.tasks.map(t => '<div class="t"><span class="ck">✓</span><span>' + t.d + '</span></div>').join('') + '</div>' : '') + '</div>';
+  };
+  /* ---------- أدوات حيّة جاهزة ---------- */
+  TK.live = name => {
+    const id = nid('lv'); reg('live', { id, name });
+    const T = {
+      hash: '<label>اكتب أي نص</label><input type="text" class="ltr" value="TweetKod2026"><label>SHA-256 (حقيقي، يُحسَب في متصفحك)</label><div class="out"></div><p class="sm muted">غيّر حرفاً واحداً وراقب تغيّر الناتج بالكامل (تأثير الانهيار الثلجي).</p>',
+      entropy: '<label>جرّب كلمة مرور (لا تكتب كلمة مرورك الحقيقية!)</label><input type="text" class="ltr" value="Tweet2026"><div class="meter"><i></i></div><div class="res tc" style="font-weight:800"></div><div class="grid g3 mt"><div class="tag tc"></div><div class="tag tc"></div><div class="tag tc"></div></div>',
+      caesar: '<div class="wheelwrap"><div class="ring o"></div><div class="ring i"></div></div><div class="tc"><button class="btn ghost s" data-d="-1">◀</button> <span class="tag lbl">الإزاحة: 3</span> <button class="btn ghost s" data-d="1">▶</button></div><label>النص (English)</label><input type="text" class="ltr" value="HELLO"><label>الناتج بهذه الإزاحة</label><div class="out"></div>',
+      convert: '<label>النص</label><input type="text" class="ltr" value="Hello TweetKod"><div class="grid g2"><div><label>Base64</label><div class="out o1"></div></div><div><label>Hex</label><div class="out o2"></div></div><div><label>Binary</label><div class="out o3"></div></div><div><label>ROT13</label><div class="out o4"></div></div></div>'
+    };
+    return '<div class="tk-live card" id="' + id + '">' + (T[name] || '') + '</div>';
+  };
+
+  /* ---------- SHA-256 متزامن (لا يعتمد على crypto.subtle) ---------- */
+  TK.sha256 = function(s){
+    const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    const rr = (v, a) => (v >>> a) | (v << (32 - a));
+    const str = unescape(encodeURIComponent(s)), b = [];
+    for (let i = 0; i < str.length; i++) b.push(str.charCodeAt(i));
+    const bl = b.length * 8; b.push(0x80); while (b.length % 64 !== 56) b.push(0);
+    const hi = Math.floor(bl / 4294967296), lo = bl >>> 0;
+    b.push((hi >>> 24) & 255, (hi >>> 16) & 255, (hi >>> 8) & 255, hi & 255, (lo >>> 24) & 255, (lo >>> 16) & 255, (lo >>> 8) & 255, lo & 255);
+    let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    for (let o = 0; o < b.length; o += 64) {
+      const w = new Array(64);
+      for (let i = 0; i < 16; i++) w[i] = (b[o + 4*i] << 24) | (b[o + 4*i + 1] << 16) | (b[o + 4*i + 2] << 8) | b[o + 4*i + 3];
+      for (let i = 16; i < 64; i++) {
+        const s0 = rr(w[i-15], 7) ^ rr(w[i-15], 18) ^ (w[i-15] >>> 3), s1 = rr(w[i-2], 17) ^ rr(w[i-2], 19) ^ (w[i-2] >>> 10);
+        w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0;
+      }
+      let [a, bb, c, d, e, f, g, h] = H;
+      for (let i = 0; i < 64; i++) {
+        const S1 = rr(e, 6) ^ rr(e, 11) ^ rr(e, 25), ch = (e & f) ^ (~e & g), t1 = (h + S1 + ch + K[i] + w[i]) | 0;
+        const S0 = rr(a, 2) ^ rr(a, 13) ^ rr(a, 22), mj = (a & bb) ^ (a & c) ^ (bb & c), t2 = (S0 + mj) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+      }
+      H = [(H[0]+a)|0,(H[1]+bb)|0,(H[2]+c)|0,(H[3]+d)|0,(H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];
+    }
+    return H.map(x => ('00000000' + (x >>> 0).toString(16)).slice(-8)).join('');
+  };
+  TK.caesar = (s, k) => s.replace(/[a-zA-Z]/g, ch => { const b = ch <= 'Z' ? 65 : 97; return String.fromCharCode(((ch.charCodeAt(0) - b + k) % 26 + 26) % 26 + b); });
+
+  /* ---------- GIFT من أسئلة الاختبار ---------- */
+  TK.gift = function(M){
+    const g = s => String(s).replace(/([~=#{}:])/g, '\\$1');
+    const pre = 'L' + M.level + '_' + String(M.num).padStart(2, '0');
+    let out = '// ' + (M.level === 1 ? 'المستوى الأول' : 'المستوى الثاني') + ' — اختبار الوحدة ' + M.num + ' — ' + M.title + '\n// تويتكود — صيغة GIFT: Question bank > Import > GIFT format\n// ' + M.quiz.length + ' سؤال اختيار من متعدد\n\n';
+    M.quiz.forEach((q, i) => {
+      out += '::' + pre + '_Q' + (i + 1) + ':: ' + g(q.q) + ' {\n=' + g(q.ok) + '\n' + q.no.map(w => '~' + g(w)).join('\n') + '\n}\n\n';
+    });
+    return out;
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* المستوى الثاني — الوحدة 2: الشبكات المتقدمة وWi-Fi وVPN */
+TK.module({
+  id: 'L2-02', level: 2, num: 2, slug: 'الشبكات-المتقدمة-وWi-Fi-وVPN',
+  title: 'الشبكات المتقدمة: Subnetting وWireshark وWi-Fi وVPN', en: 'Advanced Networking — Subnetting, Wireshark, Wi-Fi & VPN', emoji: '📡',
+  lead: 'في هذه الوحدة ستحسب شبكات فرعية بصيغة CIDR، وتحلّل التقاط حزم حقيقي بفلاتر Wireshark وتتبع جلسة TCP، ثم تفهم فكرة هجمات ARP وEvil Twin كصورة مجرّدة فقط لتبني الدفاع الصحيح ضدها، وتُقوّي شبكة Wi-Fi منزلك، وتختبر VPN حقيقياً على جهازك. النظرية مختصرة، والباقي حساب وتحليل وتطبيق.',
+  tags: ['🛠️ Wireshark', '🧮 Subnetting / CIDR', '📶 Wi-Fi hardening', '🔐 VPN'],
+  agenda: [
+    { t: '💡 مفهوم سريع: نموذج OSI/TCP-IP وCIDR', time: '10 د' },
+    { t: '🧮 مختبر ١: حساب الشبكات الفرعية (Subnetting)', time: '15 د' },
+    { t: '🧪 مختبر ٢: تحليل حزم Wireshark بالفلاتر', time: '15 د' },
+    { t: '☕ استراحة', time: '10 د' },
+    { t: '🎬 فكرة ARP Spoofing + دفاعاتها', time: '10 د' },
+    { t: '🎬 فكرة Evil Twin + تحصين Wi-Fi منزلك', time: '15 د' },
+    { t: '🔐 VPN: الفكرة والمختبر والحدود', time: '15 د' }
+  ],
+  slides: [
+    TK.concept({
+      t: 'من البتات إلى التطبيق: نموذج الشبكات', en: 'OSI / TCP-IP model & CIDR', min: '10 د',
+      body: '<p>كل اتصال شبكة يمرّ بطبقات. النموذج النظري (OSI) 7 طبقات، أما ما يعمل عملياً على الإنترنت فهو <b>TCP/IP</b> المبسّط في 4:</p>' +
+        '<div class="grid g2 mt">' +
+        '<div class="card"><b>📶 الوصول للشبكة</b><p>الكابل وWi-Fi وعناوين MAC (طبقتا Physical وData Link في OSI). عنوان MAC هو رقم تعريف فريد مطبوع على كل بطاقة شبكة من المصنع، تماماً كرقم تسلسلي ثابت لا يتغيّر مهما تبدّلت الشبكة التي يتصل بها الجهاز، بعكس عنوان IP الذي يتغيّر بحسب الشبكة.</p></div>' +
+        '<div class="card"><b>🌍 الإنترنت (IP)</b><p>التوجيه بين الشبكات بعنوان IP (طبقة Network في OSI).</p></div>' +
+        '<div class="card"><b>🔗 النقل (TCP/UDP)</b><p>تقسيم البيانات وترقيمها بالمنافذ (طبقة Transport).</p></div>' +
+        '<div class="card"><b>💬 التطبيق</b><p>HTTP وDNS وما يراه المستخدم (الطبقات 5–7 في OSI).</p></div>' +
+        '</div>' +
+        '<p class="mt">وكل شبكة IP تُكتب بصيغة <b>CIDR</b> (اختصار Classless Inter-Domain Routing، وهي ببساطة طريقة لكتابة «حجم الشبكة» بجانب عنوانها) مثل <span class="code">192.168.1.0/24</span>: الرقم بعد الشرطة المائلة هو عدد بتات «الشبكة» الثابتة، والباقي (من 32) بتات «المضيف» المتاحة للأجهزة. كلما كبر الرقم بعد الشرطة صغرت الشبكة. يسمّى هذا الحساب كله <b>Subnetting</b> (تقسيم شبكة فرعية)، أي تقسيم شبكة كبيرة واحدة إلى شبكات أصغر منظّمة — تماماً كتقسيم عنوان بريدي كبير (مدينة) إلى أحياء أصغر (الجزء الثابت) ثم أرقام منازل داخل كل حيّ (الجزء المتاح للأجهزة).</p>' +
+        '<div class="note">مثال: <span class="code">/24</span> يترك 8 بتات للمضيفين = 256 عنواناً (254 جهازاً فعلياً). <span class="code">/26</span> يترك 6 بتات = 64 عنواناً (62 جهازاً فعلياً) لأن أول عنوان هو عنوان الشبكة وآخره عنوان البث (Broadcast).</div>' +
+        TK.check({ s: 'عدد العناوين الكلي لشبكة بصيغة CIDR يساوي 2 مرفوعاً للقوة (32 ناقص رقم البادئة).', t: true, why: 'كلما زاد رقم البادئة قلّت بتات المضيف المتاحة، فيصغر عدد العناوين الكلي.' }),
+      key: 'الطبقات تفصل المهام (وصول، توجيه، نقل، تطبيق)، وCIDR يحدد حجم الشبكة بعدد بتاتها الثابتة.'
+    }),
+    TK.s('🧮 مختبر ١: احسب الشبكات الفرعية بنفسك', 'Lab 1 — subnetting calculator (CIDR)',
+      '<p class="lead">هذه طرفية تحسب لك نتيجة <span class="code">ipcalc</span> (أداة سطر أوامر على Linux تأخذ عنوان شبكة بصيغة CIDR وتُخرج نطاقه كاملاً فوراً) فور كتابة الأمر، لكن المطلوب منك أن تفهم كيف وصلت الأداة لهذه الأرقام قبل أن تثق بها.</p>' +
+      '<div class="tip mt"><b>القاعدة السريعة:</b> عدد العناوين الكلي = 2 أس (32 ناقص رقم البادئة). عدد الأجهزة الفعلي = العدد الكلي ناقص 2 (عنوان الشبكة وعنوان البث).</div>' +
+      '<div class="note mt"><b>🪟 Windows (PowerShell):</b> لا يوجد أمر <code>ipcalc</code> مدمج في Windows. هذا لا يهم عملياً — الهدف الحقيقي من هذا المختبر أن تحسب الأرقام بنفسك بالقاعدة السريعة أعلاه، وهذا يعمل على ورقة وقلم على أي نظام. وإن رغبت في التحقق السريع من إجابتك خارج هذا المختبر الافتراضي، استخدم أي حاسبة شبكات فرعية مجانية على الإنترنت (ابحث عن Subnet Calculator).<br><b>🍎 macOS / Linux:</b> يمكنك تثبيت <code>ipcalc</code> فعلياً على جهازك (مثلاً <code>brew install ipcalc</code> على macOS أو <code>sudo apt install ipcalc</code> على Linux) لتجربته خارج هذا المختبر.</div>' +
+      TK.shell({
+        title: 'student@lab: ~ (حاسبة الشبكات)', user: 'student', host: 'lab', cwd: '/home/student',
+        fs: {
+          home: { student: {
+            'task.txt': 'احسب شبكتين:\n1) 192.168.1.0/24\n2) 192.168.1.64/26\nاستخدم: ipcalc العنوان/البادئة'
+          } }
+        },
+        tasks: [
+          { d: 'احسب الشبكة الأولى: <code>ipcalc 192.168.1.0/24</code>', re: '^ipcalc\\s+192\\.168\\.1\\.0/24' },
+          { d: 'احسب الشبكة الفرعية الثانية: <code>ipcalc 192.168.1.64/26</code>', re: '^ipcalc\\s+192\\.168\\.1\\.64/26' },
+          { d: 'جرّب شبكة أصغر: <code>ipcalc 10.0.0.0/30</code>', re: '^ipcalc\\s+10\\.0\\.0\\.0/30' }
+        ],
+        cmds: [
+          { re: '^ipcalc\\s+192\\.168\\.1\\.0/24\\s*$', out: 'Address:   192.168.1.0\nNetmask:   255.255.255.0 = 24\nNetwork:   192.168.1.0/24\nHostMin:   192.168.1.1\nHostMax:   192.168.1.254\nBroadcast: 192.168.1.255\nHosts/Net: 254' },
+          { re: '^ipcalc\\s+192\\.168\\.1\\.64/26\\s*$', out: 'Address:   192.168.1.64\nNetmask:   255.255.255.192 = 26\nNetwork:   192.168.1.64/26\nHostMin:   192.168.1.65\nHostMax:   192.168.1.126\nBroadcast: 192.168.1.127\nHosts/Net: 62' },
+          { re: '^ipcalc\\s+10\\.0\\.0\\.0/30\\s*$', out: 'Address:   10.0.0.0\nNetmask:   255.255.255.252 = 30\nNetwork:   10.0.0.0/30\nHostMin:   10.0.0.1\nHostMax:   10.0.0.2\nBroadcast: 10.0.0.3\nHosts/Net: 2' },
+          { re: '^ipcalc', cls: 'bad', out: 'استخدم الصيغة: ipcalc عنوان/بادئة مثل ipcalc 192.168.1.0/24' }
+        ]
+      }) +
+      TK.check({ s: 'الشبكة بصيغة /26 تحتوي على عناوين أكثر من شبكة بصيغة /24.', t: false, why: '/24 تعطي 256 عنواناً بينما /26 تعطي 64 عنواناً فقط، فـ/26 شبكة أصغر رغم أن رقمها أكبر.' })),
+    TK.s('🏁 تحدي: قسّم الشبكة الصحيح', 'Challenge — subnetting math',
+      '<p class="lead">استخدم طرفية المختبر أعلاه أو احسب يدوياً بالقاعدة السريعة.</p>' +
+      TK.challenge({ t: 'عدد الأجهزة', q: 'كم جهازاً فعلياً (Hosts) يمكن أن تستوعبه شبكة بصيغة <span class="code">/26</span>؟', answer: ['62'], hint: 'شغّل ipcalc 192.168.1.64/26 وانظر إلى Hosts/Net.', explain: '/26 يترك 6 بتات للمضيف = 64 عنواناً، ناقص عنوان الشبكة وعنوان البث = 62 جهازاً فعلياً.', ph: 'رقم' }) +
+      TK.challenge({ t: 'عنوان البث', q: 'ما عنوان البث (Broadcast) لشبكة <span class="code">192.168.1.64/26</span>؟', answer: ['192.168.1.127'], hint: 'آخر عنوان في المجال هو عنوان البث دائماً.', explain: 'المجال يبدأ من 192.168.1.64 وينتهي عند 192.168.1.127 (64 عنواناً)، فآخره هو البث.', ph: 'x.x.x.x' }) +
+      TK.challenge({ t: 'أي بادئة أصغر؟', q: 'أيّ بادئة شبكة أصغر حجماً (عناوين أقل): <span class="code">/24</span> أم <span class="code">/26</span>؟ اكتب الرقم فقط.', answer: ['26'], hint: 'كلما زاد الرقم بعد الشرطة قلّت بتات المضيف المتاحة.', explain: '/24 يعطي 254 جهازاً و/26 يعطي 62 فقط، فـ/26 شبكة أصغر رغم أن رقمها أكبر.', ph: '24 أو 26' })),
+    TK.s('🛠️ Wireshark: فلاتر التحليل', 'Tool — Wireshark display filters',
+      TK.tool({ e: '🦈', n: 'Wireshark', what: 'برنامج يلتقط حزم الشبكة ويعرضها مفكوكة إلى طبقاتها، ويتيح تصفيتها بلغة فلاتر دقيقة.',
+        why: 'في وحدة سابقة استخدمت فلاتر أساسية؛ هنا تتعمّق أكثر لتعزل محادثة واحدة من بين آلاف الحزم وتثبت ما حدث فعلياً.',
+        how: 'اكتب فلتر العرض في الشريط العلوي، أو اضغط يميناً على حزمة واختر Follow → TCP Stream لرؤية المحادثة كاملة كنص.', url: 'https://www.wireshark.org/' }) +
+      '<p class="mt"><b>🪟 Windows (PowerShell):</b> Wireshark يثبَّت ويعمل بنفس الطريقة والواجهة تماماً على Windows كما على macOS وLinux — نزّله من الموقع الرسمي واختر نسخة Windows installer، ولا حاجة لـPowerShell هنا، البرنامج نفسه له واجهة رسومية موحّدة على كل الأنظمة.<br><b>🍎 macOS / Linux:</b> نفس البرنامج ونفس الفلاتر بالضبط، فقط اختر نسخة التثبيت المناسبة لنظامك من الموقع الرسمي.</p>' +
+      TK.table(['فلتر العرض', 'يعرض'], [
+        ['<code>tcp.port == 443</code>', 'كل حزم TCP الداخلة والخارجة على المنفذ 443'],
+        ['<code>ip.addr == 192.168.56.101</code>', 'كل حركة من وإلى هذا العنوان تحديداً'],
+        ['<code>ip.src == 192.168.56.10 && ip.dst == 203.0.113.25</code>', 'اتجاه واحد فقط بين جهازين محددين'],
+        ['<code>http.request</code>', 'طلبات HTTP فقط (بدون الردود)'],
+        ['<code>tcp.flags.syn == 1 && tcp.flags.ack == 0</code>', 'حزم بدء الاتصال (أول SYN) فقط'],
+        ['<code>http contains "password"</code>', 'حزم HTTP التي تحوي كلمة password نصاً']
+      ]) +
+      TK.check({ s: 'فلتر tcp.port == 443 يعرض فقط حزم بروتوكول HTTP غير المشفّر.', t: false, why: 'المنفذ 443 هو منفذ HTTPS المشفّر، لا HTTP العادي؛ الفلتر يعرض حركة TCP على هذا المنفذ سواء كانت HTTPS أو غيرها.' })),
+    TK.s('🧪 مختبر ٢: حلّل التقاطاً بفلاتر دقيقة', 'Lab 2 — deep filter analysis',
+      '<div class="card"><b>السيناريو:</b> لديك ملف التقاط لموظف يسجّل دخوله إلى لوحة إدارة داخلية. طبّق الفلاتر التالية بالترتيب على نسخة Wireshark لديك (أو راجع قائمة الحزم في الشريحة التالية) وتتبّع القصة خطوة بخطوة. قبل أي اتصال TCP حقيقي يحدث ما يسمى <b>المصافحة الثلاثية (Three-Way Handshake)</b>: تبادل ثلاث حزم صغيرة فقط (SYN ثم SYN-ACK ثم ACK) بين جهازين للتأكد أن الطرفين جاهزان قبل تبادل أي بيانات فعلية — تماماً كاتصال هاتفي تقول فيه «ألو» ويردّ الطرف الآخر «ألو، أسمعك» قبل أن تبدأ الحديث الفعلي.</div>' +
+      TK.lab({ t: 'تتبّع محادثة TCP كاملة', time: '15 د', req: 'Wireshark مثبّت (من الوحدة السابقة، يعمل بنفس الطريقة على Windows/macOS/Linux) أو قراءة التقاط الشريحة التالية.',
+        steps: [
+          'طبّق الفلتر <code>tcp.flags.syn == 1 && tcp.flags.ack == 0</code> لتحديد أول حزمة في كل اتصال جديد (بداية المصافحة الثلاثية).',
+          'طبّق <code>ip.addr == 192.168.56.101</code> لعزل كل حركة الخادم المستهدف وحده عن بقية الضجيج.',
+          'طبّق <code>tcp.port == 80</code> ثم قارنها مع <code>tcp.port == 443</code>: أيّهما يعرض محتوى HTTP مقروءاً مباشرة؟',
+          'طبّق <code>http.request</code> لرؤية كل الصفحات المطلوبة فقط دون ردود الخادم.',
+          'اختر أي حزمة HTTP، اضغط عليها يميناً، ثم Follow → TCP Stream لقراءة الطلب والرد كاملين كنص واحد.',
+          'ابحث داخل تيار المتابعة (Stream) عن أي بيانات حساسة ظهرت نصاً واضحاً.'
+        ],
+        tools: [{ n: 'Wireshark', u: 'https://www.wireshark.org/' }],
+        tip: 'الفلتر الدقيق أهم من حفظ كل بروتوكول: ابدأ عاماً (ip.addr) ثم ضيّق (tcp.port ثم http.request).' })),
+    TK.s('📦 التقاط جاهز: اقرأ القصة من الحزم', 'Packet list excerpt to analyse',
+      '<p class="lead">هذا مقطع حزم من دخول موظف إلى لوحة إدارة داخلية على <span class="code">192.168.56.101</span>. اقرأه كمحلل أمن وأجب عن التحديات التالية.</p>' +
+      TK.code('No.  Time      Source           Destination      Proto  Info\n 40  5.001102  192.168.56.20    192.168.56.101   TCP    49210 -> 8080 [SYN] Seq=0 Win=64240 Len=0\n 41  5.002310  192.168.56.101   192.168.56.20    TCP    8080 -> 49210 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0\n 42  5.002455  192.168.56.20    192.168.56.101   TCP    49210 -> 8080 [ACK] Seq=1 Ack=1 Win=64240 Len=0\n 43  5.010877  192.168.56.20    192.168.56.101   HTTP   POST /admin/login HTTP/1.1 (application/x-www-form-urlencoded)\n 44  5.041209  192.168.56.101   192.168.56.20    HTTP   HTTP/1.1 302 Found\n 45  5.102933  192.168.56.20    192.168.56.101   HTTP   GET /admin/dashboard HTTP/1.1\n 46  5.120044  192.168.56.101   192.168.56.20    HTTP   HTTP/1.1 200 OK (text/html)') +
+      '<p class="mt">وهذا ناتج Follow TCP Stream على الحزمة 43:</p>' +
+      TK.code('POST /admin/login HTTP/1.1\nHost: 192.168.56.101:8080\nContent-Type: application/x-www-form-urlencoded\nContent-Length: 39\n\nuser=ops_khaled&pass=Panda-River-19\n\nHTTP/1.1 302 Found\nSet-Cookie: session=a93f0e7c; HttpOnly\nX-Internal-Flag: FLAG{tcp_stream_reveals_all}\nLocation: /admin/dashboard') +
+      '<div class="note mt">الحزم 40 و41 و42 هي المصافحة الثلاثية (SYN ثم SYN-ACK ثم ACK) التي تبدأ أي اتصال TCP قبل تبادل أي بيانات تطبيق.</div>'),
+    TK.s('🏁 تحدّي: حلّل التقاط لوحة الإدارة', 'Challenge — analyse the admin login capture',
+      TK.challenge({ t: 'المصافحة الثلاثية', q: 'ما رقم الحزمة (No.) التي تحمل علم <span class="code">SYN, ACK</span> أي رد الخادم على طلب الاتصال؟', answer: ['41'], hint: 'ابحث عن السطر الذي يحوي SYN, ACK معاً.', explain: 'الترتيب دائماً: SYN من العميل، ثم SYN-ACK من الخادم، ثم ACK من العميل — هذه الحزمة 41.', ph: 'رقم الحزمة' }) +
+      TK.challenge({ t: 'كلمة المرور المسرّبة', q: 'ما كلمة مرور المستخدم <span class="code">ops_khaled</span> كما ظهرت في طلب POST؟', answer: ['Panda-River-19'], hint: 'ابحث عن pass= في تيار المتابعة.', explain: 'لأن لوحة الإدارة تعمل على HTTP وليس HTTPS فالبيانات انتقلت نصاً واضحاً رغم أنها جلسة إدارية حساسة.', ph: 'كلمة المرور' }) +
+      TK.challenge({ t: 'العلم الداخلي', q: 'ما قيمة العلم في ترويسة <span class="code">X-Internal-Flag</span>؟', answer: ['FLAG{tcp_stream_reveals_all}'], hint: 'انظر في سطور رد 302 Found.', explain: 'ترويسات الرد تُرسل أيضاً بلا تشفير، وأي متنصّت على الشبكة يقرأها مع الكوكي.', ph: 'FLAG{...}' })),
+    TK.breakSlide('الجزء القادم: كيف تُخدَع الأجهزة داخل الشبكة نفسها، وكيف تحمي نفسك منه — بدون أي خطوات هجوم فعلية.'),
+    TK.s('🎬 فكرة ARP Spoofing: كيف يُخدَع جدول ARP؟', 'Animated idea — ARP spoofing concept (no attack steps)',
+      '<p class="lead">هذه حركة <b>توضيحية مجرّدة</b> للفكرة فقط لفهم الخطر والدفاع — وليست خطوات تنفيذ. بروتوكول <b>ARP</b> (Address Resolution Protocol) هو الطريقة التي تُترجَم بها عناوين IP إلى عناوين MAC الفعلية على الشبكة المحلية. كل جهاز يحتفظ بجدول ARP صغير يربط عنوان IP بعنوان MAC الفعلي على الشبكة المحلية — فكّر فيه كدفتر عناوين مصغّر محفوظ داخل الجهاز: بدونه لا يعرف جهازك أي بطاقة شبكة فعلية يجب أن يرسل لها البيانات، حتى لو كان يعرف عنوان IP الصحيح.</p>' +
+      TK.steps({
+        a: { e: '💻', l: 'جهاز الضحية' }, b: { e: '🖥️', l: 'الراوتر الحقيقي' },
+        steps: [
+          { icon: '', at: 'mid', cap: 'في الوضع الطبيعي: جدول ARP لدى الجهاز يربط عنوان الراوتر بعنوان MAC الصحيح.' },
+          { icon: '🕵️', at: 62, cap: '١) جهاز مهاجم على الشبكة نفسها يرسل رسائل ARP مزيّفة لكلا الطرفين يدّعي فيها أنه صاحب العنوان الآخر.', bb: 'يستقبل رسالة مزيّفة' },
+          { icon: '⚠️', at: 'a', cap: '٢) جدول ARP لدى الضحية يتحدّث بهدوء دون أي تنبيه مرئي: عنوان الراوتر صار يشير لجهاز المهاجم.', flash: 'bad', ba: 'جدول ARP تغيّر' },
+          { icon: '🔁', at: 62, cap: '٣) الآن تمرّ حركة الضحية عبر جهاز المهاجم أولاً قبل أن تكمل طريقها — هذا ما يُسمّى Man-in-the-Middle.' },
+          { icon: '🛡️', at: 'a', cap: '٤) الدفاع الحقيقي لا يعتمد على ملاحظة المستخدم، بل على أدوات الشبكة نفسها (الشريحة التالية).', flash: 'ok' }
+        ]
+      })),
+    TK.s('🛡️ دفاعات ARP Spoofing', 'Defenses against ARP spoofing',
+      '<p class="lead">اضغط كل بطاقة لتعرف كيف يوقف المسؤولون هذا النوع من الخداع.</p>' +
+      TK.cards({ cols: 2, items: [
+        { e: '📌', t: 'إدخالات ARP ثابتة (Static ARP)', b: 'على الأجهزة الحساسة يمكن تثبيت عنوان MAC للراوتر يدوياً بحيث لا يقبل الجهاز أي تحديث لاحق لهذا العنوان.' },
+        { e: '🧱', t: 'DAI على السويتشات المُدارة', b: 'السويتش (Switch) هو الجهاز الذي يوصل كل الأجهزة السلكية ببعضها داخل الشبكة؛ «المُدار» منه يسمح للفنيين بضبط ميزات حماية إضافية عليه. ميزة Dynamic ARP Inspection في سويتشات الشركات تراقب كل رسائل ARP وتسقط أي رسالة لا تطابق سجل DHCP الموثوق.' },
+        { e: '🔒', t: 'HTTPS وHSTS', b: 'حتى لو نجح اعتراض المرور، التشفير يمنع قراءة المحتوى أو تعديله. وHSTS (HTTP Strict Transport Security) هي خاصية تخبر المتصفح بأن يتذكّر استخدام HTTPS دوماً مع هذا الموقع، فيمنع المتصفح من الرجوع لنسخة HTTP غير آمنة حتى لو حاول أحد إجباره على ذلك.' },
+        { e: '🧊', t: 'VPN', b: 'تشفير كل حركة الجهاز داخل نفق واحد يجعل أي اعتراض محلي على الشبكة عديم الفائدة لأن المحتوى مشفّر من قبل أن يصل لبطاقة الشبكة.' }
+      ] }) +
+      TK.check({ s: 'تثبيت عنوان MAC الراوتر يدوياً (Static ARP) يمنع الجهاز من قبول تحديث لاحق مزيّف لهذا العنوان.', t: true, why: 'الإدخال الثابت لا يتغيّر مع أي رسالة ARP جديدة، فيمنع نوعاً شائعاً من خداع جدول ARP.' })),
+    TK.s('🃏 صنّف: عرض خدمة → تهديد محتمل', 'Classify — symptom to likely cause',
+      '<p class="lead">اقرأ كل عرض (Symptom) ثم ضعه في الصندوق المناسب.</p>' +
+      TK.classify({
+        buckets: [{ t: 'مؤشر اختراق شبكة محتمل', e: '🚨' }, { t: 'سلوك طبيعي', e: '✅' }],
+        items: [
+          { t: 'جدول ARP لديك تغيّر فجأة وعنوان الراوتر صار يشير لجهاز مختلف', b: 0, why: 'تغيّر غير متوقع في ربط IP بـ MAC علامة شائعة على ARP Spoofing.' },
+          { t: 'المتصفح يحذّرك فجأة من شهادة أمان غير صالحة لموقع تزوره دائماً', b: 0, why: 'قد يعني اعتراضاً للاتصال بشهادة مزيّفة.' },
+          { t: 'جهازك يتصل تلقائياً بشبكة Wi-Fi بنفس اسم شبكة معروفة لك لكن بإشارة أقوى فجأة', b: 0, why: 'قد تكون نقطة وصول مزيّفة (Evil Twin) تنتحل الاسم نفسه.' },
+          { t: 'عنوان IP لجهازك ثابت منذ أيام ولم يتغيّر', b: 1, why: 'طبيعي تماماً في شبكة منزلية مستقرة.' },
+          { t: 'زمن استجابة ping للراوتر أقل من مللي ثانية واحدة', b: 1, why: 'زمن ممتاز وطبيعي لشبكة محلية سليمة.' },
+          { t: 'ظهور قفل HTTPS طبيعي بجانب عنوان الموقع المعتاد', b: 1, why: 'علامة تشفير سليمة ومتوقعة.' }
+        ]
+      })),
+    TK.s('🎬 فكرة Evil Twin: نقطة وصول مزيّفة', 'Animated idea — Evil Twin concept (no attack steps)',
+      '<p class="lead">حركة توضيحية مجرّدة فقط لفهم الخطر، بلا أي خطوة تنفيذ فعلية. <b>Evil Twin</b> يعني جهازاً يبثّ شبكة Wi-Fi بالاسم (SSID) نفسه الذي تعرفه ويثقك به، دون أن يكون هو الراوتر الحقيقي — تماماً كمتجر مقلّد يضع لافتة مطابقة لمتجر مشهور ليخدع الزبائن ويجذبهم بدلاً من المتجر الأصلي.</p>' +
+      TK.steps({
+        a: { e: '📱', l: 'جهازك' }, b: { e: '📶', l: 'نقاط وصول متعددة' },
+        steps: [
+          { icon: '', at: 'mid', cap: 'جهازك يبحث تلقائياً عن شبكات Wi-Fi بالاسم (SSID) الذي تعرفه ويختار الأقوى إشارة.' },
+          { icon: '📡', at: 'b', cap: '١) توجد نقطة وصول حقيقية بإشارة عادية، وأخرى بنفس الاسم تماماً لكن بإشارة أقوى.', bb: 'شبكتان بنفس الاسم' },
+          { icon: '❓', at: 'a', cap: '٢) جهازك لا يستطيع تمييز هوية الشبكة من اسمها وحده، فقد يفضّل الإشارة الأقوى.', flash: 'bad' },
+          { icon: '🔁', at: 'mid', cap: '٣) إن اتصل الجهاز بالنقطة المزيّفة، تمرّ كل حركته غير المشفّرة عبر جهاز غير معروف الهوية.' },
+          { icon: '🛡️', at: 'a', cap: '٤) الدفاع لا يعتمد على التمييز بالعين، بل على إعدادات وتشفير (الشريحة التالية).', flash: 'ok' }
+        ]
+      }) +
+      TK.check({ s: 'يستطيع جهازك تمييز هوية شبكة Wi-Fi الحقيقية من اسمها (SSID) وحده بدقة.', t: false, why: 'الاسم وحده لا يثبت الهوية؛ نقطة وصول مزيّفة يمكن أن تستخدم الاسم نفسه تماماً بإشارة أقوى.' })),
+    TK.s('🧪 مختبر ٣: قائمة تحصين Wi-Fi لمنزلك', 'Lab — home Wi-Fi hardening checklist',
+      TK.lab({ t: 'حصّن راوتر منزلك خطوة بخطوة', time: '15 د', req: 'صلاحية الدخول للوحة تحكّم الراوتر (عادة عنوان مثل 192.168.1.1 في المتصفح) وموافقة ولي الأمر إن لم يكن الراوتر لك.',
+        steps: [
+          'اعرف عنوان الراوتر الفعلي (Default Gateway) على شبكتك بدل افتراض أنه 192.168.1.1 دائماً، فبعض الراوترات تستخدم عنواناً مختلفاً:<br><b>🪟 Windows (PowerShell):</b> اكتب <code>ipconfig /all</code> وابحث عن سطر Default Gateway.<br><b>🍎 macOS / Linux:</b> اكتب <code>ifconfig</code> (أو <code>ip addr</code> على توزيعات Linux الحديثة) وابحث عن عنوان الشبكة المحلية، أو اكتب <code>route -n</code> لرؤية الراوتر مباشرة.',
+          'سجّل الدخول للوحة تحكّم الراوتر وتحقق من نوع التشفير: اختر <b>WPA3</b> إن كان متاحاً، وإلا <b>WPA2-AES</b>. لا تستخدم أبداً WEP أو WPA القديم أو شبكة مفتوحة بلا كلمة مرور.',
+          'غيّر <b>كلمة مرور لوحة إدارة الراوتر</b> نفسها (ليست كلمة مرور Wi-Fi) من القيمة الافتراضية المطبوعة على الجهاز إلى كلمة مرور قوية وفريدة.',
+          'عطّل خاصية <b>WPS</b> (الاتصال بزر واحد) من إعدادات الراوتر، فهي نقطة ضعف معروفة يسهل استغلالها بالتخمين.',
+          'فعّل <b>شبكة الضيوف (Guest Network)</b> وضع عليها الأجهزة غير الموثوقة وضيوف المنزل، بحيث تبقى معزولة عن أجهزتك الرئيسية.',
+          'تحقق من وجود <b>تحديث للنظام الداخلي (Firmware)</b> للراوتر وفعّل التحديث التلقائي إن توفر.',
+          'راجع قائمة الأجهزة المتصلة حالياً بالشبكة وتأكد أنك تعرف كل جهاز فيها.'
+        ],
+        tip: 'شبكة الضيوف وحدها قد تمنع ضيفاً مصاباً ببرمجية خبيثة من الوصول لأجهزتك الشخصية على نفس الشبكة.',
+        warn: 'لا تجرّب تغيير إعدادات راوتر لا تملكه أو لا تملك إذناً صريحاً لإدارته (راوتر المدرسة أو جار مثلاً).' })),
+    TK.s('⚖️ قارن: WPA2 مقابل WPA3', 'Compare — WPA2 vs WPA3',
+      '<p class="lead">WPA هو بروتوكول التشفير الذي يحمي شبكة Wi-Fi: بدونه يستطيع أي شخص قريب رؤية بياناتك أو استخدام إنترنتك مجاناً. توجد نسخ متعددة منه تطورت بمرور الوقت لتصحيح نقاط ضعف سابقة. بدّل بين الزرين لتقارن أهم فروق تشفير Wi-Fi الحديثة.</p>' +
+      TK.compare({
+        a: { t: '🔸 WPA2-AES', html:
+          '<ul class="clean"><li>معيار قياسي منتشر منذ سنوات طويلة وما زال مقبولاً أمنياً إن استُخدم مع AES لا TKIP.</li>' +
+          '<li>يستخدم مصافحة 4-Way Handshake يمكن التقاطها ثم محاولة تخمين كلمة مرور ضعيفة عنها لاحقاً دون اتصال.</li>' +
+          '<li>كلمة مرور قصيرة أو شائعة تبقى نقطة الضعف الأكبر فيه.</li></ul>' },
+        b: { t: '🔹 WPA3', html:
+          '<ul class="clean"><li>يستخدم آلية تبادل مفاتيح أحدث (SAE) تقاوم تخمين كلمة المرور بلا اتصال حتى لو التُقطت المصافحة.</li>' +
+          '<li>يوفر سرية تامة للأمام (Forward Secrecy): حتى لو عُرفت كلمة المرور لاحقاً، لا يمكن فك تشفير جلسات ماضية التُقطت مسبقاً.</li>' +
+          '<li>يحتاج أجهزة وراوتر حديثين يدعمانه؛ الأجهزة القديمة جداً قد لا تتوافق معه.</li></ul>' }
+      })),
+    TK.s('🔐 VPN: نفق مشفّر فوق أي شبكة', 'Concept — VPN tunnel',
+      TK.concept({
+        t: 'كيف يحمي VPN اتصالك؟', en: 'How a VPN tunnel works', min: '4 د',
+        body: '<p>شبكة VPN (Virtual Private Network) تبني <b>نفقاً مشفّراً</b> بين جهازك وخادم VPN: كل حركتك تُغلَّف (Encapsulation) داخل طبقة تشفير إضافية قبل أن تخرج من جهازك، فلا يرى أي جهاز على الشبكة المحلية (كشبكة المقهى) إلا بيانات معمّاة متجهة إلى خادم VPN فقط. تخيّل الأمر كرسالة ورقية توضع داخل صندوق مقفل بداخل صندوق آخر مقفل: من يرى الصندوق الخارجي في الطريق لا يستطيع معرفة محتوى الرسالة الأصلية بداخله، ولا حتى إلى من تتجه فعلياً.</p>' +
+        '<div class="warn">حدود حقيقية: خادم VPN نفسه يرى حركتك غير مشفّرة إن كان الموقع الهدف HTTP، لذا تعتمد الثقة على من يملك ذلك الخادم. وVPN لا يحميك من برمجية خبيثة على جهازك، ولا يجعلك مجهولاً تماماً.</div>' +
+        TK.check({ s: 'خادم VPN نفسه يرى حركتك غير مشفّرة إن كان الموقع الهدف يستخدم HTTP عادياً.', t: true, why: 'VPN يشفّر الحركة بينك وبين خادم VPN فقط؛ من خادم VPN إلى الموقع الهدف تبقى حركة HTTP غير مشفّرة كما هي.' }),
+        key: 'VPN يخفي محتوى واتجاه حركتك عن الشبكة المحلية، لكنه ينقل الثقة إلى مزوّد VPN لا يُلغيها.'
+      })),
+    TK.s('🎬 رحلة حزمة داخل نفق VPN', 'Animated — packet encapsulation inside a VPN tunnel',
+      '<p class="lead">تابع كيف تُغلَّف الحزمة الأصلية داخل حزمة VPN مشفّرة قبل خروجها من جهازك.</p>' +
+      TK.steps({
+        a: { e: '💻', l: 'جهازك' }, b: { e: '🌐', l: 'خادم VPN ثم الموقع' },
+        steps: [
+          { icon: '', at: 'a', cap: 'تطلب صفحة موقع كالمعتاد؛ برنامج VPN يعمل في الخلفية.' },
+          { icon: '📦', at: 'a', cap: '١) الحزمة الأصلية (بعنوانك الحقيقي) تُغلَّف داخل حزمة VPN جديدة ثم تُشفَّر بالكامل.', ba: 'يغلّف ويشفّر' },
+          { icon: '🔒', at: 62, cap: '٢) أي جهاز على شبكتك المحلية (راوتر المقهى مثلاً) يرى فقط بيانات معمّاة متجهة لعنوان خادم VPN.' },
+          { icon: '🔓', at: 'b', cap: '٣) خادم VPN يفكّ التغليف، ثم يرسل الطلب الأصلي للموقع الهدف وكأنه صادر منه هو، لا من جهازك.', bb: 'يفكّ ويعيد الإرسال' },
+          { icon: '📄', at: 'a', cap: '٤) الرد يعود بالطريق نفسه: من الموقع إلى خادم VPN ثم مشفّراً إليك.', flash: 'ok', ba: 'استقبل الرد' }
+        ]
+      })),
+    TK.s('🧪 مختبر ٤: اختبر VPN حقيقياً على جهازك', 'Lab — install & test a real VPN / WireGuard',
+      TK.lab({ t: 'قارن عنوان IP قبل وبعد تفعيل VPN', time: '15 د', req: 'جهازك الشخصي، تطبيق VPN موثوق (أو WireGuard) — كثير من الجامعات والشركات توفر VPN مجانياً لطلابها وموظفيها.',
+        steps: [
+          'افتح موقعاً لمعرفة عنوان IP العام الحالي ودوّنه (ابحث في محرك بحث عن عبارة «ما هو عنوان IP الخاص بي»).',
+          'ثبّت تطبيق VPN موثوقاً (أو اضبط عميل <b>WireGuard</b> إن كان متوفراً لديك من مصدر تثق به كجامعتك) واتصل به.',
+          'أعد زيارة الصفحة نفسها بعد الاتصال، وقارن: هل تغيّر عنوان IP الظاهر؟ هل تغيّر البلد الظاهر؟',
+          'افتح موقعاً يستخدم HTTP عادياً (غير حساس) وتأكد أن التصفح ما زال يعمل أثناء تفعيل VPN.',
+          'افصل الاتصال بـ VPN وتحقق أن عنوان IP عاد كما كان قبل الخطوة الأولى.',
+          'دوّن النتيجتين (قبل/بعد) وفرقاً واحداً لاحظته في سرعة التصفح إن وُجد.'
+        ],
+        tip: 'VPN يغيّر عنوان IP الظاهر للمواقع الخارجية، لكنه لا يغيّر عنوان IP الداخلي لشبكتك المحلية.',
+        warn: 'لا تستخدم تطبيقات VPN مجانية مجهولة المصدر تطلب صلاحيات واسعة على جهازك؛ اختر خدمة معروفة أو WireGuard بإعداد من جهة تثق بها.' })),
+    TK.s('🎭 سيناريو: شبكة المقهى المجانية', 'Scenario — free café Wi-Fi',
+      '<p class="lead">ركّز على ما يجب أن <b>تتحقق منه وتفعله أنت</b> كمستخدم، لا على كيفية الهجوم.</p>' +
+      TK.scenario({ steps: [
+        { s: 'تفتح إعدادات Wi-Fi في المقهى فتجد شبكتين بالاسم نفسه تقريباً: «Cafe_Free_WiFi» و«Cafe_Free_WiFi_5G»، إحداهما بإشارة قوية جداً رغم أنك بعيد عن جهاز الراوتر الظاهر. ماذا تفعل أولاً؟', o: [
+          { t: 'أتصل بالإشارة الأقوى مباشرة لأنها أسرع', ok: false, fb: 'قوة الإشارة لا تثبت هوية الشبكة؛ الاسم المتشابه فقط لا يكفي للثقة.' },
+          { t: 'أسأل أحد موظفي المقهى عن الاسم الصحيح الدقيق لشبكتهم الرسمية قبل الاتصال', ok: true, fb: 'صحيح — التأكد من الهوية من مصدر بشري موثوق هو أول خط دفاع فعلي.' },
+          { t: 'أتصل بكلتيهما لأقارن أيهما أسرع', ok: false, fb: 'الاتصال بشبكة غير مؤكدة الهوية يعرّض بياناتك دون داعٍ.' }] },
+        { s: 'اتصلت بشبكة المقهى الصحيحة، وتريد الدخول لبريدك الإلكتروني. ما أهم إجراء تتحقق منه الآن؟', o: [
+          { t: 'أتأكد أن الموقع يبدأ بـ https وأن القفل ظاهر قبل إدخال كلمة المرور', ok: true, fb: 'صحيح — HTTPS يشفّر المحتوى حتى لو كانت الشبكة نفسها غير موثوقة تماماً.' },
+          { t: 'لا أتحقق من شيء طالما الاتصال بالشبكة نجح', ok: false, fb: 'نجاح الاتصال بالشبكة لا يعني أن الموقع الذي تزوره مشفّر أو آمن.' },
+          { t: 'أستخدم نفس كلمة المرور لعدة حسابات لأنها شبكة مؤقتة', ok: false, fb: 'استخدام الشبكة لا علاقة له بتكرار كلمات المرور، وهذا خطر دائم بغض النظر عن الشبكة.' }] },
+        { s: 'لديك تطبيق VPN موثوق مثبّت مسبقاً على جوالك. متى الوقت الأنسب لتفعيله في هذا الموقف؟', o: [
+          { t: 'بعد الدخول لحساباتي، فلا داعي لتفعيله من البداية', ok: false, fb: 'الأفضل تفعيله قبل أي اتصال بحساب حساس، لا بعده.' },
+          { t: 'قبل تصفح أي شيء حساس على شبكة عامة لا أثق بها تماماً', ok: true, fb: 'صحيح — تفعيل VPN مبكراً على شبكة عامة يضيف طبقة حماية إضافية فوق HTTPS.' },
+          { t: 'لا داعي له أبداً طالما أرى القفل في المتصفح', ok: false, fb: 'القفل يحمي موقعاً واحداً فقط، أما VPN فيحمي كل حركة جهازك على تلك الشبكة.' }] }
+      ] })),
+    TK.s('📋 ورقة الغش: مصطلحات وأوامر اليوم', 'Cheat sheet',
+      TK.table(['المصطلح / الأمر', 'المعنى'], [
+        ['<code>CIDR /24</code>, <code>/26</code>', 'صيغة تحدد حجم الشبكة الفرعية بعدد بتاتها الثابتة'],
+        ['<code>ipcalc عنوان/بادئة</code>', 'يحسب نطاق الشبكة وعنوان البث وعدد الأجهزة'],
+        ['<code>tcp.port ==</code>, <code>ip.addr ==</code>', 'فلاتر Wireshark لعزل حركة محددة'],
+        ['Follow TCP Stream', 'قراءة محادثة TCP كاملة كنص واحد'],
+        ['ARP', 'بروتوكول يربط عنوان IP بعنوان MAC داخل الشبكة المحلية'],
+        ['Evil Twin', 'نقطة وصول Wi-Fi مزيّفة تنتحل اسم شبكة حقيقية'],
+        ['VPN', 'نفق مشفّر ينقل حركتك عبر خادم وسيط موثوق']
+      ]) + TK.terms([
+        ['Encapsulation (التغليف)', 'وضع حزمة كاملة داخل حزمة أخرى (كما يفعل VPN).'],
+        ['Man-in-the-Middle', 'اعتراض طرف ثالث لاتصال بين جهازين دون علمهما.'],
+        ['WPA3 / SAE', 'معيار Wi-Fi حديث يقاوم تخمين كلمة المرور بلا اتصال.'],
+        ['Forward Secrecy', 'عدم القدرة على فك تشفير جلسات ماضية حتى لو سُرّب المفتاح لاحقاً.']
+      ]))
+  ],
+  quiz: [
+    { q: 'شبكة بصيغة /24 كم جهازاً فعلياً (Hosts) تستوعب كحد أقصى؟', ok: '254', no: ['256', '255', '62'], why: '256 عنواناً كلياً ناقص عنوان الشبكة وعنوان البث = 254 جهازاً فعلياً.' },
+    { q: 'ما عنوان البث (Broadcast) لشبكة 192.168.1.64/26؟', ok: '192.168.1.127', no: ['192.168.1.126', '192.168.1.64', '192.168.1.255'], why: 'المجال يمتد من 64 إلى 127، فآخر عنوان فيه هو عنوان البث.' },
+    { q: 'ما وظيفة طبقة الإنترنت (Internet) في نموذج TCP/IP؟', ok: 'عنونة الأجهزة بعناوين IP وتوجيه البيانات بين الشبكات', no: ['تقسيم البيانات وترقيمها بالمنافذ', 'عرض الصفحات على المستخدم مباشرة', 'ربط عنوان IP بعنوان MAC فقط'], why: 'هذه وظيفة طبقة الإنترنت تحديداً؛ طبقة النقل تهتم بتقسيم البيانات والمنافذ.' },
+    { q: 'ماذا يعرض فلتر Wireshark tcp.flags.syn == 1 && tcp.flags.ack == 0؟', ok: 'أول حزمة SYN في بداية كل اتصال TCP جديد', no: ['حزمة ACK الأخيرة في نهاية المصافحة', 'كل حزم HTTP فقط', 'الحزم المشفّرة فقط'], why: 'هذا الفلتر يطابق أول حزمة SYN فقط، وليس حزمة ACK الأخيرة.' },
+    { q: 'جدول ARP لديك تغيّر فجأة وصار عنوان الراوتر يشير إلى جهاز مختلف. ماذا يدل هذا غالباً؟', ok: 'مؤشر شائع على هجوم ARP Spoofing واعتراض محتمل لحركتك', no: ['تحديث تلقائي طبيعي للراوتر لا يستدعي القلق', 'خلل في سرعة الإنترنت فقط', 'تغيير عادي يحدث بلا أي سبب يُذكر'], why: 'تغيّر غير متوقع في ربط IP بـ MAC علامة شائعة على ARP Spoofing.' },
+    { q: 'ما الذي يحمي محتوى بياناتك من القراءة حتى لو نجح شخص باعتراض اتصالك على الشبكة المحلية؟', ok: 'استخدام HTTPS الذي يشفّر المحتوى من طرف لطرف', no: ['الاتصال بشبكة Wi-Fi ذات اسم مألوف فقط', 'سرعة الإنترنت المرتفعة', 'استخدام متصفح مختلف'], why: 'التشفير في HTTPS يمنع قراءة المحتوى بغض النظر عمّن يعترض المسار.' },
+    { q: 'ما وظيفة ميزة Dynamic ARP Inspection (DAI) على سويتش مُدار؟', ok: 'مراقبة رسائل ARP وإسقاط أي رسالة لا تطابق سجل DHCP الموثوق', no: ['تسريع نقل البيانات بين المنافذ', 'تشفير كل حركة الشبكة تلقائياً', 'حجب الإنترنت عن أجهزة معيّنة'], why: 'DAI ميزة حماية ضد ARP Spoofing، لا علاقة لها بسرعة النقل.' },
+    { q: 'ما الذي يميّز WPA3 عن WPA2 في مقاومة تخمين كلمة مرور Wi-Fi؟', ok: 'WPA3 يستخدم آلية SAE تقاوم تخمين كلمة المرور بلا اتصال حتى لو التُقطت المصافحة', no: ['WPA3 يستخدم نفس آلية WPA2 بلا أي تغيير', 'WPA2 أقوى من WPA3 في كل الحالات', 'WPA3 لا يحتاج كلمة مرور على الإطلاق'], why: 'آلية SAE في WPA3 صُممت خصيصاً لمنع هجمات التخمين دون اتصال التي تهدد WPA2.' },
+    { q: 'هل يجعل تفعيل VPN المستخدم مجهول الهوية تماماً على الإنترنت؟', ok: 'لا، لأن خادم VPN نفسه يرى حركة المستخدم ولا يضمن إخفاء هويته تماماً', no: ['نعم، يصبح تتبعه مستحيلاً تماماً', 'نعم، لأن VPN يحذف كل بياناته فوراً', 'لا علاقة لـVPN بإخفاء الهوية أساساً'], why: 'VPN يشفّر ويغلّف الحركة عن الشبكة المحلية فقط، لكن خادم VPN نفسه يرى حركتك.' },
+    { q: 'في شبكة Wi-Fi عامة غير مؤكدة الهوية بالكامل (كمقهى)، متى يُفضَّل تفعيل VPN؟', ok: 'قبل تصفح أي حساب حساس على الشبكة لا بعده', no: ['بعد الدخول إلى الحسابات الحساسة فقط', 'فقط عند رؤية قفل HTTPS في المتصفح', 'لا حاجة له إطلاقاً في المقهى'], why: 'تفعيل VPN مبكراً يضيف طبقة حماية فوق HTTPS قبل انتقال أي بيانات حساسة.' }
+  ],
+  audit: [
+    'حسبت نطاق شبكتين بصيغتي CIDR مختلفتين (/24 و/26) وتحققت من عدد الأجهزة وعنوان البث',
+    'طبّقت فلاتر Wireshark لعزل حركة جهاز محدد ومنفذ محدد وطلبات HTTP',
+    'استخدمت Follow TCP Stream لقراءة محادثة كاملة واستخرجت بيانات مسرّبة منها',
+    'ميّزت المصافحة الثلاثية (SYN, SYN-ACK, ACK) داخل قائمة حزم مطبوعة',
+    'فهمت فكرة ARP Spoofing كمفهوم دفاعي وذكرت دفاعين عمليين ضدها',
+    'فهمت فكرة Evil Twin وطبّقت قائمة تحصين Wi-Fi على راوتر (منزلي أو افتراضي)',
+    'ثبّت أو استخدمت VPN حقيقياً وقارنت عنوان IP قبل الاتصال وبعده',
+    'قارنت WPA2 وWPA3 وحددت متى تُفعّل VPN في سيناريو شبكة عامة'
+  ],
+  recap: [
+    'CIDR يحدد حجم الشبكة الفرعية؛ كلما كبرت البادئة صغرت الشبكة وقلّ عدد الأجهزة',
+    'فلاتر Wireshark الدقيقة (tcp.port, ip.addr, http.request) تحوّل آلاف الحزم إلى قصة واحدة مفهومة',
+    'ARP Spoofing وEvil Twin يُفهمان كمفاهيم للدفاع فقط: HTTPS وVPN وDAI وتحصين الراوتر هي الحماية الفعلية',
+    'WPA3 أقوى من WPA2 في مقاومة تخمين كلمة المرور، وVPN يشفّر حركتك لكنه ينقل الثقة لمزوّد الخدمة لا يُلغيها'
+  ],
+  homework: 'احسب يدوياً نطاق شبكة 172.16.0.0/27 (عدد الأجهزة وعنوان البث) وتحقق من إجابتك بـ ipcalc في طرفية المختبر، ثم طبّق قائمة تحصين Wi-Fi كاملة على راوتر منزلك ودوّن أي إعداد كان مفعّلاً مسبقاً وأيها غيّرته.',
+  resources: [
+    { t: 'Wireshark — الموقع الرسمي', u: 'https://www.wireshark.org/' },
+    { t: 'Wireshark — التحميل', u: 'https://www.wireshark.org/download.html' },
+    { t: 'Nmap — فحص الشبكات', u: 'https://nmap.org/' },
+    { t: 'TryHackMe — غرف الشبكات للمبتدئين', u: 'https://tryhackme.com/' },
+    { t: 'picoCTF — تحديات مجانية', u: 'https://picoctf.org/' }
+  ],
+  next: 'في الوحدة القادمة: الاستطلاع وفحص الشبكات — ستستخدم أدوات حقيقية لرسم خريطة شبكة كاملة بأسلوب أخلاقي ومرخّص.'
+});
+
+</script>
+<script>
+/* TweetKod engine — يبني الشرائح ويربط المكوّنات ويدير الثيم والتنقل */
+(function(){
+  'use strict';
+  const M = window.TK_MODULE, TK = window.TK;
+  const $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const esc = TK.esc;
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem('tk:' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v){ try { localStorage.setItem('tk:' + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  const LV = M.level === 1 ? 'المستوى الأول' : 'المستوى الثاني';
+  const KEY = M.id + ':';
+  const safe = (fn, name) => { try { fn(); } catch (e) { console.error('TK component failed:', name, e); } };
+
+  /* ---------- الثيم والخط ---------- */
+  const root = document.documentElement;
+  function setTheme(t){ root.setAttribute('data-theme', t); store.set('theme', t); const b = $('#tkTheme'); if (b) b.textContent = t === 'dark' ? '☀️' : '🌙'; }
+  let th = store.get('theme', null);
+  if (!th) th = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  let fs = store.get('fs', 1);
+  function setFs(v){ fs = Math.max(.85, Math.min(1.4, v)); root.style.setProperty('--fs', fs); store.set('fs', fs); }
+  setFs(fs);
+
+  /* ---------- بناء الشرائح ---------- */
+  const labs = TK.reg.filter(r => r.k === 'lab').length + TK.reg.filter(r => r.k === 'shell').length;
+  const chs = TK.reg.filter(r => r.k === 'challenge').length;
+  const anims = TK.reg.filter(r => ['steps', 'terminal', 'scan', 'transform', 'compare', 'cards', 'scenario', 'classify'].includes(r.k)).length;
+  const S = [];
+  S.push('<div class="in"><div class="center"><div class="big-emoji">' + (M.emoji || '🛡️') + '</div><div class="kicker">TweetKod · ' + LV + ' — الوحدة ' + M.num + '</div>' +
+    '<h1 class="tk-h1">' + M.title + '<span class="en">' + (M.en || '') + '</span></h1><p class="lead">' + (M.lead || '') + '</p><div class="mt">' +
+    '<span class="tag">⏱️ 90 دقيقة</span><span class="tag">🧪 ' + labs + ' مختبرات عملية</span><span class="tag">🏁 ' + chs + ' تحديات</span><span class="tag">🎬 ' + anims + ' تفاعلات</span>' +
+    (M.tags || []).map(t => '<span class="tag">' + t + '</span>').join('') + '</div></div></div>');
+  S.push(TK.s('خطة الجلسة', 'Session roadmap', '<div class="card"><ul class="agenda">' + (M.agenda || []).map(a => '<li><span>' + a.t + '</span><span class="t">' + a.time + '</span></li>').join('') + '</ul></div>' +
+    '<div class="flag">⚖️ <b>تذكير الأخلاقيات:</b> كل تطبيق عملي يتم داخل مختبر معزول أو منصة تدريب قانونية. لا تفحص أو تختبر أي نظام لا تملكه أو لا تملك إذناً كتابياً به.</div>'));
+  (M.slides || []).forEach(h => S.push(h));
+  S.push(TK.s('🎯 اختبار الوحدة (تدريبي)', M.quiz.length + ' أسئلة · أجوبة فورية مع تفسير', '<p class="lead">للمراجعة فقط — الاختبار الرسمي على منصة مودل. ترتيب الخيارات يتغيّر في كل محاولة.</p><div class="card" id="tkQuiz"></div>'));
+  S.push(TK.s('🏆 مشروع الوحدة: أشّر ما أنجزته فعلياً', 'Hands-on checklist', '<div class="card" id="tkAudit"></div><p id="tkAuditScore" class="tc" style="font-size:1.2rem;font-weight:900"></p>'));
+  S.push(TK.s('📌 الملخص والمراجع', 'Recap & resources', '<div class="grid g2"><div class="card"><b style="color:var(--blue)">تذكّر دائماً</b><ul class="clean">' + (M.recap || []).map(i => '<li>' + i + '</li>').join('') + '</ul></div>' +
+    '<div class="card"><b style="color:var(--yellow)">📝 الواجب</b><p class="sm muted">' + (M.homework || '') + '</p></div></div><div class="card"><b style="color:var(--blue)">📚 كل الروابط</b>' +
+    (M.resources || []).map(r => '<a class="reslink" href="' + r.u + '" target="_blank" rel="noopener">🔗 ' + r.t + '</a>').join('') + '</div>'));
+  S.push('<div class="in"><div class="center"><div class="big-emoji">🏁</div><h1 class="tk-h1">أحسنتم! أنجزتم الوحدة ' + M.num + '</h1><p class="lead">' + (M.next || '') + '</p><span class="tag mt">فريق تويتكود التعليمية 💙</span></div></div>');
+
+  const stage = $('#stage');
+  S.forEach(h => { const d = document.createElement('section'); d.className = 'slide'; d.innerHTML = h.indexOf('class="in"') === 0 || h.indexOf('<div class="in">') === 0 ? h : '<div class="in">' + h + '</div>'; stage.appendChild(d); });
+  const els = $$('.slide');
+  const titles = els.map((e, i) => { const h = $('h2.tk-h2,h1.tk-h1', e); if (!h) return 'شريحة ' + (i + 1); const c = h.cloneNode(true); const en = $('.en', c); if (en) en.remove(); return c.textContent.trim(); });
+
+  /* ---------- التنقل ---------- */
+  let cur = 0;
+  function render(){
+    els.forEach((e, i) => e.classList.toggle('on', i === cur));
+    $('#tkCount').textContent = (cur + 1) + ' / ' + els.length;
+    $('#tkBar').style.width = ((cur + 1) / els.length * 100) + '%';
+    $('#tkPrev').disabled = cur === 0; $('#tkNext').disabled = cur === els.length - 1;
+    els[cur].scrollTop = 0;
+    if (history.replaceState) history.replaceState(null, '', '#' + (cur + 1));
+    $$('.tk-drawer .it').forEach((b, i) => b.classList.toggle('cur', i === cur));
+  }
+  function go(d){ cur = Math.max(0, Math.min(els.length - 1, cur + d)); render(); }
+  function jump(i){ cur = i; render(); }
+  $('#tkPrev').onclick = () => go(-1); $('#tkNext').onclick = () => go(1);
+  document.addEventListener('keydown', e => {
+    if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    if (e.key === 'ArrowLeft' || e.key === 'PageDown') go(1);
+    if (e.key === 'ArrowRight' || e.key === 'PageUp') go(-1);
+    if (e.key === 'Home') jump(0); if (e.key === 'End') jump(els.length - 1);
+  });
+  let tx = null; stage.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 70 && !/INPUT|TEXTAREA/.test((e.target || {}).tagName || '')) go(dx < 0 ? 1 : -1); }, { passive: true });
+
+  /* ---------- الرأس: ثيم/خط/فهرس/طباعة ---------- */
+  $('#tkTheme').onclick = () => setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  $('#tkFm').onclick = () => setFs(fs - .08); $('#tkFp').onclick = () => setFs(fs + .08);
+  window.addEventListener('beforeprint', () => setTheme('light'));
+  const dr = $('#tkDrawer');
+  dr.querySelector('.pn').innerHTML = '<b>📑 فهرس الشرائح</b>' + titles.map((t, i) => '<button class="it"><span class="n">' + (i + 1) + '</span><span>' + esc(t) + '</span></button>').join('');
+  $$('.it', dr).forEach((b, i) => b.onclick = () => { jump(i); dr.classList.remove('open'); });
+  $('#tkMenu').onclick = () => dr.classList.add('open'); dr.querySelector('.bk').onclick = () => dr.classList.remove('open');
+  setTheme(th);
+
+  /* ---------- مؤقّت الاستراحة ---------- */
+  (function(){
+    let t = null, s = 600; const d = $('[data-tk-timer]'); if (!d) return;
+    const paint = () => { d.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+    $('[data-tk-timer-start]').onclick = () => { if (t) return; t = setInterval(() => { s--; if (s <= 0) { clearInterval(t); t = null; d.textContent = 'انتهت الاستراحة ⏰'; } else paint(); }, 1000); };
+    $('[data-tk-timer-reset]').onclick = () => { clearInterval(t); t = null; s = 600; paint(); };
+  })();
+
+  /* ---------- ربط المكوّنات ---------- */
+  const W = {};
+  W.steps = c => { const el = document.getElementById(c.id), st = $('.stage', el), mv = $('.mover', el), cap = $('.cap', el), dots = $('.dots', el); let i = 0;
+    const pos = { a: '22%', mid: '50%', b: '78%' };
+    function paint(){ const s = c.steps[i]; mv.textContent = s.icon || ''; mv.style.opacity = s.icon ? 1 : 0; mv.style.insetInlineStart = pos[s.at] || (typeof s.at === 'number' ? s.at + '%' : '50%');
+      cap.textContent = s.cap; st.classList.remove('ok', 'bad'); if (s.flash) st.classList.add(s.flash);
+      $$('.actor em', el).forEach((e, k) => { e.textContent = (k === 0 ? s.ba : s.bb) || ''; });
+      dots.innerHTML = c.steps.map((_, k) => '<i class="' + (k <= i ? 'on' : '') + '"></i>').join(''); }
+    el.addEventListener('click', e => { const a = e.target.getAttribute && e.target.getAttribute('data-a'); if (!a) return; if (a === 'next') i = Math.min(c.steps.length - 1, i + 1); if (a === 'prev') i = Math.max(0, i - 1); if (a === 'reset') i = 0; paint(); });
+    paint(); };
+  W.cards = c => { const el = document.getElementById(c.id); const cs = $$('.tk-card', el); cs.forEach(x => x.onclick = () => { const was = x.classList.contains('open'); cs.forEach(y => y.classList.remove('open')); if (!was) x.classList.add('open'); }); };
+  W.compare = c => { const el = document.getElementById(c.id), bs = $$('.seg button', el), ps = $$('.pane', el);
+    bs.forEach((b, i) => b.onclick = () => { bs.forEach((x, k) => { x.classList.toggle('blue', k === i); x.classList.toggle('ghost', k !== i); }); ps.forEach((p, k) => p.classList.toggle('on', k === i)); }); };
+  W.terminal = c => { const el = document.getElementById(c.id), pre = $('pre', el); const btn = document.querySelector('[data-tk-run="' + c.id + '"]'); let run = 0;
+    btn.onclick = () => { const my = ++run; pre.innerHTML = ''; let k = 0; (function next(){ if (my !== run || k >= c.lines.length) return; const l = c.lines[k++]; const sp = document.createElement('span'); sp.className = l[0]; sp.textContent = l[1] + '\n'; pre.appendChild(sp); pre.scrollTop = pre.scrollHeight; setTimeout(next, l[2] || c.ms); })(); }; };
+  W.scan = c => { const el = document.getElementById(c.id), cells = $$('.c', el), sum = $('.sum', el); let run = 0;
+    function reset(){ run++; cells.forEach(x => x.className = 'c'); sum.textContent = ''; }
+    el.addEventListener('click', e => { const a = e.target.getAttribute && e.target.getAttribute('data-a'); if (a === 'reset') reset(); if (a === 'go') { reset(); const my = run; let k = 0, cnt = {};
+      (function nx(){ if (my !== run) return; if (k > 0) { const p = cells[k - 1], s = c.cells[k - 1].s; p.className = 'c ' + s; cnt[s] = (cnt[s] || 0) + 1; }
+        if (k >= cells.length) { sum.textContent = Object.keys(cnt).map(s => (c.labels[s] || s) + ': ' + cnt[s]).join(' · '); return; }
+        cells[k].className = 'c scan'; k++; setTimeout(nx, c.ms); })(); } }); };
+  W.transform = c => { const el = document.getElementById(c.id), inp = $('input', el), out = $('.out', el), gear = $('.gear', el), after = $('.after', el);
+    el.addEventListener('click', e => { if (e.target.getAttribute('data-a') !== 'go') return; const v = inp ? inp.value : ''; out.textContent = '…'; gear.classList.add('spinning');
+      setTimeout(() => { gear.classList.remove('spinning'); out.textContent = c.fn === 'sha256' ? TK.sha256(v) : (c.output || '—'); out.classList.add('pop'); setTimeout(() => out.classList.remove('pop'), 500); if (c.after) after.textContent = c.after; }, 1000); }); };
+  W.lab = c => { const el = document.getElementById(c.id), st = $$('.stp', el), pm = $('.pm i', el); const k = KEY + c.id; let done = store.get(k, []);
+    const paint = () => { st.forEach((s, i) => s.classList.toggle('done', done.indexOf(i) > -1)); pm.style.width = (done.length / c.n * 100) + '%'; };
+    st.forEach((s, i) => s.onclick = () => { const p = done.indexOf(i); if (p > -1) done.splice(p, 1); else done.push(i); store.set(k, done); paint(); }); paint(); };
+  W.challenge = c => { const el = document.getElementById(c.id), inp = $('input', el), res = $('.res', el); const k = KEY + c.id; const norm = s => String(s).trim().toLowerCase().replace(/\s+/g, ' ');
+    const solved = () => { el.classList.add('solved'); res.innerHTML = '<span style="color:var(--ok)">✅ إجابة صحيحة! +' + c.pts + ' نقطة</span>' + (c.explain ? '<div class="sm muted" style="font-weight:600">' + c.explain + '</div>' : ''); };
+    if (store.get(k, false)) solved();
+    el.addEventListener('click', e => { const a = e.target.getAttribute && e.target.getAttribute('data-a'); if (a === 'hint') { const h = $('.hint', el); h.style.display = h.style.display === 'none' ? 'block' : 'none'; }
+      if (a === 'chk') { const v = norm(inp.value); const ok = c.re ? new RegExp(c.re, 'i').test(inp.value.trim()) : c.answer.some(x => norm(x) === v); if (ok) { store.set(k, true); solved(); updScore(); } else { res.innerHTML = '<span style="color:var(--bad)">❌ ليست صحيحة بعد — راجع الخطوات وجرّب مرة أخرى.</span>'; } } });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') $('[data-a=chk]', el).click(); }); };
+  W.scenario = c => { const el = document.getElementById(c.id), h = $('.sh', el), o = $('.so', el), f = $('.sf', el); let i = 0, score = 0;
+    function paint(){ if (i >= c.steps.length) { o.innerHTML = ''; h.innerHTML = '<div class="big" style="font-weight:900;font-size:1.4rem;text-align:center">النتيجة: ' + score + ' / ' + c.steps.length + '</div>'; f.innerHTML = '<div class="tc mt"><button class="btn blue s" data-a="re">↺ أعد المحاولة</button></div>'; return; }
+      const s = c.steps[i]; h.innerHTML = '<span class="tag">الموقف ' + (i + 1) + ' من ' + c.steps.length + '</span><p style="font-weight:800">' + s.s + '</p>'; f.innerHTML = '';
+      o.innerHTML = s.o.map((x, j) => '<button class="opt" dir="auto" data-j="' + j + '">' + x.t + '</button>').join(''); }
+    el.addEventListener('click', e => { const b = e.target.closest ? e.target.closest('[data-j]') : null; if (e.target.getAttribute && e.target.getAttribute('data-a') === 're') { i = 0; score = 0; paint(); return; }
+      if (!b || b.classList.contains('ok') || b.classList.contains('no') || f.getAttribute('data-l')) return; const s = c.steps[i], x = s.o[+b.getAttribute('data-j')]; b.classList.add(x.ok ? 'ok' : 'no'); if (x.ok) score++;
+      f.setAttribute('data-l', 1); f.innerHTML = '<div class="' + (x.ok ? 'tip' : 'warn') + '">' + (x.ok ? '✅ ' : '❌ ') + x.fb + '</div><div class="tc"><button class="btn blue s" data-a="nx">' + (i === c.steps.length - 1 ? 'عرض النتيجة' : 'الموقف التالي ▶') + '</button></div>'; });
+    el.addEventListener('click', e => { if (e.target.getAttribute && e.target.getAttribute('data-a') === 'nx') { f.removeAttribute('data-l'); i++; paint(); } });
+    paint(); };
+  W.classify = c => { const el = document.getElementById(c.id), its = $('.its', el), bks = $('.bks', el), fb = $('.fb', el); let sel = null, ok = 0, tot = c.items.length;
+    its.innerHTML = c.items.map((x, i) => '<button class="it" dir="auto" data-i="' + i + '">' + x.t + '</button>').join('');
+    bks.innerHTML = c.buckets.map((b, i) => '<div class="bk" data-b="' + i + '"><b>' + (b.e || '') + ' ' + b.t + '</b><div class="got"></div></div>').join('');
+    el.addEventListener('click', e => { const it = e.target.closest('.it'), bk = e.target.closest('.bk');
+      if (it && !it.classList.contains('done')) { $$('.it', el).forEach(x => x.classList.remove('sel')); it.classList.add('sel'); sel = +it.getAttribute('data-i'); fb.textContent = ''; return; }
+      if (bk && sel !== null) { const b = +bk.getAttribute('data-b'), item = c.items[sel], btn = $$('.it', el)[sel];
+        if (item.b === b) { btn.classList.add('done'); btn.classList.remove('sel'); $('.got', bk).innerHTML += '✔ ' + item.t + '<br>'; ok++; sel = null; fb.innerHTML = '<span style="color:var(--ok)">✅ صحيح!' + (item.why ? ' ' + item.why : '') + '</span>'; if (ok === tot) fb.innerHTML = '<span style="color:var(--ok)">🎉 صنّفت كل العناصر بنجاح!</span>'; }
+        else fb.innerHTML = '<span style="color:var(--bad)">❌ ليس هنا — فكّر مرة أخرى.' + (item.hint ? ' 💡 ' + item.hint : '') + '</span>'; } }); };
+
+  /* تحقّق سريع صح/خطأ بعد كل موضوع — تنشيط فوري، لا يُحتسب في الاختبار النهائي */
+  W.check = c => { const el = document.getElementById(c.id), fb = $('.fb', el); let picked = false;
+    el.addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b || picked) return; picked = true;
+      const v = b.getAttribute('data-v') === '1';
+      $$('[data-v]', el).forEach(x => { if ((x.getAttribute('data-v') === '1') === c.t) x.classList.add('correct'); });
+      if (v === c.t) { fb.innerHTML = '<div class="tip">✅ صحيح! ' + (c.why || '') + '</div>'; }
+      else { b.classList.add('wrong'); fb.innerHTML = '<div class="warn">❌ ' + (c.t ? 'العبارة صحيحة فعلياً.' : 'العبارة خاطئة فعلياً.') + ' ' + (c.why || '') + '</div>'; } }); };
+
+  /* طرفية Linux تفاعلية */
+  W.shell = c => {
+    const el = document.getElementById(c.id), out = $('.out', el), inp = $('input', el), pr = $('.pr', el), tasks = $$('.tk-tasks .t', el);
+    const norm = p => { const parts = []; p.split('/').forEach(s => { if (!s || s === '.') return; if (s === '..') parts.pop(); else parts.push(s); }); return '/' + parts.join('/'); };
+    const mk = (o) => (typeof o === 'string') ? { t: 'f', d: o, p: '-rw-r--r--' } : Array.isArray(o) ? { t: 'f', d: o[0], p: o[1] || '-rw-r--r--' } : { t: 'd', c: Object.keys(o).reduce((a, k) => { a[k] = mk(o[k]); return a; }, {}) };
+    const fsr = mk(c.fs); let cwd = c.cwd; const home = c.cwd;
+    const find = p => { let n = fsr; for (const s of p.split('/').filter(Boolean)) { if (!n || n.t !== 'd' || !n.c[s]) return null; n = n.c[s]; } return n; };
+    const abs = p => p.charAt(0) === '/' ? norm(p) : (p === '~' ? home : norm(cwd + '/' + p));
+    const tok = l => (l.match(/"[^"]*"|'[^']*'|\S+/g) || []).map(x => x.replace(/^["']|["']$/g, ''));
+    const hist = []; let hi = 0; const done = tasks.map(() => false);
+    const print = (t, cls) => { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = t; out.appendChild(s); out.scrollTop = out.scrollHeight; };
+    const prompt = () => { pr.textContent = c.user + '@' + c.host + ':' + (cwd === home ? '~' : cwd) + '$'; };
+    const dirList = (d, all) => Object.keys(d.c).filter(k => all || k[0] !== '.').sort();
+    function runCmd(a, stdin){ // يعيد نصاً
+      const cmd = a[0], args = a.slice(1), flags = args.filter(x => x[0] === '-'), rest = args.filter(x => x[0] !== '-'); const has = f => flags.some(x => x.indexOf(f) > -1);
+      switch (cmd) {
+        case 'pwd': return cwd;
+        case 'whoami': return c.user;
+        case 'id': return 'uid=1000(' + c.user + ') gid=1000(' + c.user + ') groups=1000(' + c.user + ')';
+        case 'hostname': return c.host;
+        case 'echo': return args.join(' ');
+        case 'clear': out.textContent = ''; return null;
+        case 'help': return 'الأوامر المتاحة: ls cd pwd cat head tail grep find wc echo mkdir touch rm cp mv chmod whoami id clear\nالمسارات: ~ هو مجلدك، .. المجلد الأعلى. جرّب الأنبوب: cat file | grep كلمة';
+        case 'ls': { const n = find(abs(rest[0] || '.')); if (!n) return 'ls: cannot access \'' + (rest[0] || '') + '\': No such file or directory'; if (n.t === 'f') return rest[0];
+          const names = dirList(n, has('a')); if (has('l')) return names.map(k => { const x = n.c[k]; return (x.t === 'd' ? 'drwxr-xr-x' : x.p) + ' 1 ' + c.user + ' ' + c.user + ' ' + String(x.t === 'd' ? 4096 : x.d.length).padStart(5) + ' ' + k + (x.t === 'd' ? '/' : ''); }).join('\n');
+          return names.map(k => k + (n.c[k].t === 'd' ? '/' : '')).join('  '); }
+        case 'cd': { const p = rest[0] ? abs(rest[0]) : home; const n = find(p); if (!n) return 'bash: cd: ' + rest[0] + ': No such file or directory'; if (n.t !== 'd') return 'bash: cd: ' + rest[0] + ': Not a directory'; cwd = p; prompt(); return null; }
+        case 'cat': { if (!rest.length && stdin != null) return stdin; return rest.map(r => { const n = find(abs(r)); return !n ? 'cat: ' + r + ': No such file or directory' : n.t === 'd' ? 'cat: ' + r + ': Is a directory' : n.d; }).join('\n'); }
+        case 'head': case 'tail': { let nn = 10; const ix = args.indexOf('-n'); if (ix > -1) nn = +args[ix + 1] || 10; const file = rest.filter(x => x !== String(nn))[0]; let txt = stdin; if (file) { const n = find(abs(file)); if (!n || n.t !== 'f') return cmd + ': cannot open \'' + file + '\''; txt = n.d; } const ls = String(txt || '').split('\n'); return (cmd === 'head' ? ls.slice(0, nn) : ls.slice(-nn)).join('\n'); }
+        case 'wc': { let txt = stdin; if (rest[0]) { const n = find(abs(rest[0])); if (!n || n.t !== 'f') return 'wc: ' + rest[0] + ': No such file'; txt = n.d; } txt = String(txt || ''); const l = txt.split('\n').length, w = txt.split(/\s+/).filter(Boolean).length; return has('l') ? String(l) : has('w') ? String(w) : l + ' ' + w + ' ' + txt.length; }
+        case 'sort': return String(stdin || '').split('\n').sort().join('\n');
+        case 'uniq': return String(stdin || '').split('\n').filter((x, i, ar) => i === 0 || x !== ar[i - 1]).join('\n');
+        case 'grep': { if (!rest.length) return 'usage: grep [-irn] pattern [file]'; const pat = rest[0], ic = has('i'), rr = has('r') || has('R'); const re = new RegExp(pat.replace(/[.*+?^${}()|[\]\\]/g, m => m), ic ? 'i' : '');
+          let re2; try { re2 = new RegExp(pat, ic ? 'i' : ''); } catch (e) { re2 = re; } const res = [];
+          const scan = (txt, label) => String(txt).split('\n').forEach((ln, i) => { if (re2.test(ln)) res.push((label ? label + ':' : '') + (has('n') ? (i + 1) + ':' : '') + ln); });
+          const walk = (n, p) => { if (n.t === 'f') scan(n.d, p); else Object.keys(n.c).sort().forEach(k => walk(n.c[k], p + (p === '/' ? '' : '/') + k)); };
+          if (rest.length < 2) { if (stdin == null) return 'grep: missing file'; scan(stdin, ''); } else rest.slice(1).forEach(r => { const n = find(abs(r)); if (!n) { res.push('grep: ' + r + ': No such file or directory'); return; } if (n.t === 'd') { if (rr) walk(n, abs(r)); else res.push('grep: ' + r + ': Is a directory'); } else scan(n.d, rest.length > 2 ? r : ''); });
+          return res.join('\n'); }
+        case 'find': { const start = abs(rest[0] && rest[0][0] !== '-' ? rest[0] : '.'); const ni = args.indexOf('-name'); const pat = ni > -1 ? args[ni + 1] : null; const n = find(start); if (!n) return 'find: \'' + rest[0] + '\': No such file or directory';
+          const re = pat ? new RegExp('^' + pat.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$') : null; const res = [];
+          const walk = (nd, p) => { if (!re || re.test(p.split('/').pop())) res.push(p); if (nd.t === 'd') Object.keys(nd.c).sort().forEach(k => walk(nd.c[k], p + (p === '/' ? '' : '/') + k)); }; walk(n, start); return res.join('\n'); }
+        case 'mkdir': { rest.forEach(r => { const p = abs(r), par = find(norm(p + '/..')); if (par && par.t === 'd') par.c[p.split('/').pop()] = { t: 'd', c: {} }; }); return null; }
+        case 'touch': { rest.forEach(r => { const p = abs(r), par = find(norm(p + '/..')); const nm = p.split('/').pop(); if (par && par.t === 'd' && !par.c[nm]) par.c[nm] = { t: 'f', d: '', p: '-rw-r--r--' }; }); return null; }
+        case 'rm': { rest.forEach(r => { const p = abs(r), par = find(norm(p + '/..')); const nm = p.split('/').pop(); if (par && par.c && par.c[nm]) delete par.c[nm]; }); return null; }
+        case 'cp': case 'mv': { const s = find(abs(rest[0])); if (!s) return cmd + ': cannot stat \'' + rest[0] + '\''; const p = abs(rest[1]), par = find(norm(p + '/..')); par.c[p.split('/').pop()] = JSON.parse(JSON.stringify(s)); if (cmd === 'mv') { const sp = abs(rest[0]); delete find(norm(sp + '/..')).c[sp.split('/').pop()]; } return null; }
+        case 'chmod': { const n = find(abs(rest[1] || '')); if (!n) return 'chmod: cannot access \'' + (rest[1] || '') + '\''; if (n.t === 'f') { const m = rest[0]; if (m === '+x') n.p = '-rwxr-xr-x'; else if (m === '-x') n.p = '-rw-r--r--'; else if (/^[0-7]{3}$/.test(m)) { const f = d => (d & 4 ? 'r' : '-') + (d & 2 ? 'w' : '-') + (d & 1 ? 'x' : '-'); n.p = '-' + m.split('').map(d => f(+d)).join(''); } } return null; }
+        default: return 'bash: ' + cmd + ': command not found';
+      }
+    }
+    function exec(line){
+      const raw = line.trim(); if (!raw) return;
+      for (const cm of c.cmds) { if (new RegExp(cm.re, 'i').test(raw)) { print(cm.out + '\n', cm.cls || ''); return; } }
+      const stages = []; let cur2 = []; tok(raw).forEach(t => { if (t === '|') { stages.push(cur2); cur2 = []; } else cur2.push(t); }); stages.push(cur2);
+      let redir = null; const last = stages[stages.length - 1]; const ri = last.findIndex(t => t === '>' || t === '>>'); if (ri > -1) { redir = { f: last[ri + 1], app: last[ri] === '>>' }; stages[stages.length - 1] = last.slice(0, ri); }
+      let data = null; for (let i = 0; i < stages.length; i++) { if (!stages[i].length) continue; data = runCmd(stages[i], data); if (data === null && i < stages.length - 1) data = ''; }
+      if (redir && redir.f) { const p = abs(redir.f), par = find(norm(p + '/..')), nm = p.split('/').pop(); if (par && par.t === 'd') { const old = par.c[nm]; par.c[nm] = { t: 'f', d: (redir.app && old ? old.d + '\n' : '') + (data || ''), p: '-rw-r--r--' }; } data = null; }
+      if (data !== null && data !== undefined) print(data + '\n');
+    }
+    function check(line){ tasks.forEach((t, i) => { if (!done[i] && new RegExp(c.tasks[i].re, 'i').test(line.trim())) { done[i] = true; t.classList.add('done'); } }); }
+    prompt(); print(c.motd + '\n', 'dim');
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { const l = inp.value; print(pr.textContent + ' ', 'hl'); print(l + '\n', 'cmd'); hist.push(l); hi = hist.length; inp.value = ''; safe(() => { exec(l); check(l); }, 'shell'); prompt(); }
+      else if (e.key === 'ArrowUp') { if (hi > 0) inp.value = hist[--hi]; e.preventDefault(); } else if (e.key === 'ArrowDown') { inp.value = hi < hist.length - 1 ? hist[++hi] : ''; if (hi >= hist.length - 1) hi = hist.length; e.preventDefault(); } });
+    el.querySelector('.tk-shell').addEventListener('click', () => inp.focus());
+  };
+
+  /* أدوات حيّة */
+  W.live = c => { const el = document.getElementById(c.id), inp = $('input', el);
+    if (c.name === 'hash') { const o = $('.out', el); const f = () => { o.textContent = TK.sha256(inp.value); }; inp.oninput = f; f(); }
+    if (c.name === 'entropy') { const m = $('.meter i', el), r = $('.res', el), tg = $$('.tag', el);
+      const common = ['password', '123456', '12345678', 'qwerty', 'admin', 'letmein', 'iloveyou', 'welcome', 'abc123', 'password1', '111111', 'football', 'tweetkod'];
+      const f = () => { const p = inp.value; let pool = 0; if (/[a-z]/.test(p)) pool += 26; if (/[A-Z]/.test(p)) pool += 26; if (/[0-9]/.test(p)) pool += 10; if (/[^a-zA-Z0-9]/.test(p)) pool += 33; const L = p.length; let H = L && pool ? L * Math.log2(pool) : 0;
+        const isCommon = common.some(w => p.toLowerCase().indexOf(w) > -1); if (isCommon) H = Math.min(H, 20);
+        const secs = Math.pow(2, H) / 1e10, hum = s => s < 1 ? 'أقل من ثانية' : s < 60 ? Math.round(s) + ' ثانية' : s < 3600 ? Math.round(s / 60) + ' دقيقة' : s < 86400 ? Math.round(s / 3600) + ' ساعة' : s < 31536000 ? Math.round(s / 86400) + ' يوم' : s < 3.15e9 ? Math.round(s / 31536000) + ' سنة' : 'أكثر من 100 سنة';
+        m.style.width = Math.min(100, H / 80 * 100) + '%'; m.style.background = H < 40 ? 'var(--bad)' : H < 60 ? 'var(--warn)' : 'var(--ok)';
+        r.textContent = !L ? '—' : (H < 40 ? '🔴 ضعيفة' : H < 60 ? '🟡 متوسطة' : '🟢 قوية') + (isCommon ? ' — تحتوي كلمة شائعة معروفة في قوائم الكسر!' : '');
+        tg[0].textContent = 'الطول: ' + L; tg[1].textContent = 'الإنتروبيا: ' + Math.round(H) + ' بت'; tg[2].textContent = 'زمن الكسر التقريبي: ' + hum(secs); };
+      inp.oninput = f; f(); }
+    if (c.name === 'caesar') { const wo = $('.ring.o', el), wi = $('.ring.i', el), lbl = $('.lbl', el), o = $('.out', el); let k = 3; const AL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let ho = '', hi2 = ''; for (let i = 0; i < 26; i++) { const a = (i * 360 / 26 - 90) * Math.PI / 180; const xo = 130 + 112 * Math.cos(a) - 11, yo = 130 + 112 * Math.sin(a) - 11, xi = 130 + 76 * Math.cos(a) - 11, yi = 130 + 76 * Math.sin(a) - 11;
+        ho += '<div class="l" style="left:' + xo + 'px;top:' + yo + 'px;color:#7ee787">' + AL[i] + '</div>'; hi2 += '<div class="l" style="left:' + xi + 'px;top:' + yi + 'px;background:#F7B228;color:#0c1f28;border-radius:50%">' + AL[i] + '</div>'; }
+      wo.innerHTML = ho; wi.innerHTML = hi2; const f = () => { wi.style.transform = 'rotate(' + (k * 360 / 26) + 'deg)'; lbl.textContent = 'الإزاحة: ' + k; o.textContent = TK.caesar(inp.value, k); };
+      $$('[data-d]', el).forEach(b => b.onclick = () => { k = (k + (+b.getAttribute('data-d')) + 26) % 26; f(); }); inp.oninput = f; f(); }
+    if (c.name === 'convert') { const o = [1, 2, 3, 4].map(i => $('.o' + i, el)); const f = () => { const v = inp.value; let b64 = ''; try { b64 = btoa(unescape(encodeURIComponent(v))); } catch (e) { b64 = '—'; }
+      o[0].textContent = b64; o[1].textContent = Array.from(unescape(encodeURIComponent(v))).map(ch => ch.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+      o[2].textContent = Array.from(unescape(encodeURIComponent(v))).map(ch => ch.charCodeAt(0).toString(2).padStart(8, '0')).join(' '); o[3].textContent = TK.caesar(v, 13); }; inp.oninput = f; f(); } };
+
+  TK.reg.forEach(c => safe(() => W[c.k] && W[c.k](c), c.k));
+
+  /* ---------- الاختبار ---------- */
+  (function(){
+    const box = $('#tkQuiz'); let qi = 0, sc = 0, picked = false;
+    const shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    function paint(){
+      if (qi >= M.quiz.length) { const p = Math.round(sc / M.quiz.length * 100), g = p >= 80 ? ['🏆', 'ممتاز!', 'var(--ok)'] : p >= 60 ? ['👍', 'جيد', 'var(--yellow)'] : ['📖', 'يحتاج مراجعة', 'var(--bad)'];
+        box.innerHTML = '<div class="tc"><div class="big-emoji">' + g[0] + '</div><div style="font-size:2rem;font-weight:900;color:' + g[2] + '">' + sc + ' / ' + M.quiz.length + '</div><p class="lead" style="margin:auto;color:' + g[2] + ';font-weight:900">' + g[1] + ' — ' + p + '%</p><button class="btn blue mt" id="tkQRe">↺ أعد المحاولة</button></div>'; $('#tkQRe').onclick = () => { qi = 0; sc = 0; paint(); }; return; }
+      const q = M.quiz[qi], opts = shuf([{ t: q.ok, c: 1 }].concat(q.no.map(t => ({ t, c: 0 })))); picked = false;
+      box.innerHTML = '<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="tag">السؤال ' + (qi + 1) + ' من ' + M.quiz.length + '</span><div class="dots">' + M.quiz.map((_, k) => '<i class="' + (k <= qi ? 'on' : '') + '"></i>').join('') + '</div></div>' +
+        '<p style="font-weight:900;font-size:1.05rem">' + q.q + '</p>' + opts.map((o, j) => '<button class="quiz-opt" dir="auto" data-j="' + j + '">' + o.t + '</button>').join('') + '<div id="tkQF"></div><div style="text-align:end"><button class="btn ghost" id="tkQN" style="display:none">' + (qi === M.quiz.length - 1 ? 'النتيجة 🏁' : 'التالي ▶') + '</button></div>';
+      $$('.quiz-opt', box).forEach(b => b.onclick = () => { if (picked) return; picked = true; const o = opts[+b.getAttribute('data-j')]; $$('.quiz-opt', box).forEach((x, k) => { if (opts[k].c) x.classList.add('correct'); });
+        if (o.c) { sc++; $('#tkQF').innerHTML = '<div class="tip">✅ صحيح! ' + (q.why || '') + '</div>'; } else { b.classList.add('wrong'); $('#tkQF').innerHTML = '<div class="warn">❌ ليست صحيحة. ' + (q.why || '') + '</div>'; } $('#tkQN').style.display = 'inline-block'; });
+      $('#tkQN').onclick = () => { qi++; paint(); };
+    }
+    paint();
+  })();
+
+  /* ---------- قائمة الإنجاز + النقاط ---------- */
+  function updScore(){ const n = TK.reg.filter(r => r.k === 'challenge' && store.get(KEY + r.id, false)).length; const b = $('#tkPts'); if (b) b.textContent = '🏅 ' + (n * 10); }
+  (function(){
+    const box = $('#tkAudit'); const k = KEY + 'audit'; let on = store.get(k, []);
+    box.innerHTML = (M.audit || []).map((a, i) => '<div class="toggle' + (on.indexOf(i) > -1 ? ' on' : '') + '" data-i="' + i + '"><span>' + a + '</span><span class="sw"></span></div>').join('');
+    const sc = () => { const n = $$('.toggle.on', box).length, t = (M.audit || []).length; const e = $('#tkAuditScore'); e.textContent = 'أنجزت: ' + n + ' / ' + t + (n === t ? ' 🎉 أحسنت! أنهيت كل مهام الوحدة' : ''); e.style.color = n >= t * .8 ? 'var(--ok)' : n >= t * .4 ? 'var(--yellow)' : 'var(--bad)'; };
+    box.addEventListener('click', e => { const t = e.target.closest('.toggle'); if (!t) return; t.classList.toggle('on'); store.set(k, $$('.toggle', box).map((x, i) => x.classList.contains('on') ? i : -1).filter(x => x > -1)); sc(); }); sc();
+  })();
+  updScore();
+
+  const h0 = parseInt((location.hash || '').slice(1), 10); if (h0 > 0 && h0 <= els.length) cur = h0 - 1;
+  render();
+})();
+
+</script>
+</body>
+</html>

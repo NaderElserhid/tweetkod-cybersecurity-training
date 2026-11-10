@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>المستوى الأول — الوحدة 2: Linux من الصفر: الطرفية أداتك الأولى | تويتكود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script>(function(){try{var t=JSON.parse(localStorage.getItem('tk:theme'));if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<style>
+/* ===== TweetKod Design System v2 — ليل/نهار، RTL أولاً ===== */
+:root{
+  --blue:#009EE2; --yellow:#F7B228; --green:#25D366; --ok:#16a34a; --bad:#e5484d; --warn:#f59e0b;
+  --bg:#EEF6F8; --bg2:#E3F1F5; --surface:rgba(255,255,255,.82); --surface2:#ffffff;
+  --text:#17383A; --muted:#55726f; --line:#d5e5e8; --shadow:0 6px 24px rgba(23,56,58,.08);
+  --code:#0c1f28; --codetext:#e6edf3; --glow1:rgba(0,158,226,.16); --glow2:rgba(247,178,40,.14);
+  --grid:rgba(0,158,226,.07); --chip:#eef7fa; --fs:1;
+}
+html[data-theme="dark"]{
+  --bg:#09141a; --bg2:#0c1d24; --surface:rgba(18,34,41,.78); --surface2:#12252d;
+  --text:#e7f2f3; --muted:#9bb7ba; --line:#223c44; --shadow:0 8px 28px rgba(0,0,0,.45);
+  --code:#050e12; --codetext:#d9e8ee;
+  --chip:#14303a;
+}
+/* خلفية الزينة (توهّج/شبكة/عقد/مسح) ثابتة بين الليل والنهار عمداً — نفس المشهد السيبراني دائماً،
+   وتبديل الوضع يغيّر فقط ألوان المحتوى (البطاقات/النصوص) لراحة القراءة */
+:root{
+  --glow1:rgba(0,158,226,.2); --glow2:rgba(247,178,40,.13);
+  --node1:rgba(0,158,226,.5); --node2:rgba(247,178,40,.38); --node3:rgba(37,211,102,.36);
+  --scan:rgba(0,158,226,.16); --scan-blend:multiply;
+}
+html[data-theme="dark"]{ --scan:rgba(0,158,226,.13); --scan-blend:screen; }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:'Tajawal','IBM Plex Sans Arabic','Noto Sans Arabic','Segoe UI',Tahoma,system-ui,sans-serif;color:var(--text);
+  background:var(--bg);overflow:hidden;font-size:calc(16px * var(--fs));line-height:1.75;-webkit-font-smoothing:antialiased}
+/* خلفية جمالية: تدرّج + شبكة سيبرانية + توهّج متحرك */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(70vmax 70vmax at 90% -15%,var(--glow1),transparent 55%),
+   radial-gradient(60vmax 60vmax at -15% 115%,var(--glow2),transparent 55%),
+   radial-gradient(40vmax 40vmax at 50% 45%,rgba(37,211,102,.06),transparent 60%),
+   linear-gradient(180deg,var(--bg),var(--bg2));}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:46px 46px;mask-image:radial-gradient(ellipse at 50% 30%,#000 25%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 25%,transparent 75%);animation:tkdrift 40s linear infinite}
+@keyframes tkdrift{to{background-position:46px 46px,46px 46px}}
+/* شبكة عقد سيبرانية متوهّجة — إحساس أمان رقمي يتنفّس بهدوء */
+html::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    radial-gradient(2.6px 2.6px at 12% 18%,var(--node1),transparent 60%),
+    radial-gradient(2.2px 2.2px at 82% 12%,var(--node2),transparent 60%),
+    radial-gradient(2.6px 2.6px at 70% 64%,var(--node3),transparent 60%),
+    radial-gradient(2px 2px at 25% 80%,var(--node1),transparent 60%),
+    radial-gradient(2.2px 2.2px at 92% 56%,var(--node3),transparent 60%),
+    radial-gradient(2px 2px at 48% 28%,var(--node2),transparent 60%),
+    radial-gradient(2.2px 2.2px at 38% 92%,var(--node1),transparent 60%),
+    radial-gradient(2px 2px at 6% 52%,var(--node3),transparent 60%),
+    radial-gradient(2px 2px at 58% 8%,var(--node1),transparent 60%),
+    radial-gradient(1.8px 1.8px at 96% 86%,var(--node2),transparent 60%);
+  animation:tkpulse 7s ease-in-out infinite alternate}
+@keyframes tkpulse{from{opacity:.5}to{opacity:1}}
+/* شعاع مسح قطري بطيء — لمسة "رادار" سيبرانية خفيفة جداً */
+html::after{content:"";position:fixed;inset:-25% -25%;z-index:0;pointer-events:none;overflow:hidden;
+  background-image:
+    repeating-linear-gradient(115deg,var(--scan) 0 2px,transparent 2px 190px),
+    repeating-linear-gradient(25deg,var(--scan) 0 1.5px,transparent 1.5px 230px);
+  opacity:.9;mix-blend-mode:var(--scan-blend);animation:tkscan 16s linear infinite}
+@keyframes tkscan{to{transform:translate(7%,7%)}}
+/* طوق توهّج دوّار خلف الإيموجي الكبير في شرائح العنوان */
+.big-emoji{position:relative;display:inline-block}
+.big-emoji::before{
+  content:"";position:absolute;inset:-22px;z-index:-1;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--blue),var(--yellow),var(--green),var(--blue));
+  filter:blur(18px);opacity:.35;animation:tkring 7s linear infinite}
+@keyframes tkring{to{transform:rotate(360deg)}}
+/* دخول ناعم ومتدرّج للعناصر الرئيسية عند ظهور كل شريحة */
+.slide.on .tk-h1,.slide.on .lead,.slide.on .big-emoji,.slide.on .kicker{animation:tkenter .65s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .kicker{animation-delay:.02s}.slide.on .big-emoji{animation-delay:.04s}.slide.on .tk-h1{animation-delay:.08s}.slide.on .lead{animation-delay:.16s}
+.slide.on .tag{animation:tkenter .5s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .tag:nth-of-type(1){animation-delay:.22s}.slide.on .tag:nth-of-type(2){animation-delay:.27s}.slide.on .tag:nth-of-type(3){animation-delay:.32s}
+.slide.on .tag:nth-of-type(4){animation-delay:.37s}.slide.on .tag:nth-of-type(5){animation-delay:.42s}
+@keyframes tkenter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#deck{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column}
+.tk-topbar{height:4px;background:linear-gradient(90deg,var(--blue),var(--yellow),var(--blue));flex:none}
+header.tk-head{flex:none;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.tk-logo{background:#fff;border-radius:10px;padding:3px 8px;display:flex;align-items:center;flex:none}
+.tk-logo img{height:26px;width:auto;max-width:110px;object-fit:contain;display:block}
+.tk-titles{min-width:0;flex:1;line-height:1.3}
+.tk-titles .l{font-size:.72rem;font-weight:900;color:var(--yellow);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk-titles .m{font-size:.82rem;font-weight:700;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk-prog{flex:0 1 180px;display:flex;align-items:center;gap:8px}
+.tk-prog .bar{flex:1;height:8px;border-radius:99px;background:var(--chip);border:1px solid var(--line);overflow:hidden}
+.tk-prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .35s;box-shadow:0 0 10px rgba(0,158,226,.55)}
+.tk-prog span{font-size:.75rem;font-weight:800;min-width:50px;text-align:center;direction:ltr;unicode-bidi:isolate}
+.tk-ic{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);color:var(--text);cursor:pointer;
+  font-size:1rem;display:inline-flex;align-items:center;justify-content:center;flex:none;font-family:inherit;font-weight:800;transition:.15s}
+.tk-ic:hover{border-color:var(--blue);transform:translateY(-1px)}
+@media(max-width:640px){.tk-titles{display:none}.tk-prog{flex:1}}
+
+.tk-stage{position:relative;flex:1;min-height:0;overflow:hidden}
+.slide{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;
+  transform:translateX(-26px) scale(.995);transition:opacity .35s,transform .35s;padding:clamp(14px,2.6vw,26px) clamp(14px,6vw,7vw) clamp(14px,2.6vw,26px)}
+.slide.on{opacity:1;pointer-events:auto;transform:none}
+.slide>.in{max-width:980px;margin:0 auto}
+.tk-nav{flex:none;position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px clamp(14px,4vw,28px);background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line)}
+.tk-nav button{min-width:110px}
+@media(max-width:480px){.tk-nav button{min-width:0;flex:1}}
+
+/* عناصر عامة */
+h1.tk-h1{font-size:clamp(1.5rem,5vw,2.2rem);line-height:1.3;margin:.2em 0;font-weight:900}
+h2.tk-h2{font-size:clamp(1.15rem,3.2vw,1.5rem);margin:.1em 0 .6em;font-weight:900;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tk-h2 .en,.tk-h1 .en{display:block;width:100%;font-size:.5em;font-weight:600;color:var(--muted);direction:ltr;text-align:start;opacity:.9}
+.kicker{color:var(--blue);font-weight:900;letter-spacing:.5px;font-size:.85rem;margin-bottom:4px}
+.lead{font-size:1.05rem;color:var(--muted);line-height:1.9;max-width:820px}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:calc(100dvh - 240px)}
+.big-emoji{font-size:clamp(2.4rem,8vw,3.6rem);filter:drop-shadow(0 6px 14px rgba(0,158,226,.3))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(14px,2.2vw,22px);margin:12px 0;box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:relative;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-3px);border-color:rgba(0,158,226,.4);box-shadow:0 14px 34px rgba(0,158,226,.14),var(--shadow)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.76rem;padding:3px 12px;border-radius:99px;background:var(--chip);border:1px solid var(--line);color:var(--muted);font-weight:700;margin:2px}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:9px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;align-items:flex-start}
+ul.clean li:last-child{border:0}
+.mt{margin-top:12px}.mt2{margin-top:22px}.tc{text-align:center}.sm{font-size:.86rem}.muted{color:var(--muted)}
+.tip,.warn,.note,.flag{border-radius:14px;padding:10px 14px;margin:10px 0;font-size:.9rem;line-height:1.75}
+.tip{background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.45);color:var(--text)}
+.note{background:rgba(247,178,40,.14);border:1px solid rgba(247,178,40,.5)}
+.warn,.flag{background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.4)}
+.tip b:first-child,.note b:first-child,.warn b:first-child{margin-inline-end:4px}
+.codebox{background:var(--code);color:var(--codetext);border-radius:14px;padding:13px 16px;font-family:'Cascadia Code','Courier New',monospace;direction:ltr;text-align:left;
+  font-size:.82rem;line-height:1.85;overflow-x:auto;margin:10px 0;white-space:pre-wrap;word-break:break-word}
+code,.code{font-family:'Cascadia Code','Courier New',monospace;direction:ltr;unicode-bidi:isolate;display:inline-block;background:var(--code);color:#7ee787;padding:1px 8px;border-radius:6px;font-size:.82rem;word-break:break-word}
+table.tbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.tblwrap{overflow-x:auto;border-radius:12px;margin-top:8px;border:1px solid var(--line);background:var(--surface);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+table.tbl th{background:var(--chip);color:var(--blue);padding:9px 12px;text-align:start;border-bottom:2px solid var(--line);white-space:nowrap}
+table.tbl td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;background:var(--surface2)}
+.term{border:1px dashed var(--line);border-radius:14px;padding:10px 14px;margin-top:12px;background:var(--surface)}
+.term dt{font-weight:900;font-size:.88rem;margin-top:6px}.term dd{margin:2px 0 0;color:var(--muted);font-size:.84rem}
+
+/* أزرار */
+.btn{position:relative;overflow:hidden;background:var(--yellow);color:#1b2b2c;border:0;border-radius:14px;padding:10px 20px;font:inherit;font-weight:900;cursor:pointer;min-height:42px;
+  box-shadow:0 4px 14px rgba(247,178,40,.35);transition:.15s;font-size:.92rem}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 48%,transparent 66%);
+  transform:translateX(-120%);transition:transform .55s}
+.btn:hover::after{transform:translateX(120%)}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:none}
+.btn.blue{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(0,158,226,.35)}
+.btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line);box-shadow:none}
+.btn.s{padding:7px 14px;font-size:.8rem;min-height:34px}
+.btn:disabled{opacity:.35;cursor:default}
+input[type=text],textarea,select{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font:inherit;min-height:42px}
+input:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+.ltr{direction:ltr;text-align:left}
+
+/* مكوّن: steps */
+.tk-steps .stage{position:relative;height:170px;border-radius:18px;background:linear-gradient(135deg,var(--chip),var(--surface));border:1px solid var(--line);overflow:hidden}
+.tk-steps .actor{position:absolute;top:50%;transform:translateY(-50%);text-align:center;width:22%;transition:.4s}
+.tk-steps .actor.a{inset-inline-start:3%}.tk-steps .actor.b{inset-inline-end:3%}
+.tk-steps .actor i{font-style:normal;font-size:2.4rem;display:block}
+.tk-steps .actor b{font-size:.78rem;display:block;line-height:1.3}
+.tk-steps .actor em{font-style:normal;font-size:.7rem;color:var(--muted);display:block;min-height:1.2em}
+.tk-steps .mover{position:absolute;top:34%;width:2.8rem;margin-inline-start:-1.4rem;font-size:2rem;text-align:center;transition:inset-inline-start .9s cubic-bezier(.65,.05,.25,1),opacity .3s;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
+.tk-steps .stage.ok{box-shadow:inset 0 0 0 2px var(--ok),0 0 24px rgba(22,163,74,.25)}
+.tk-steps .stage.bad{box-shadow:inset 0 0 0 2px var(--bad),0 0 24px rgba(229,72,77,.3)}
+.tk-steps .dots{display:flex;gap:6px;justify-content:center;margin:12px 0 4px;flex-wrap:wrap}
+.tk-steps .dots i{width:24px;height:6px;border-radius:99px;background:var(--chip);border:1px solid var(--line);transition:.25s}
+.tk-steps .dots i.on{background:var(--blue);border-color:var(--blue)}
+.tk-steps .cap{min-height:56px;text-align:center;font-weight:800;color:var(--blue);margin:6px 0;font-size:.95rem;line-height:1.7}
+.tk-steps .ctrl{text-align:center}
+.tk-steps .ctrl .btn{margin:3px}
+/* cards */
+.tk-cards{display:grid;gap:12px}.tk-cards.c2{grid-template-columns:repeat(2,1fr)}.tk-cards.c3{grid-template-columns:repeat(3,1fr)}.tk-cards.c4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.tk-cards.c3,.tk-cards.c4{grid-template-columns:1fr 1fr}}@media(max-width:480px){.tk-cards.c2,.tk-cards.c3,.tk-cards.c4{grid-template-columns:1fr}}
+.tk-card{border:1.5px solid var(--line);background:var(--surface);border-radius:18px;padding:12px 14px;cursor:pointer;transition:.25s;text-align:center}
+.tk-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,158,226,.16)}
+.tk-card.open{border-color:var(--blue);background:var(--surface2);box-shadow:0 0 0 3px rgba(0,158,226,.15)}
+.tk-card .h{font-weight:900}.tk-card .h i{font-style:normal;font-size:1.8rem;display:block}
+.tk-card .b{max-height:0;opacity:0;overflow:hidden;transition:max-height .4s,opacity .3s;text-align:start;font-size:.86rem;color:var(--muted);line-height:1.7}
+.tk-card.open .b{max-height:420px;opacity:1;margin-top:8px}
+/* compare */
+.tk-cmp .seg{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
+.tk-cmp .pane{display:none;animation:tkfade .4s}.tk-cmp .pane.on{display:block}
+@keyframes tkfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tk-cmp .pane.good{border-inline-start:5px solid var(--ok)}.tk-cmp .pane.badp{border-inline-start:5px solid var(--bad)}
+/* terminal */
+.tk-term,.tk-shell{background:var(--code);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);border:1px solid #1a2f3a}
+.tk-term .bar,.tk-shell .bar{background:#13262f;padding:8px 12px;display:flex;gap:6px;align-items:center}
+.tk-term .bar i,.tk-shell .bar i{width:10px;height:10px;border-radius:50%;display:block}
+.tk-term .bar span,.tk-shell .bar span{margin-inline-start:8px;font-size:.72rem;color:#8fb3c0;direction:ltr}
+.tk-term pre,.tk-shell .out{margin:0;padding:12px 16px;font-family:'Cascadia Code','Courier New',monospace;font-size:.78rem;line-height:1.75;color:#e6edf3;
+  direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-word;min-height:130px;max-height:340px;overflow:auto}
+.tk-term .cmd,.tk-shell .cmd{color:#7ee787}.tk-term .ok,.tk-shell .ok{color:#56d364}.tk-term .bad,.tk-shell .bad{color:#ff7b72}.tk-term .dim,.tk-shell .dim{color:#7d8f99}.tk-term .hl,.tk-shell .hl{color:#f7b228}
+.tk-shell .in{display:flex;gap:8px;align-items:center;border-top:1px solid #1a2f3a;padding:8px 14px;direction:ltr}
+.tk-shell .in span{color:#7ee787;font-family:'Cascadia Code','Courier New',monospace;font-size:.78rem;white-space:nowrap}
+.tk-shell .in input{background:transparent;border:0;color:#fff;font-family:'Cascadia Code','Courier New',monospace;font-size:.82rem;direction:ltr;text-align:left;min-height:30px;padding:2px}
+.tk-shell .in input:focus{outline:none}
+.tk-tasks{margin-top:10px}
+.tk-tasks .t{display:flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:12px;margin:6px 0;background:var(--surface);font-size:.88rem;transition:.3s}
+.tk-tasks .t.done{border-color:var(--ok);background:rgba(22,163,74,.1)}
+.tk-tasks .t .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex:none}
+.tk-tasks .t.done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+/* scan grid */
+.tk-grid .cells{display:grid;gap:7px;max-width:560px;margin:0 auto}
+.tk-grid .c{border-radius:10px;padding:9px 4px;text-align:center;font-family:'Cascadia Code','Courier New',monospace;font-size:.75rem;font-weight:800;background:var(--chip);border:1px solid var(--line);transition:.3s;direction:ltr}
+.tk-grid .c.scan{background:rgba(0,158,226,.25);border-color:var(--blue);transform:scale(1.08)}
+.tk-grid .c.open,.tk-grid .c.ok{background:rgba(22,163,74,.2);border-color:var(--ok);color:var(--ok)}
+.tk-grid .c.closed,.tk-grid .c.bad{background:rgba(229,72,77,.15);border-color:var(--bad);color:var(--bad)}
+.tk-grid .c.filtered{background:rgba(247,178,40,.2);border-color:var(--yellow)}
+.tk-grid .sum{text-align:center;font-weight:800;margin-top:12px;min-height:26px}
+/* transform / gear */
+.tk-tf .row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+@media(max-width:640px){.tk-tf .row{grid-template-columns:1fr}.tk-tf .gear{margin:0 auto}}
+.tk-tf .box{background:var(--code);color:#7ee787;border-radius:12px;padding:12px 14px;font-family:'Cascadia Code','Courier New',monospace;direction:ltr;text-align:left;font-size:.78rem;word-break:break-all;min-height:48px;display:flex;align-items:center}
+.tk-tf .gear{font-size:2.2rem;text-align:center}
+.spinning{animation:tkspin .9s linear infinite}@keyframes tkspin{to{transform:rotate(360deg)}}
+/* lab */
+.tk-lab{border:2px solid var(--blue);border-radius:22px;background:var(--surface);padding:16px 18px;margin:12px 0;box-shadow:var(--shadow);position:relative}
+.tk-lab .lh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.tk-lab .lh b{font-size:1.05rem}.tk-lab .badge{background:var(--blue);color:#fff;border-radius:99px;padding:2px 12px;font-size:.74rem;font-weight:900}
+.tk-lab .req{background:rgba(0,158,226,.09);border:1px solid rgba(0,158,226,.3);border-radius:12px;padding:8px 12px;font-size:.84rem;margin:8px 0}
+.tk-lab .stp{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin:6px 0;cursor:pointer;background:var(--surface2);transition:.2s;font-size:.9rem;line-height:1.7}
+.tk-lab .stp:hover{border-color:var(--blue)}
+.tk-lab .stp .n{width:26px;height:26px;border-radius:50%;background:var(--chip);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.78rem;flex:none}
+.tk-lab .stp.done{border-color:var(--ok);background:rgba(22,163,74,.09)}.tk-lab .stp.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.tk-lab .stp.done .tx{opacity:.75}
+.tk-lab .pm{height:8px;border-radius:99px;background:var(--chip);overflow:hidden;margin-top:10px;border:1px solid var(--line)}.tk-lab .pm i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .3s}
+.tk-tool{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:8px 0;background:var(--surface2)}
+.tk-tool .ti{font-size:1.9rem;flex:none}.tk-tool b{display:block}.tk-tool .w{font-size:.84rem;color:var(--muted)}
+.tk-tool a{color:var(--blue);font-weight:800;text-decoration:none;font-size:.84rem}
+/* challenge */
+.tk-ch{border:2px dashed var(--yellow);border-radius:20px;padding:14px 18px;background:linear-gradient(135deg,rgba(247,178,40,.12),transparent);margin:14px 0;position:relative}
+.tk-ch .chh{font-weight:900;margin-bottom:6px}.tk-ch .chh span{background:var(--yellow);color:#1b2b2c;border-radius:99px;padding:2px 12px;font-size:.74rem;margin-inline-end:8px}
+.tk-ch .row{display:flex;gap:8px;margin-top:8px}.tk-ch .res{margin-top:8px;font-weight:800;min-height:24px}
+.tk-ch.solved{border-style:solid;border-color:var(--ok);background:rgba(22,163,74,.1)}
+/* scenario / classify */
+.tk-sc .opt,.tk-cl .it{display:block;width:100%;text-align:start;padding:12px 16px;margin:8px 0;border-radius:14px;border:1.5px solid var(--line);background:var(--surface2);color:var(--text);font:inherit;font-weight:700;cursor:pointer;transition:.2s}
+.tk-sc .opt:hover,.tk-cl .it:hover{border-color:var(--blue)}
+.tk-sc .opt.ok{border-color:var(--ok);background:rgba(22,163,74,.12)}.tk-sc .opt.no{border-color:var(--bad);background:rgba(229,72,77,.1)}
+.tk-cl .its{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.tk-cl .it{width:auto;margin:0;padding:8px 14px}.tk-cl .it.sel{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(247,178,40,.3)}
+.tk-cl .it.done{opacity:.55;pointer-events:none;border-color:var(--ok)}
+.tk-cl .bks{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tk-cl .bk{border:2px dashed var(--line);border-radius:16px;padding:10px;min-height:90px;text-align:center;cursor:pointer;background:var(--surface)}
+.tk-cl .bk:hover{border-color:var(--blue)}.tk-cl .bk b{display:block}.tk-cl .bk .got{font-size:.78rem;color:var(--ok);margin-top:6px;line-height:1.6}
+.tk-cl .fb{min-height:24px;text-align:center;font-weight:800;margin-top:8px}
+/* live tools */
+.tk-live label{font-size:.8rem;font-weight:800;display:block;margin:10px 0 4px}
+.tk-live .meter{height:14px;border-radius:99px;background:var(--chip);border:1px solid var(--line);overflow:hidden;margin:10px 0}.tk-live .meter i{display:block;height:100%;width:0;transition:width .3s,background .3s}
+.tk-live .out{background:var(--code);color:#7ee787;border-radius:12px;padding:10px 14px;font-family:'Cascadia Code','Courier New',monospace;direction:ltr;text-align:left;font-size:.78rem;word-break:break-all;min-height:44px}
+.wheelwrap{position:relative;width:260px;height:260px;margin:10px auto;background:var(--code);border-radius:50%;box-shadow:inset 0 0 0 2px #1a2f3a}
+.wheelwrap .ring{position:absolute;inset:0;transition:transform .6s ease}.wheelwrap .l{position:absolute;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;font-family:'Courier New',monospace}
+/* quiz / audit / misc */
+.quiz-opt{display:block;width:100%;text-align:start;padding:12px 16px;margin:8px 0;border-radius:14px;border:1.5px solid var(--line);background:var(--surface2);color:var(--text);font:inherit;font-weight:700;cursor:pointer;transition:.15s}
+.quiz-opt:hover{border-color:var(--blue)}.quiz-opt.correct{background:rgba(22,163,74,.14);border-color:var(--ok);color:var(--ok)}.quiz-opt.wrong{background:rgba(229,72,77,.12);border-color:var(--bad);color:var(--bad)}
+/* تحقّق سريع صح/خطأ بعد كل موضوع */
+.tk-quick{border:1.5px dashed var(--blue);border-radius:16px;padding:12px 16px;margin:14px 0;background:rgba(0,158,226,.05)}
+.tk-quick .qh{font-weight:900;font-size:.85rem;color:var(--blue);margin-bottom:6px}
+.tk-quick .qs{font-weight:800;margin:0 0 10px}
+.tk-quick .opts{display:flex;gap:8px;flex-wrap:wrap}
+.tk-quick .opts .quiz-opt{flex:1;min-width:110px;width:auto;margin:0;text-align:center;padding:9px 14px;font-size:.88rem}
+.tk-quick .fb{margin-top:8px}
+.dots{display:flex;gap:6px;flex-wrap:wrap}.dots i{width:22px;height:6px;border-radius:99px;background:var(--chip);border:1px solid var(--line)}.dots i.on{background:var(--blue);border-color:var(--blue)}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:14px;margin:8px 0;cursor:pointer;font-weight:700;font-size:.92rem}
+.toggle .sw{width:46px;height:26px;border-radius:99px;background:#9fb2b6;position:relative;flex:none;transition:.2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on{border-color:var(--green);background:rgba(37,211,102,.1)}.toggle.on .sw{background:var(--green)}.toggle.on .sw::after{inset-inline-start:23px}
+.agenda li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);align-items:center;flex-wrap:wrap;list-style:none}
+.agenda{padding:0;margin:0}.agenda .t{background:var(--blue);color:#fff;font-weight:800;padding:3px 12px;border-radius:99px;font-size:.78rem;white-space:nowrap}
+.timerbig{font-size:clamp(2.6rem,10vw,4.5rem);font-weight:900;color:var(--blue);font-variant-numeric:tabular-nums}
+.reslink{display:block;padding:10px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;margin-top:8px;color:var(--blue);font-weight:800;font-size:.86rem;text-decoration:none}
+.reslink:hover{border-color:var(--blue)}
+.pop{animation:tkpop .45s}@keyframes tkpop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+/* فهرس الشرائح */
+.tk-drawer{position:fixed;inset:0;z-index:50;display:none}.tk-drawer.open{display:block}
+.tk-drawer .bk{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.tk-drawer .pn{position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(360px,88vw);background:var(--surface2);border-inline-start:1px solid var(--line);padding:16px;overflow-y:auto}
+.tk-drawer .pn button.it{display:flex;gap:10px;width:100%;text-align:start;background:none;border:0;border-bottom:1px dashed var(--line);padding:10px 4px;color:var(--text);font:inherit;cursor:pointer;font-size:.88rem}
+.tk-drawer .pn button.it.cur{color:var(--blue);font-weight:900}.tk-drawer .pn .n{color:var(--muted);min-width:24px}
+/* طباعة / PDF: نهاري دائماً */
+@media print{
+  html[data-theme="dark"]{--bg:#fff;--bg2:#fff;--surface:#fff;--surface2:#fff;--text:#111;--muted:#444;--line:#ccc;--code:#f3f3f3;--codetext:#111;--chip:#f2f2f2;--shadow:none}
+  body{overflow:visible;background:#fff}body::before,body::after,html::before,html::after,.tk-nav,header.tk-head .tk-ic,.tk-steps .ctrl,.tk-drawer{display:none!important}
+  #deck{height:auto}.tk-stage{overflow:visible}.slide{position:static;opacity:1;transform:none;pointer-events:auto;page-break-after:always;padding:10px 0;overflow:visible}
+  .card{box-shadow:none;break-inside:avoid}
+}
+
+.tk-shell .out span,.tk-term pre span{unicode-bidi:plaintext}
+
+</style>
+<style>
+
+</style>
+</head>
+<body>
+<div id="deck">
+  <div class="tk-topbar"></div>
+  <header class="tk-head">
+    <div class="tk-logo"><img src="https://tweetkod.com/wp-content/uploads/2024/05/Tweetkod.png" alt="TweetKod" onerror="this.outerHTML='<b style=&quot;color:#009EE2;font-size:.9rem&quot;>TweetKod</b>'"></div>
+    <div class="tk-titles"><div class="l">المستوى الأول · الوحدة 2</div><div class="m">Linux من الصفر: الطرفية أداتك الأولى</div></div>
+    <div class="tk-prog"><div class="bar"><i id="tkBar"></i></div><span id="tkCount">1 / 1</span></div>
+    <span class="tag" id="tkPts" title="نقاط التحديات">🏅 0</span>
+    <button class="tk-ic" id="tkMenu" title="فهرس الشرائح" aria-label="فهرس الشرائح">☰</button>
+    <button class="tk-ic" id="tkFm" title="تصغير الخط" aria-label="تصغير الخط">أ-</button>
+    <button class="tk-ic" id="tkFp" title="تكبير الخط" aria-label="تكبير الخط">أ+</button>
+    <button class="tk-ic" id="tkTheme" title="ليل / نهار" aria-label="تبديل الوضع الليلي">🌙</button>
+  </header>
+  <div class="tk-stage" id="stage"></div>
+  <div class="tk-nav"><button class="btn ghost" id="tkPrev">◀ السابق</button><button class="btn blue" id="tkNext">التالي ▶</button></div>
+</div>
+<div class="tk-drawer" id="tkDrawer"><div class="bk"></div><div class="pn"></div></div>
+<script>
+/* TweetKod lib — مكوّنات نقيّة (تعمل في المتصفح وفي Node للفحص وتوليد GIFT) */
+(function(root){
+  const TK = root.TK = { reg: [], _n: 0 };
+  const nid = p => 'tk' + p + (++TK._n);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  TK.esc = esc;
+  const reg = (k, cfg) => { TK.reg.push(Object.assign({ k }, cfg)); return cfg.id; };
+
+  /* ---------- هيكل الوحدة ---------- */
+  TK.module = function(cfg){ root.TK_MODULE = cfg; return cfg; };
+
+  /* ---------- شرائح عامة ---------- */
+  TK.s = (title, en, body) => '<div class="in"><h2 class="tk-h2">' + title + (en ? '<span class="en">' + en + '</span>' : '') + '</h2>' + body + '</div>';
+  TK.concept = c => (TK._concepts = (TK._concepts || 0) + 1, 0) || TK.s('💡 ' + c.t, c.en || '', '<div class="card"><span class="tag">⏱️ مفهوم سريع · ' + (c.min || '3 د') + '</span><div class="mt">' + c.body + '</div></div>' +
+      (c.key ? '<div class="tip"><b>🎯 الفكرة في جملة:</b> ' + c.key + '</div>' : ''));
+  TK.code = (text, cls) => '<div class="codebox ' + (cls || '') + '">' + esc(text) + '</div>';
+  TK.table = (head, rows) => '<div class="tblwrap"><table class="tbl"><tr>' + head.map(h => '<th>' + h + '</th>').join('') + '</tr>' +
+      rows.map(r => '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</table></div>';
+  TK.terms = list => '<dl class="term"><b>📖 مصطلحات مهمة</b>' + list.map(x => '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>').join('') + '</dl>';
+  TK.tool = c => '<div class="tk-tool"><div class="ti">' + (c.e || '🛠️') + '</div><div><b>' + c.n + (c.free === false ? '' : ' <span class="tag">مجاني</span>') + '</b>' +
+      '<div class="w"><b style="display:inline">ما هي؟</b> ' + c.what + '</div><div class="w"><b style="display:inline">لماذا نستخدمها؟</b> ' + c.why + '</div>' +
+      (c.how ? '<div class="w"><b style="display:inline">كيف؟</b> ' + c.how + '</div>' : '') +
+      (c.url ? '<a href="' + c.url + '" target="_blank" rel="noopener">🔗 ' + c.url.replace(/^https?:\/\//, '') + '</a>' : '') + '</div></div>';
+  TK.breakSlide = next => '<div class="in"><div class="center"><div class="big-emoji">☕</div><div class="kicker">استراحة</div><h1 class="tk-h1">10 دقائق راحة</h1>' +
+      '<div class="timerbig" data-tk-timer>10:00</div><div class="mt"><button class="btn" data-tk-timer-start>▶️ بدء العدّاد</button> <button class="btn ghost" data-tk-timer-reset>↺ إعادة</button></div>' +
+      (next ? '<p class="lead mt2">' + next + '</p>' : '') + '</div></div>';
+  TK.recap = (title, items) => '<div class="in"><div class="center"><div class="big-emoji">✅</div><h2 class="tk-h2" style="justify-content:center">' + title + '</h2><div class="card" style="max-width:640px;text-align:start"><ul class="clean">' +
+      items.map(i => '<li>' + i + '</li>').join('') + '</ul></div></div></div>';
+
+  /* ---------- steps: حركة تنقّل بين طرفين (a = بداية القراءة، b = النهاية) ---------- */
+  TK.steps = c => {
+    const id = nid('st'); reg('steps', { id, steps: c.steps });
+    return '<div class="tk-steps card" id="' + id + '"><div class="stage"><div class="actor a"><i>' + c.a.e + '</i><b>' + c.a.l + '</b><em></em></div>' +
+      '<div class="actor b"><i>' + c.b.e + '</i><b>' + c.b.l + '</b><em></em></div><div class="mover"></div></div><div class="dots"></div><p class="cap"></p>' +
+      '<div class="ctrl"><button class="btn blue s" data-a="next">▶ الخطوة التالية</button><button class="btn ghost s" data-a="prev">◀ السابقة</button><button class="btn ghost s" data-a="reset">↺ من البداية</button></div></div>';
+  };
+  /* ---------- cards: بطاقات كشف (واحدة مفتوحة في كل مرة) ---------- */
+  TK.cards = c => {
+    const id = nid('cd'); reg('cards', { id });
+    return '<div class="tk-cards c' + (c.cols || 3) + '" id="' + id + '">' + c.items.map(i => '<div class="tk-card"><div class="h"><i>' + (i.e || '•') + '</i>' + i.t + '</div><div class="b">' + i.b + '</div></div>').join('') + '</div>';
+  };
+  /* ---------- compare: لوحتان بمفتاح تبديل ---------- */
+  TK.compare = c => {
+    const id = nid('cp'); reg('compare', { id });
+    return '<div class="tk-cmp card" id="' + id + '"><div class="seg"><button class="btn blue s" data-i="0">' + c.a.t + '</button><button class="btn ghost s" data-i="1">' + c.b.t + '</button></div>' +
+      '<div class="pane on ' + (c.a.bad ? 'badp' : 'good') + '">' + c.a.html + '</div><div class="pane ' + (c.b.bad ? 'badp' : 'good') + '">' + c.b.html + '</div></div>';
+  };
+  /* ---------- terminal: عرض متحرّك لمخرجات أداة ---------- */
+  TK.terminal = c => {
+    const id = nid('tm'); reg('terminal', { id, lines: c.lines, ms: c.ms || 420 });
+    return '<div class="tk-term" id="' + id + '"><div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i><span>' + esc(c.title || 'terminal') + '</span></div><pre>اضغط تشغيل لمشاهدة التنفيذ…</pre></div>' +
+      '<div class="tc mt"><button class="btn blue s" data-tk-run="' + id + '">▶ ' + (c.btn || 'شغّل المحاكاة') + '</button></div>';
+  };
+  /* ---------- scan: شبكة فحص متتابع ---------- */
+  TK.scan = c => {
+    const id = nid('sc'); reg('scan', { id, cells: c.cells, labels: c.labels || {} , ms: c.ms || 140 });
+    return '<div class="tk-grid card" id="' + id + '"><div class="cells" style="grid-template-columns:repeat(' + (c.cols || 5) + ',1fr)">' +
+      c.cells.map(x => '<div class="c" title="' + esc(x.tip || '') + '">' + esc(x.t) + '</div>').join('') + '</div><div class="sum"></div><div class="tc"><button class="btn blue s" data-a="go">▶ ' + (c.btn || 'ابدأ الفحص') + '</button> <button class="btn ghost s" data-a="reset">↺</button></div></div>';
+  };
+  /* ---------- transform: مدخل → آلة → مخرج (sha256 حقيقي أو ناتج ثابت) ---------- */
+  TK.transform = c => {
+    const id = nid('tf'); reg('transform', { id, fn: c.fn || 'none', output: c.output || '', after: c.after || '' });
+    return '<div class="tk-tf card" id="' + id + '"><div class="row"><div><label class="sm muted">' + (c.inLabel || 'المُدخل') + '</label>' +
+      (c.editable === false ? '<div class="box">' + esc(c.input) + '</div>' : '<input type="text" class="ltr" value="' + esc(c.input) + '">') + '</div>' +
+      '<div class="gear">' + (c.gear || '⚙️') + '<div class="sm muted">' + (c.label || '') + '</div></div><div><label class="sm muted">' + (c.outLabel || 'المُخرَج') + '</label><div class="box out">—</div></div></div>' +
+      '<div class="tc mt"><button class="btn blue s" data-a="go">▶ ' + (c.btn || 'شغّل') + '</button></div><p class="sm muted tc after"></p></div>';
+  };
+  /* ---------- lab: مختبر بخطوات قابلة للتأشير ---------- */
+  TK.lab = c => {
+    const id = nid('lb'); reg('lab', { id, n: c.steps.length });
+    return '<div class="tk-lab" id="' + id + '"><div class="lh"><span class="badge">🧪 مختبر عملي</span><b>' + c.t + '</b>' + (c.time ? '<span class="tag">⏱️ ' + c.time + '</span>' : '') + '</div>' +
+      (c.req ? '<div class="req">✅ <b>المتطلبات:</b> ' + c.req + '</div>' : '') + c.steps.map((s, i) => '<div class="stp" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span class="tx">' + s + '</span></div>').join('') +
+      (c.tools ? c.tools.map(t => '<a class="reslink" href="' + t.u + '" target="_blank" rel="noopener">🔗 ' + t.n + '</a>').join('') : '') +
+      (c.tip ? '<div class="tip"><b>💡</b> ' + c.tip + '</div>' : '') + (c.warn ? '<div class="warn"><b>⚠️</b> ' + c.warn + '</div>' : '') +
+      '<div class="pm"><i></i></div></div>';
+  };
+  /* ---------- challenge: تحدٍّ بإجابة قابلة للتحقق ---------- */
+  TK.challenge = c => {
+    const id = nid('ch'); reg('challenge', { id, answer: [].concat(c.answer), re: c.re || null, pts: c.pts || 10, explain: c.explain || '' });
+    return '<div class="tk-ch" id="' + id + '"><div class="chh"><span>🏁 تحدٍّ ' + (c.pts || 10) + ' نقاط</span>' + (c.t || '') + '</div><div>' + c.q + '</div>' +
+      '<div class="row"><input type="text" class="ltr" placeholder="' + esc(c.ph || 'اكتب إجابتك هنا…') + '" autocomplete="off"><button class="btn s" data-a="chk">تحقّق</button>' + (c.hint ? '<button class="btn ghost s" data-a="hint">تلميح</button>' : '') + '</div>' +
+      '<div class="res"></div>' + (c.hint ? '<div class="sm muted hint" style="display:none">💡 ' + c.hint + '</div>' : '') + '</div>';
+  };
+  /* ---------- scenario: قرارات متتالية ---------- */
+  TK.scenario = c => {
+    const id = nid('sn'); reg('scenario', { id, steps: c.steps });
+    return '<div class="tk-sc card" id="' + id + '"><div class="sh"></div><div class="so"></div><div class="sf"></div></div>';
+  };
+  /* ---------- classify: صنّف العناصر في صناديق ---------- */
+  TK.classify = c => {
+    const id = nid('cl'); reg('classify', { id, items: c.items, buckets: c.buckets });
+    return '<div class="tk-cl card" id="' + id + '"><p class="sm muted">اختر عنصراً ثم اضغط الصندوق الصحيح.</p><div class="its"></div><div class="bks"></div><div class="fb"></div></div>';
+  };
+  /* ---------- check: تحقّق سريع صح/خطأ بعد كل موضوع (تنشيط فوري، لا يُحتسب في الاختبار النهائي) ---------- */
+  TK.check = c => {
+    const id = nid('ch'); reg('check', { id, s: c.s, t: c.t, why: c.why });
+    return '<div class="tk-quick" id="' + id + '"><div class="qh">🧠 <b>تحقّق سريع</b></div><p dir="auto" class="qs">' + c.s + '</p>' +
+      '<div class="opts"><button class="quiz-opt s" data-v="1">✅ صحيح</button><button class="quiz-opt s" data-v="0">❌ خطأ</button></div><div class="fb"></div></div>';
+  };
+  /* ---------- shell: طرفية Linux تفاعلية بنظام ملفات افتراضي ---------- */
+  TK.shell = c => {
+    const id = nid('sh'); reg('shell', { id, fs: c.fs, cwd: c.cwd || '/home/student', user: c.user || 'student', host: c.host || 'lab', tasks: c.tasks || [], cmds: c.cmds || [], motd: c.motd || 'اكتب help لعرض الأوامر المتاحة.' });
+    return '<div id="' + id + '"><div class="tk-shell"><div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i><span>' + esc(c.title || 'student@lab: ~') + '</span></div>' +
+      '<div class="out"></div><div class="in"><span class="pr"></span><input type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="terminal"></div></div>' +
+      (c.tasks && c.tasks.length ? '<div class="tk-tasks">' + c.tasks.map(t => '<div class="t"><span class="ck">✓</span><span>' + t.d + '</span></div>').join('') + '</div>' : '') + '</div>';
+  };
+  /* ---------- أدوات حيّة جاهزة ---------- */
+  TK.live = name => {
+    const id = nid('lv'); reg('live', { id, name });
+    const T = {
+      hash: '<label>اكتب أي نص</label><input type="text" class="ltr" value="TweetKod2026"><label>SHA-256 (حقيقي، يُحسَب في متصفحك)</label><div class="out"></div><p class="sm muted">غيّر حرفاً واحداً وراقب تغيّر الناتج بالكامل (تأثير الانهيار الثلجي).</p>',
+      entropy: '<label>جرّب كلمة مرور (لا تكتب كلمة مرورك الحقيقية!)</label><input type="text" class="ltr" value="Tweet2026"><div class="meter"><i></i></div><div class="res tc" style="font-weight:800"></div><div class="grid g3 mt"><div class="tag tc"></div><div class="tag tc"></div><div class="tag tc"></div></div>',
+      caesar: '<div class="wheelwrap"><div class="ring o"></div><div class="ring i"></div></div><div class="tc"><button class="btn ghost s" data-d="-1">◀</button> <span class="tag lbl">الإزاحة: 3</span> <button class="btn ghost s" data-d="1">▶</button></div><label>النص (English)</label><input type="text" class="ltr" value="HELLO"><label>الناتج بهذه الإزاحة</label><div class="out"></div>',
+      convert: '<label>النص</label><input type="text" class="ltr" value="Hello TweetKod"><div class="grid g2"><div><label>Base64</label><div class="out o1"></div></div><div><label>Hex</label><div class="out o2"></div></div><div><label>Binary</label><div class="out o3"></div></div><div><label>ROT13</label><div class="out o4"></div></div></div>'
+    };
+    return '<div class="tk-live card" id="' + id + '">' + (T[name] || '') + '</div>';
+  };
+
+  /* ---------- SHA-256 متزامن (لا يعتمد على crypto.subtle) ---------- */
+  TK.sha256 = function(s){
+    const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    const rr = (v, a) => (v >>> a) | (v << (32 - a));
+    const str = unescape(encodeURIComponent(s)), b = [];
+    for (let i = 0; i < str.length; i++) b.push(str.charCodeAt(i));
+    const bl = b.length * 8; b.push(0x80); while (b.length % 64 !== 56) b.push(0);
+    const hi = Math.floor(bl / 4294967296), lo = bl >>> 0;
+    b.push((hi >>> 24) & 255, (hi >>> 16) & 255, (hi >>> 8) & 255, hi & 255, (lo >>> 24) & 255, (lo >>> 16) & 255, (lo >>> 8) & 255, lo & 255);
+    let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    for (let o = 0; o < b.length; o += 64) {
+      const w = new Array(64);
+      for (let i = 0; i < 16; i++) w[i] = (b[o + 4*i] << 24) | (b[o + 4*i + 1] << 16) | (b[o + 4*i + 2] << 8) | b[o + 4*i + 3];
+      for (let i = 16; i < 64; i++) {
+        const s0 = rr(w[i-15], 7) ^ rr(w[i-15], 18) ^ (w[i-15] >>> 3), s1 = rr(w[i-2], 17) ^ rr(w[i-2], 19) ^ (w[i-2] >>> 10);
+        w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0;
+      }
+      let [a, bb, c, d, e, f, g, h] = H;
+      for (let i = 0; i < 64; i++) {
+        const S1 = rr(e, 6) ^ rr(e, 11) ^ rr(e, 25), ch = (e & f) ^ (~e & g), t1 = (h + S1 + ch + K[i] + w[i]) | 0;
+        const S0 = rr(a, 2) ^ rr(a, 13) ^ rr(a, 22), mj = (a & bb) ^ (a & c) ^ (bb & c), t2 = (S0 + mj) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+      }
+      H = [(H[0]+a)|0,(H[1]+bb)|0,(H[2]+c)|0,(H[3]+d)|0,(H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];
+    }
+    return H.map(x => ('00000000' + (x >>> 0).toString(16)).slice(-8)).join('');
+  };
+  TK.caesar = (s, k) => s.replace(/[a-zA-Z]/g, ch => { const b = ch <= 'Z' ? 65 : 97; return String.fromCharCode(((ch.charCodeAt(0) - b + k) % 26 + 26) % 26 + b); });
+
+  /* ---------- GIFT من أسئلة الاختبار ---------- */
+  TK.gift = function(M){
+    const g = s => String(s).replace(/([~=#{}:])/g, '\\$1');
+    const pre = 'L' + M.level + '_' + String(M.num).padStart(2, '0');
+    let out = '// ' + (M.level === 1 ? 'المستوى الأول' : 'المستوى الثاني') + ' — اختبار الوحدة ' + M.num + ' — ' + M.title + '\n// تويتكود — صيغة GIFT: Question bank > Import > GIFT format\n// ' + M.quiz.length + ' سؤال اختيار من متعدد\n\n';
+    M.quiz.forEach((q, i) => {
+      out += '::' + pre + '_Q' + (i + 1) + ':: ' + g(q.q) + ' {\n=' + g(q.ok) + '\n' + q.no.map(w => '~' + g(w)).join('\n') + '\n}\n\n';
+    });
+    return out;
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* المستوى الأول — الوحدة 2: Linux من الصفر (وحدة نموذجية تُستخدم كمرجع لبقية الوحدات) */
+TK.module({
+  id: 'L1-02', level: 1, num: 2, slug: 'Linux-من-الصفر',
+  title: 'Linux من الصفر: الطرفية أداتك الأولى', en: 'Linux from Zero — the Terminal is Your First Tool', emoji: '🐧',
+  lead: 'في هذه الوحدة ستفهم أولاً كيف يُبنى نظام Linux ومن أين أتى، ثم ستتحكم به بالكتابة فقط: تتنقل بين المجلدات، تقرأ الملفات، تبحث عن أدلة داخل سجلات حقيقية، وتحل تحديات بنقاط. النظرية موجزة ومصوّرة، والباقي تطبيق بيدك.',
+  tags: ['🛠️ طرفية تفاعلية داخل الصفحة', '📦 إدارة الحزم APT', '⌨️ +15 أمراً عملياً'],
+  agenda: [
+    { t: '💡 لماذا Linux؟ + بنية النظام والتاريخ والتوزيعات', time: '16 د' },
+    { t: '🧪 مختبر ١: التنقل وقراءة الملفات (ls, cd, cat)', time: '18 د' },
+    { t: '🏁 تحدي: اعثر على العلم المخفي', time: '6 د' },
+    { t: '☕ استراحة', time: '10 د' },
+    { t: '🧪 مختبر ٢: الصلاحيات والبحث (grep, find, |)', time: '20 د' },
+    { t: '📦 إدارة الحزم بـ APT', time: '7 د' },
+    { t: '🧪 مختبر ٣: أوامر يومية أكثر (mkdir, cp, mv, rm, sort...)', time: '20 د' },
+    { t: '🏁 تحقيق: من يهاجم الخادم؟', time: '9 د' }
+  ],
+  slides: [
+    TK.concept({
+      t: 'لماذا يستخدم محترفو الأمن Linux؟', en: 'Why security people live in Linux', min: '5 د',
+      body: '<p>أنظمة التشغيل التي تعرفها (الجوال، Windows) تُدار غالباً بواجهة رسومية: أيقونات تضغط عليها بإصبعك أو فأرتك. لكن هناك طريقة أخرى: <b>الطرفية (Terminal)</b>، وهي نافذة نصية بسيطة تكتب فيها «أوامر» — جمل قصيرة بالإنجليزية يفهمها النظام وينفّذها فوراً، بدل البحث عن أيقونة بالفأرة. معظم الخوادم في العالم تعمل بـ Linux، ومعظم أدوات الأمن (Nmap, Wireshark, Kali) صُمّمت للعمل من الطرفية. فالطرفية تتيح لك التحكم بالنظام بالكتابة مباشرة: أسرع من الفأرة، وأدق، ويمكن تكرار نفس الأوامر تلقائياً (أتمتة) لاحقاً بسكربت.</p>' +
+        '<div class="grid g3 mt"><div class="tag">🖥️ الخوادم والمواقع</div><div class="tag">🛠️ أدوات الاختراق الأخلاقي</div><div class="tag">🔎 تحليل السجلات والأدلة</div></div>' +
+        TK.check({ s: 'معظم أدوات الأمن السيبراني المعروفة مثل Nmap وWireshark صُمّمت للعمل من الطرفية لا من واجهة رسومية فقط.', t: true, why: 'صحيح: محترفو الأمن يستخدمون الطرفية لأنها أسرع وأدق وتتيح الأتمتة بالسكربتات.' }),
+      key: 'من يتقن الطرفية يتقن نصف أدوات الأمن السيبراني.'
+    }),
+
+    /* جديد — بنية Linux الأربع طبقات (رسم بياني) */
+    TK.s('🏗️ من ضغطة المفتاح إلى المعالج: بنية Linux', 'Diagram — the four layers of Linux',
+      '<p class="lead">قبل أن تكتب أمرك الأول، من المفيد أن ترى الصورة الكاملة: أي نظام Linux مبني من أربع طبقات، كل طبقة تتحدث فقط مع الطبقة التي فوقها وتحتها مباشرة. هذا التقسيم هو سبب استقرار Linux وأمانه: برنامج في الأعلى لا يستطيع لمس العتاد مباشرة إلا عبر هذه السلسلة.</p>' +
+      '<div class="card" style="padding:18px">' +
+      '<svg viewBox="0 0 640 410" style="width:100%;height:auto;display:block" role="img" aria-label="رسم بنية Linux بأربع طبقات">' +
+      '<rect x="40" y="4" width="560" height="64" rx="14" style="fill:rgba(247,178,40,.16);stroke:var(--yellow);stroke-width:2"/>' +
+      '<text x="320" y="30" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:17px">تطبيقات المستخدم (User Space)</text>' +
+      '<text x="320" y="52" text-anchor="middle" style="fill:var(--muted);font-size:12px">المتصفح، nmap، أي برنامج تشغّله</text>' +
+      '<rect x="220" y="76" width="200" height="30" rx="15" style="fill:var(--surface2);stroke:var(--line);stroke-width:1.5"/>' +
+      '<text x="320" y="96" text-anchor="middle" style="fill:var(--blue);font-weight:800;font-size:13px">⇅ أوامر وتُطبَع النتائج</text>' +
+      '<rect x="40" y="118" width="560" height="64" rx="14" style="fill:rgba(0,158,226,.14);stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="320" y="144" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:17px">الصدفة Shell (مثل bash)</text>' +
+      '<text x="320" y="166" text-anchor="middle" style="fill:var(--muted);font-size:12px">تقرأ ما تكتبه وتترجمه لطلب يفهمه النظام</text>' +
+      '<rect x="220" y="190" width="200" height="30" rx="15" style="fill:var(--surface2);stroke:var(--line);stroke-width:1.5"/>' +
+      '<text x="320" y="210" text-anchor="middle" style="fill:var(--blue);font-weight:800;font-size:13px">⇅ طلبات نظام Syscalls</text>' +
+      '<rect x="40" y="232" width="560" height="64" rx="14" style="fill:rgba(0,158,226,.28);stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="320" y="258" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:17px">النواة Kernel</text>' +
+      '<text x="320" y="280" text-anchor="middle" style="fill:var(--muted);font-size:12px">تتحكم مباشرة بالمعالج والذاكرة والملفات والشبكة</text>' +
+      '<rect x="220" y="304" width="200" height="30" rx="15" style="fill:var(--surface2);stroke:var(--line);stroke-width:1.5"/>' +
+      '<text x="320" y="324" text-anchor="middle" style="fill:var(--blue);font-weight:800;font-size:13px">⇅ تعليمات للعتاد</text>' +
+      '<rect x="40" y="346" width="560" height="64" rx="14" style="fill:var(--chip);stroke:var(--line);stroke-width:2"/>' +
+      '<text x="320" y="372" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:17px">العتاد Hardware</text>' +
+      '<text x="320" y="394" text-anchor="middle" style="fill:var(--muted);font-size:12px">المعالج (CPU)، الذاكرة (RAM)، القرص، كرت الشبكة</text>' +
+      '</svg></div>' +
+      '<p class="tc" style="font-size:.85rem;color:var(--muted);margin-top:8px">حين تكتب <code>ls</code> في الصدفة، هي لا تقرأ الملفات بنفسها؛ تطلب من النواة ذلك، والنواة وحدها تتحدث مع القرص مباشرة.</p>' +
+      TK.check({ s: 'برنامج في طبقة تطبيقات المستخدم (User Space) يستطيع التحكم بالعتاد مباشرة دون المرور بالنواة.', t: false, why: 'لا يمر أي طلب إلى العتاد إلا عبر النواة (Kernel)؛ هذا الفصل هو ما يمنع برنامجاً واحداً من إفساد النظام كله.' })),
+
+    /* جديد — تاريخ موجز + عائلة التوزيعات */
+    TK.s('🕰️ قصة Linux في دقيقة + عائلة التوزيعات', 'A one-minute history + the distro family',
+      '<p class="lead">Linux ليس نظاماً واحداً، بل نواة (Kernel) حرة ومفتوحة المصدر يبني فوقها آلاف الأشخاص والشركات نسخاً مختلفة تسمى <b>توزيعات (Distributions)</b>، كل واحدة بشخصية وغرض مختلف.</p>' +
+      '<svg viewBox="0 0 680 170" style="width:100%;height:auto;display:block" role="img" aria-label="خط زمني مختصر لتاريخ Linux">' +
+      '<line x1="50" y1="85" x2="630" y2="85" style="stroke:var(--line);stroke-width:3"/>' +
+      '<circle cx="110" cy="85" r="9" style="fill:var(--blue)"/><line x1="110" y1="76" x2="110" y2="50" style="stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="110" text-anchor="middle"><tspan x="110" y="34" style="fill:var(--text);font-weight:900;font-size:13px">1969</tspan><tspan x="110" y="50" style="fill:var(--muted);font-size:11px">ولادة Unix</tspan></text>' +
+      '<circle cx="270" cy="85" r="9" style="fill:var(--blue)"/><line x1="270" y1="94" x2="270" y2="120" style="stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="270" text-anchor="middle"><tspan x="270" y="136" style="fill:var(--text);font-weight:900;font-size:13px">1991</tspan><tspan x="270" y="152" style="fill:var(--muted);font-size:11px">تورفالدز ينشر نواة Linux</tspan></text>' +
+      '<circle cx="430" cy="85" r="9" style="fill:var(--blue)"/><line x1="430" y1="76" x2="430" y2="50" style="stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="430" text-anchor="middle"><tspan x="430" y="34" style="fill:var(--text);font-weight:900;font-size:13px">1993</tspan><tspan x="430" y="50" style="fill:var(--muted);font-size:11px">أولى التوزيعات</tspan></text>' +
+      '<circle cx="590" cy="85" r="9" style="fill:var(--yellow)"/><line x1="590" y1="94" x2="590" y2="120" style="stroke:var(--yellow);stroke-width:2"/>' +
+      '<text x="590" text-anchor="middle"><tspan x="590" y="136" style="fill:var(--text);font-weight:900;font-size:13px">اليوم</tspan><tspan x="590" y="152" style="fill:var(--muted);font-size:11px">مئات التوزيعات</tspan></text>' +
+      '</svg>' +
+      TK.cards({ cols: 4, items: [
+        { e: '🟠', t: 'Ubuntu', b: 'الأسهل للمبتدئين: واجهة رسومية ودودة ومجتمع ضخم. خيار جيد لأول جهاز Linux لك.' },
+        { e: '🔴', t: 'Debian', b: 'مستقرة جداً وتُعدّ أساس توزيعات كثيرة أخرى (ومنها Ubuntu نفسها). تُفضَّل على الخوادم.' },
+        { e: '🐉', t: 'Kali Linux', b: 'مبنية على Debian وجاهزة بمئات أدوات اختبار الاختراق مثبّتة مسبقاً. هذه توزيعتنا في هذه الدورة.' },
+        { e: '🔷', t: 'Arch Linux', b: 'للمحترفين: تبني نظامك حزمة حزمة بنفسك لتتعلم كل تفصيلة، وليست خياراً للمبتدئين.' }
+      ] }) +
+      TK.check({ s: 'كل توزيعات Linux (Ubuntu وKali وArch وغيرها) تستخدم في جوهرها نفس نواة Linux، لكنها تختلف فيما يحيط بها.', t: true, why: 'التوزيعات تشترك في النواة، وتختلف في البرامج المثبّتة مسبقاً وأدوات إدارة الحزم وسهولة الاستخدام والغرض منها.' })),
+
+    /* جديد — Linux أم Windows؟ */
+    TK.s('⚖️ لماذا نتدرّب على Linux لا Windows هنا؟', 'Linux vs. Windows for security work',
+      '<p class="lead">Windows ليس أسوأ من Linux، لكن لكل منهما ساحته. اضغط الزرين لترى الفرق من زاوية الأمن السيبراني تحديداً.</p>' +
+      TK.compare({
+        a: { t: '🐧 Linux', html: '<ul class="clean"><li>مفتوح المصدر ومجاني بالكامل: يمكنك رؤية كوده وتعديله.</li><li>الطرفية جزء أساسي من كل استخدام، لا إضافة اختيارية.</li><li>أغلب أدوات الأمن (Nmap, Wireshark, Metasploit...) صُمّمت له أولاً.</li><li>يدير أغلب خوادم الإنترنت والسحابة وأجهزة الشبكات.</li></ul>' },
+        b: { t: '🪟 Windows', html: '<ul class="clean"><li>الأكثر انتشاراً على أجهزة المستخدمين والألعاب والشركات.</li><li>واجهة رسومية أولاً؛ PowerShell موجود لكنه أقل استخداماً يومياً من معظم المستخدمين.</li><li>بعض أدوات الأمن لها نسخة Windows، لكن أقل مرونة من أصلها على Linux.</li><li>هدف شائع للهجمات لأنه الأكثر انتشاراً على أجهزة الأفراد، فمعرفته أيضاً مهمة لاحقاً.</li></ul>', bad: false }
+      }) +
+      TK.check({ s: 'تعلّم Linux يعني أنك لن تحتاج أبداً للتعامل مع Windows في مجال الأمن السيبراني.', t: false, why: 'العكس: محلل الأمن الجيد يفهم النظامين، لأن أجهزة الضحايا والشركات غالباً تعمل بـ Windows حتى لو كانت أدوات الهجوم والدفاع الأساسية مبنية على Linux.' })),
+
+    TK.s('🎬 رحلة الأمر: ماذا يحدث عندما تضغط Enter؟', 'Animated: the life of a command',
+      '<p class="lead">الطرفية هي النافذة التي تكتب فيها، لكن من يقرأ كتابتك فعلياً هو برنامج صغير داخلها اسمه <b>الصدفة (Shell)</b> — فكّر فيه كمترجم بينك وبين النظام: يستقبل النص الذي كتبته، يفهم ما تقصده، ثم يطلب من النظام تنفيذه. اضغط «الخطوة التالية» لترى كيف يمرّ الأمر <span class="code">ls</span> بين أنت والنظام.</p>' +
+      TK.steps({
+        a: { e: '👩‍💻', l: 'أنت (الطرفية)' }, b: { e: '🐧', l: 'نواة Linux' },
+        steps: [
+          { icon: '', at: 'mid', cap: 'أنت جاهز: الطرفية تنتظر أمراً بعد علامة $' },
+          { icon: '⌨️', at: 'a', cap: '١) تكتب الأمر ls ثم Enter — الصدفة (shell) تقرأ النص وتفهمه', ba: 'كتب: ls' },
+          { icon: '📨', at: 'b', cap: '٢) الصدفة تطلب من النواة قراءة محتويات المجلد الحالي', bb: 'تستقبل الطلب' },
+          { icon: '📂', at: 'mid', cap: '٣) النواة تجمع أسماء الملفات من القرص' },
+          { icon: '📄', at: 'a', cap: '٤) تعود القائمة إلى شاشتك — انتهى الأمر في أجزاء من الثانية ✅', flash: 'ok', ba: 'رأى النتيجة' }
+        ]
+      })),
+    TK.s('🧪 مختبر ١: تنقّل داخل نظام Linux تدريبي', 'Lab 1 — navigate a training Linux system',
+      '<p class="lead">هذه طرفية حقيقية التفاعل بنظام ملفات تدريبي آمن. اكتب الأوامر بنفسك — وتُحدَّد المهام تلقائياً عند تنفيذها. ستتعرف هنا على أربعة أوامر أساسية تتكرر في كل عمل أمني: <code>ls</code> يعرض محتويات المجلد الذي تقف فيه حالياً، <code>cd</code> (اختصار change directory) ينقلك إلى مجلد آخر، <code>pwd</code> (print working directory) يطبع مسارك الحالي الكامل، و<code>cat</code> يطبع محتوى ملف نصي كامل على الشاشة. ستلاحظ أيضاً أن بعض الأوامر تُكتب بعدها شرطة وحرف، مثل <code>-a</code>؛ يسمى هذا <b>خياراً (Option)</b>، وهو يغيّر سلوك الأمر الافتراضي — فمثلاً <code>ls</code> وحدها تعرض الملفات العادية فقط، بينما <code>ls -a</code> تضيف الخيار <code>-a</code> (all) لتعرض حتى الملفات المخفية.</p>' +
+      TK.shell({
+        title: 'student@lab: ~ (طرفية تدريبية)',
+        fs: {
+          home: { student: {
+            'notes.txt': 'مرحباً بك في مختبر Linux!\nهذا أول ملف تقرؤه بأمر cat.',
+            '.secret_note': 'الملفات التي تبدأ بنقطة مخفية — تظهر فقط بالخيار -a',
+            docs: { 'readme.txt': 'مجلد الوثائق.\nجرّب الأمر ls -l لترى الصلاحيات.', 'todo.txt': '1. تعلّم ls\n2. تعلّم cd\n3. تعلّم cat\n4. اعثر على العلم!' },
+            projects: { lab1: { 'hint.txt': 'العلم في مكان قريب... جرّب ls -a داخل هذا المجلد', '.flag.txt': 'FLAG{linux_navigator}' } }
+          } },
+          etc: { hostname: 'lab', 'os-release': 'NAME="Ubuntu"\nVERSION="22.04 LTS"' },
+          var: { log: { 'syslog': 'Oct 15 09:00:01 lab systemd: Started Daily apt download.' } }
+        },
+        tasks: [
+          { d: 'اعرض محتويات المجلد الحالي: <code>ls</code>', re: '^ls\\s*$' },
+          { d: 'اعرض الملفات المخفية أيضاً: <code>ls -a</code>', re: '^ls\\s+-\\w*a' },
+          { d: 'اعرض الملفات بصلاحياتها وحجمها (ستفهم كل عمود في شريحة لاحقة): <code>ls -l</code>', re: '^ls\\s+-\\w*l\\w*\\s*$' },
+          { d: 'ادخل مجلد docs: <code>cd docs</code>', re: '^cd\\s+(~/)?docs' },
+          { d: 'اقرأ ملف todo.txt: <code>cat todo.txt</code>', re: '^cat\\s+.*todo\\.txt' },
+          { d: 'اعرف مكانك الحالي: <code>pwd</code>', re: '^pwd' },
+          { d: 'ارجع للمجلد الرئيسي: <code>cd ~</code>', re: '^cd(\\s+~|\\s*)$' }
+        ]
+      })),
+    TK.s('🗺️ خريطة نظام الملفات: أين أبحث؟', 'The Linux directory map',
+      '<p class="lead">في Linux كل الملفات والمجلدات مرتّبة في شجرة واحدة تبدأ من نقطة اسمها الجذر <span class="code">/</span>، وكل شيء آخر فرع منها. عنوان أي ملف أو مجلد داخل هذه الشجرة يسمى <b>المسار (Path)</b>، مثل <span class="code">/home/student/notes.txt</span>، وهو يشبه العنوان البريدي: يخبرك بالضبط أين تجد الملف. اضغط كل بطاقة لتعرف ماذا تجد في هذا المجلد — وأين يبحث المحقق الأمني أولاً.</p>' +
+      TK.cards({ cols: 3, items: [
+        { e: '🏠', t: '/home', b: 'ملفات المستخدمين الشخصية. هنا تبدأ طرفيتك (المجلد ~). كثيراً ما تجد فيه ملاحظات وكلمات مرور منسية.' },
+        { e: '⚙️', t: '/etc', b: 'ملفات الإعدادات. فيه <code>passwd</code> (قائمة المستخدمين) وإعدادات الشبكة والخدمات.' },
+        { e: '📜', t: '/var/log', b: 'السجلات: من دخل ومتى وماذا فشل. أول مكان يفحصه محلل الحوادث.' },
+        { e: '🧰', t: '/bin و /usr/bin', b: 'برامج النظام والأدوات (ls, cat, nmap...). كل أمر تكتبه هو ملف تنفيذي هنا.' },
+        { e: '🗑️', t: '/tmp', b: 'ملفات مؤقتة يكتب فيها الجميع — يحبّه المهاجمون لإخفاء أدواتهم، فافحصه دائماً.' },
+        { e: '👑', t: '/root', b: 'مجلد المستخدم الأعلى صلاحية (root). لا يدخله إلا المسؤول.' }
+      ] }) +
+      '<div class="card" style="padding:18px;margin-top:14px">' +
+      '<svg viewBox="0 0 700 280" style="width:100%;height:auto;display:block;direction:ltr" role="img" aria-label="شجرة مجلدات Linux ابتداءً من الجذر">' +
+      '<rect x="295" y="14" width="110" height="54" rx="12" style="fill:rgba(0,158,226,.28);stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="350" y="40" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:19px">/</text>' +
+      '<text x="350" y="58" text-anchor="middle" style="fill:var(--muted);font-size:10px">الجذر (Root)</text>' +
+      '<line x1="350" y1="68" x2="90" y2="128" style="stroke:var(--line);stroke-width:2"/>' +
+      '<line x1="350" y1="68" x2="194" y2="128" style="stroke:var(--line);stroke-width:2"/>' +
+      '<line x1="350" y1="68" x2="298" y2="128" style="stroke:var(--line);stroke-width:2"/>' +
+      '<line x1="350" y1="68" x2="402" y2="128" style="stroke:var(--line);stroke-width:2"/>' +
+      '<line x1="350" y1="68" x2="506" y2="128" style="stroke:var(--line);stroke-width:2"/>' +
+      '<line x1="350" y1="68" x2="610" y2="128" style="stroke:var(--line);stroke-width:2"/>' +
+      '<g>' +
+      '<rect x="42" y="128" width="96" height="46" rx="10" style="fill:var(--chip);stroke:var(--line);stroke-width:1.5"/><text x="90" y="156" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:13px">/home</text>' +
+      '<rect x="146" y="128" width="96" height="46" rx="10" style="fill:var(--chip);stroke:var(--line);stroke-width:1.5"/><text x="194" y="156" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:13px">/etc</text>' +
+      '<rect x="250" y="128" width="96" height="46" rx="10" style="fill:var(--chip);stroke:var(--line);stroke-width:1.5"/><text x="298" y="156" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:13px">/var</text>' +
+      '<rect x="354" y="128" width="96" height="46" rx="10" style="fill:var(--chip);stroke:var(--line);stroke-width:1.5"/><text x="402" y="156" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:13px">/bin</text>' +
+      '<rect x="458" y="128" width="96" height="46" rx="10" style="fill:var(--chip);stroke:var(--line);stroke-width:1.5"/><text x="506" y="156" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:13px">/tmp</text>' +
+      '<rect x="562" y="128" width="96" height="46" rx="10" style="fill:var(--chip);stroke:var(--line);stroke-width:1.5"/><text x="610" y="156" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:13px">/root</text>' +
+      '</g>' +
+      '<line x1="90" y1="174" x2="90" y2="214" style="stroke:rgba(0,158,226,.6);stroke-width:2"/>' +
+      '<rect x="30" y="214" width="120" height="44" rx="10" style="fill:rgba(0,158,226,.14);stroke:var(--blue);stroke-width:1.5"/>' +
+      '<text x="90" y="241" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:11.5px">/home/student</text>' +
+      '<line x1="298" y1="174" x2="298" y2="214" style="stroke:rgba(247,178,40,.8);stroke-width:2"/>' +
+      '<rect x="238" y="214" width="120" height="44" rx="10" style="fill:rgba(247,178,40,.16);stroke:var(--yellow);stroke-width:1.5"/>' +
+      '<text x="298" y="241" text-anchor="middle" style="fill:var(--text);font-weight:800;font-size:11.5px">/var/log</text>' +
+      '</svg></div>' +
+      '<p class="tc" style="font-size:.85rem;color:var(--muted);margin-top:8px">كل مسار (Path) هو ببساطة سلسلة أسماء من الجذر إلى الملف، مفصولة بشرطات مائلة: /var/log/auth.log يعني «من الجذر، ادخل var، ثم log، ثم الملف auth.log».</p>' +
+      TK.check({ s: 'سجلات دخول الخادم (Logs) توجد عادة داخل مجلد <code>/bin</code>.', t: false, why: 'السجلات توجد في /var/log، أما /bin فيحوي البرامج التنفيذية الأساسية للنظام فقط.' })),
+    TK.s('🏁 تحدي: اعثر على العلم المخفي', 'Challenge — find the hidden flag',
+      '<div class="card"><p>داخل مجلد <span class="code">~/projects/lab1</span> ملف مخفي يحوي «علماً» بصيغة <span class="code">FLAG{...}</span>. استخدم طرفية المختبر أعلاه (ارجع للشريحة السابقة) للعثور عليه.</p></div>' +
+      TK.challenge({ t: 'الملف المخفي', q: 'ما قيمة العلم (Flag) الموجود في المجلد projects/lab1؟', answer: ['FLAG{linux_navigator}'], hint: 'الملفات المخفية تبدأ بنقطة. استخدم ls -a ثم cat.', explain: 'ls -a يكشف الملفات المخفية، و cat يقرأ محتواها — مهارتان تتكرران في كل تحقيق رقمي.', ph: 'FLAG{...}' })),
+    TK.breakSlide('الجزء القادم: صلاحيات الملفات، ثم البحث داخل سجلات خادم تعرّض لهجوم تخمين.'),
+    TK.s('🔐 الصلاحيات: من يستطيع قراءة الملف أو تشغيله؟', 'File permissions (rwx)',
+      '<p class="lead">كل ملف في Linux له <b>صلاحيات (Permissions)</b> تحدد من يستطيع التعامل معه، مقسّمة على ثلاث فئات: المالك (صاحب الملف)، المجموعة، ثم باقي المستخدمين. تظهر هذه الصلاحيات كرمز من تسعة أحرف مثل <span class="code">rwxr-xr-x</span> عند استخدام الخيار <span class="code">-l</span> مع الأمر <span class="code">ls</span> (أي <span class="code">ls -l</span>: اعرض قائمة مفصّلة). اضغط على كل حرف لتفهمه.</p>' +
+      TK.cards({ cols: 3, items: [
+        { e: '👁️', t: 'r = قراءة (4)', b: 'يستطيع عرض محتوى الملف بـ cat.' },
+        { e: '✏️', t: 'w = كتابة (2)', b: 'يستطيع تعديل الملف أو حذفه.' },
+        { e: '🚀', t: 'x = تنفيذ (1)', b: 'يستطيع تشغيل الملف كبرنامج. ملف نصي ضار بصلاحية x قد يُشغَّل!' }
+      ] }) +
+      '<div class="card" style="padding:18px;margin-top:14px">' +
+      '<svg viewBox="0 0 640 200" style="width:100%;height:auto;display:block;direction:ltr" role="img" aria-label="تحليل رمز الصلاحيات rwxr-xr-x">' +
+      '<rect x="106" y="20" width="158" height="70" rx="12" style="fill:rgba(0,158,226,.14);stroke:var(--blue);stroke-width:1.5"/>' +
+      '<rect x="268" y="20" width="158" height="70" rx="12" style="fill:rgba(247,178,40,.16);stroke:var(--yellow);stroke-width:1.5"/>' +
+      '<rect x="430" y="20" width="158" height="70" rx="12" style="fill:rgba(37,211,102,.14);stroke:var(--green);stroke-width:1.5"/>' +
+      '<g style="font-family:Cascadia Code,monospace;font-size:21px;font-weight:900">' +
+      '<rect x="52" y="40" width="50" height="50" rx="8" style="fill:var(--chip);stroke:var(--line)"/><text x="77" y="72" text-anchor="middle" style="fill:var(--text)">-</text>' +
+      '<rect x="106" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--blue)"/><text x="131" y="72" text-anchor="middle" style="fill:var(--blue)">r</text>' +
+      '<rect x="160" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--blue)"/><text x="185" y="72" text-anchor="middle" style="fill:var(--blue)">w</text>' +
+      '<rect x="214" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--blue)"/><text x="239" y="72" text-anchor="middle" style="fill:var(--blue)">x</text>' +
+      '<rect x="268" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--yellow)"/><text x="293" y="72" text-anchor="middle" style="fill:#b8790a">r</text>' +
+      '<rect x="322" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--yellow)"/><text x="347" y="72" text-anchor="middle" style="fill:#b8790a">-</text>' +
+      '<rect x="376" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--yellow)"/><text x="401" y="72" text-anchor="middle" style="fill:#b8790a">x</text>' +
+      '<rect x="430" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--green)"/><text x="455" y="72" text-anchor="middle" style="fill:#1a9c4a">r</text>' +
+      '<rect x="484" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--green)"/><text x="509" y="72" text-anchor="middle" style="fill:#1a9c4a">-</text>' +
+      '<rect x="538" y="40" width="50" height="50" rx="8" style="fill:var(--surface2);stroke:var(--green)"/><text x="563" y="72" text-anchor="middle" style="fill:#1a9c4a">x</text>' +
+      '</g>' +
+      '<text x="77" y="118" text-anchor="middle" style="fill:var(--muted);font-size:11px;font-weight:800">النوع</text>' +
+      '<text x="77" y="132" text-anchor="middle" style="fill:var(--muted);font-size:9.5px">- = ملف عادي</text>' +
+      '<text x="185" y="118" text-anchor="middle" style="fill:var(--blue);font-size:12px;font-weight:900">المالك (Owner)</text>' +
+      '<text x="185" y="134" text-anchor="middle" style="fill:var(--muted);font-size:10px">rwx = قراءة+كتابة+تنفيذ</text>' +
+      '<text x="347" y="118" text-anchor="middle" style="fill:#b8790a;font-size:12px;font-weight:900">المجموعة (Group)</text>' +
+      '<text x="347" y="134" text-anchor="middle" style="fill:var(--muted);font-size:10px">r-x = قراءة وتنفيذ فقط</text>' +
+      '<text x="509" y="118" text-anchor="middle" style="fill:#1a9c4a;font-size:12px;font-weight:900">الآخرون (Others)</text>' +
+      '<text x="509" y="134" text-anchor="middle" style="fill:var(--muted);font-size:10px">r-x = قراءة وتنفيذ فقط</text>' +
+      '<text x="320" y="170" text-anchor="middle" style="fill:var(--muted);font-size:11px">مثال: <tspan style="font-family:Cascadia Code,monospace;fill:var(--text);font-weight:800">-rwxr-xr-x</tspan> — المالك يملك كل شيء، والباقون يقرؤون وينفّذون فقط دون تعديل</text>' +
+      '</svg></div>' +
+      TK.terminal({ title: 'student@lab:~$', lines: [
+        ['cmd', '$ ls -l script.sh'], ['out', '-rw-r--r-- 1 student student 52 script.sh', 600],
+        ['dim', '# المالك: قراءة وكتابة · الباقي: قراءة فقط · لا أحد يستطيع تشغيله'],
+        ['cmd', '$ chmod +x script.sh', 700], ['cmd', '$ ls -l script.sh'], ['ok', '-rwxr-xr-x 1 student student 52 script.sh', 600],
+        ['hl', '# ظهر الحرف x: صار الملف قابلاً للتشغيل ✅']
+      ], btn: 'شاهد chmod يغيّر الصلاحيات' }) +
+      TK.check({ s: 'الأمر <code>chmod +x</code> يمنح الملف صلاحية التنفيذ (x)، مما قد يسمح بتشغيله كبرنامج.', t: true, why: 'بالضبط، وهذا يجعل فحص أي ملف نصي يحمل صلاحية x أمراً مهماً قبل الوثوق به.' })),
+    TK.s('🃏 صنّف: أي أمر لأي مهمة؟', 'Classify — pick the right command',
+      TK.classify({
+        buckets: [{ t: 'عرض وقراءة', e: '👁️' }, { t: 'بحث', e: '🔎' }, { t: 'تغيير', e: '✏️' }],
+        items: [
+          { t: 'ls -la', b: 0, why: 'يعرض الملفات بصلاحياتها.' }, { t: 'cat notes.txt', b: 0, why: 'يطبع محتوى الملف.' },
+          { t: 'grep Failed auth.log', b: 1, why: 'يبحث عن كلمة داخل الملف.' }, { t: 'find / -name "*.conf"', b: 1, why: 'يبحث عن ملفات بالاسم.' },
+          { t: 'chmod +x tool.sh', b: 2, why: 'يغيّر صلاحيات الملف.' }, { t: 'mkdir reports', b: 2, why: 'ينشئ مجلداً جديداً.' }
+        ]
+      })),
+    TK.s('🧪 مختبر ٢: حقّق في سجلات خادم مخترَق', 'Lab 2 — investigate a server log',
+      '<div class="card"><b>السيناريو:</b> مسؤول النظام لاحظ بطئاً في الخادم. <b>السجل (Log)</b> هو ملف نصي يسجّل النظام فيه تلقائياً كل حدث يحصل (من دخل، ومتى، وهل نجح أم فشل)، وسجل الدخول <span class="code">/var/log/auth.log</span> فيه الدليل. ستستخدم هنا ثلاث أدوات جديدة: <code>grep</code> يبحث عن كلمة أو نمط نصي محدد داخل ملف ويعرض فقط الأسطر التي تحتويه (كالبحث السريع داخل مستند طويل)، و<code>find</code> يبحث عن الملفات نفسها بالاسم في أي مكان بالنظام، و<span class="code">|</span> (الأنبوب/Pipe) يأخذ ناتج أمر ويمرّره مباشرة كمُدخل لأمر آخر، فتستطيع مثلاً عدّ نتائج grep بإرسالها إلى الأمر wc -l. اجمع بين هذه الأدوات الثلاث لكشف ما حدث.</div>' +
+      TK.shell({
+        title: 'analyst@server: ~ (سجلات تدريبية)', user: 'analyst', host: 'server', cwd: '/home/analyst',
+        fs: {
+          home: { analyst: { 'case-notes.txt': 'سجلات الدخول في /var/log/auth.log\nابحث عن كلمة Failed.' } },
+          etc: { 'ssh.conf': 'Port 22\nPermitRootLogin yes', 'app.conf': 'debug=true' },
+          var: { log: {
+            'auth.log': 'Oct 15 10:01:11 server sshd[311]: Accepted password for analyst from 192.168.56.1\nOct 15 10:03:22 server sshd[320]: Failed password for root from 203.0.113.7\nOct 15 10:03:25 server sshd[320]: Failed password for root from 203.0.113.7\nOct 15 10:03:29 server sshd[320]: Failed password for admin from 203.0.113.7\nOct 15 10:09:40 server sshd[331]: Accepted password for analyst from 192.168.56.1\nOct 15 10:12:02 server sshd[340]: Failed password for test from 198.51.100.9\nOct 15 10:12:09 server sshd[341]: Failed password for root from 203.0.113.7\nOct 15 10:15:00 server sshd[350]: session opened for user analyst',
+            'syslog': 'Oct 15 10:00:00 server kernel: boot ok'
+          } }
+        },
+        tasks: [
+          { d: 'اقرأ السجل كاملاً: <code>cat /var/log/auth.log</code>', re: 'cat\\s+/var/log/auth\\.log' },
+          { d: 'ابحث عن المحاولات الفاشلة: <code>grep Failed /var/log/auth.log</code>', re: 'grep\\s+.*Failed' },
+          { d: 'عُدّ المحاولات الفاشلة بالأنبوب: <code>grep Failed /var/log/auth.log | wc -l</code>', re: 'grep\\s+.*Failed.*\\|\\s*wc' },
+          { d: 'ابحث عن كل ملفات الإعدادات: <code>find / -name "*.conf"</code>', re: 'find\\s+/\\s+-name\\s+.*conf' }
+        ]
+      }) +
+      TK.check({ s: 'الأمر <code>find / -name "*.conf"</code> يبحث عن محتوى يحوي كلمة conf داخل الملفات.', t: false, why: 'find يبحث عن الملفات نفسها بالاسم في أي مكان بالنظام، أما البحث داخل محتوى الملفات فهو عمل grep.' })),
+    TK.s('🏁 تحقيق: من يهاجم الخادم؟', 'Challenge — who is attacking?',
+      '<p class="lead">استخدم طرفية المختبر ٢ لحل التحديين. هذا بالضبط ما يفعله محلل الأمن يومياً.</p>' +
+      TK.challenge({ t: 'العدّ', q: 'كم عدد محاولات الدخول <b>الفاشلة</b> (Failed password) في السجل؟', answer: ['5'], hint: 'grep Failed ... | wc -l', explain: 'خمس محاولات فاشلة خلال دقائق = هجوم تخمين كلمات مرور (Brute Force).', ph: 'رقم' }) +
+      TK.challenge({ t: 'المهاجم', q: 'ما عنوان IP الذي نفّذ أكثر المحاولات الفاشلة على حساب root؟', answer: ['203.0.113.7'], hint: 'grep "Failed password for root" وانظر إلى العنوان الأكثر تكراراً.', explain: 'العنوان 203.0.113.7 ظهر في 4 محاولات — يُحظر في الجدار الناري ويُبلَّغ عنه.', ph: 'x.x.x.x' })),
+    /* جديد — إدارة الحزم بـ APT */
+    TK.s('📦 كيف تثبّت أداة جديدة؟ إدارة الحزم بـ APT', 'Package management — how APT works',
+      '<p class="lead">البرامج في Linux لا تُحمَّل عادة من مواقع عشوائية على الإنترنت، بل من <b>مستودعات (Repositories)</b> رسمية وموثوقة يديرها فريق التوزيعة نفسها. أداة <code>apt</code> (في Debian وUbuntu وKali) هي التي تتحدث مع هذه المستودعات نيابة عنك: تبحث، تحمّل، تثبّت، وتحدّث البرامج بأمر واحد بدل البحث يدوياً وتحميل ملفات exe من مواقع قد تكون غير موثوقة.</p>' +
+      '<div class="card" style="padding:18px">' +
+      '<svg viewBox="0 0 760 170" style="width:100%;height:auto;display:block;direction:ltr" role="img" aria-label="مخطط سير عمل APT من المستودعات إلى التثبيت">' +
+      '<rect x="605" y="35" width="150" height="100" rx="14" style="fill:var(--chip);stroke:var(--line);stroke-width:2"/>' +
+      '<text x="680" y="65" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:13px">🗄️ مستودعات</text>' +
+      '<text x="680" y="85" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">خوادم تخزّن آلاف</text>' +
+      '<text x="680" y="103" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">البرامج الجاهزة</text>' +
+      '<text x="585" y="92" text-anchor="middle" style="fill:var(--blue);font-size:24px">⟵</text>' +
+      '<rect x="415" y="35" width="150" height="100" rx="14" style="fill:rgba(0,158,226,.14);stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="490" y="65" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:13px">① apt update</text>' +
+      '<text x="490" y="85" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">يحدّث قائمة</text>' +
+      '<text x="490" y="103" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">البرامج المتاحة فقط</text>' +
+      '<text x="395" y="92" text-anchor="middle" style="fill:var(--blue);font-size:24px">⟵</text>' +
+      '<rect x="225" y="35" width="150" height="100" rx="14" style="fill:rgba(0,158,226,.14);stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="300" y="65" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:13px">② apt upgrade</text>' +
+      '<text x="300" y="85" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">يثبّت أحدث نسخة</text>' +
+      '<text x="300" y="103" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">لما هو مثبّت فعلاً</text>' +
+      '<text x="205" y="92" text-anchor="middle" style="fill:var(--blue);font-size:24px">⟵</text>' +
+      '<rect x="35" y="35" width="150" height="100" rx="14" style="fill:rgba(0,158,226,.14);stroke:var(--blue);stroke-width:2"/>' +
+      '<text x="110" y="65" text-anchor="middle" style="fill:var(--text);font-weight:900;font-size:13px">③ apt install</text>' +
+      '<text x="110" y="85" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">يثبّت برنامجاً</text>' +
+      '<text x="110" y="103" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">جديداً لم يكن موجوداً</text>' +
+      '</svg></div>' +
+      '<p class="tc" style="font-size:.85rem;color:var(--muted);margin-top:8px">القاعدة البسيطة: شغّل apt update أولاً دائماً لتحديث القائمة، ثم استخدم upgrade لتحديث ما لديك أو install لإضافة أداة جديدة.</p>' +
+      TK.terminal({ title: 'student@lab:~$', btn: 'شاهد apt يحدّث ثم يثبّت أداة', lines: [
+        ['cmd', '$ sudo apt update'],
+        ['out', 'Hit:1 http://archive.kali.org/kali kali-rolling InRelease', 450],
+        ['out', 'Reading package lists... Done', 400],
+        ['hl', '# القائمة تحدّثت فقط؛ لم يتغيّر أي برنامج مثبّت بعد'],
+        ['cmd', '$ sudo apt install nmap', 700],
+        ['out', 'Reading package lists... Done', 350],
+        ['out', 'The following NEW packages will be installed: nmap', 400],
+        ['ok', 'nmap is now installed.', 500]
+      ] }) +
+      '<div class="note">كلمة <code>sudo</code> (super user do) قبل الأمر تعني «نفّذ هذا بصلاحية المسؤول (root)» — التثبيت والتحديث يغيّران ملفات النظام فيحتاجان هذه الصلاحية، على عكس أوامر القراءة العادية مثل <code>ls</code> أو <code>cat</code>.</div>' +
+      TK.check({ s: 'الأمر <code>apt update</code> يقوم بتثبيت وتحديث كل البرامج الموجودة على جهازك مباشرة.', t: false, why: 'apt update يحدّث فقط قائمة البرامج المتاحة من المستودعات، ولا يغيّر أي برنامج مثبّت. التحديث الفعلي يتم بـ apt upgrade.' })),
+
+    /* جديد — مختبر ٣: أوامر يومية أكثر */
+    TK.s('🧪 مختبر ٣: أوامر يومية أكثر — نظّم وعالِج الملفات', 'Lab 3 — more daily commands: organize & process files',
+      '<p class="lead">كل يوم يحتاج محلل الأمن أوامر أكثر من مجرد التنقّل والقراءة: إنشاء وتنظيم ملفات، نسخها ونقلها وحذفها بأمان، ومعالجة نص طويل بسرعة بدل قراءته سطراً سطراً. جرّب كل أمر بنفسك وتعرّف بالضبط ماذا يفعل ومتى تستخدمه يومياً.</p>' +
+      TK.table(['الأمر', 'ماذا يفعل بالضبط؟', 'متى تستخدمه يومياً؟'], [
+        ['<code>id</code>', 'يعرض هويتك الكاملة: رقم المستخدم (uid) ورقم المجموعة (gid) وكل المجموعات التي تنتمي إليها', 'للتأكد من صلاحياتك الفعلية، أدق من whoami'],
+        ['<code>mkdir</code>', 'ينشئ مجلداً جديداً فارغاً', 'لتنظيم أدلة تحقيق أو مشروع جديد'],
+        ['<code>touch</code>', 'ينشئ ملفاً فارغاً جديداً (أو يحدّث وقت تعديل ملف موجود)', 'لبدء ملف ملاحظات أو تقرير بسرعة'],
+        ['<code>cp</code>', 'ينسخ ملفاً من مصدر إلى هدف (الأصل يبقى كما هو)', 'لأخذ نسخة احتياطية قبل تعديل ملف دليل'],
+        ['<code>mv</code>', 'ينقل الملف أو يعيد تسميته (الأصل يختفي من مكانه)', 'لترتيب الملفات أو تصحيح اسم ملف'],
+        ['<code>rm</code>', 'يحذف ملفاً نهائياً — لا سلة مهملات بالأمر العادي!', 'بحذر شديد، وبعد التأكد أنك لا تحتاج الملف'],
+        ['<code>head</code>', 'يعرض أول N سطر فقط من ملف طويل (مع الخيار -n N)', 'لإلقاء نظرة سريعة على بداية سجل ضخم'],
+        ['<code>tail</code>', 'يعرض آخر N سطر فقط من ملف طويل (مع الخيار -n N)', 'لرؤية آخر الأحداث في سجل حيّ'],
+        ['<code>sort</code>', 'يرتّب أسطر الملف أبجدياً أو رقمياً', 'لترتيب عناوين IP أو أسماء قبل تحليلها'],
+        ['<code>uniq</code>', 'يحذف الأسطر المكرّرة المتتالية (يعمل غالباً بعد sort)', 'لمعرفة القيم الفريدة وسط تكرار كثير'],
+        ['<code>wc -l</code>', 'يعدّ عدد الأسطر في ملف', 'لمعرفة حجم سجل أو عدد نتائج بحث بسرعة']
+      ]) +
+      TK.shell({
+        title: 'analyst@lab: ~ (مختبر الأوامر اليومية)', user: 'analyst', host: 'lab', cwd: '/home/analyst',
+        fs: {
+          home: { analyst: {
+            'raw_data.txt': '203.0.113.7 login failed\n198.51.100.9 login failed\n203.0.113.7 login failed\n192.168.1.5 login success\n203.0.113.7 login failed\n198.51.100.9 login failed\n192.168.1.5 login success\n10.0.0.4 login failed\n203.0.113.7 login failed\n192.168.1.5 login success',
+            'draft_report.txt': 'ملاحظات أولية: العنوان 203.0.113.7 يتكرر كثيراً في محاولات الدخول الفاشلة. يحتاج حظراً في الجدار الناري.'
+          } }
+        },
+        tasks: [
+          { d: 'اعرض هويتك الكاملة بالتفصيل: <code>id</code>', re: '^id\\s*$' },
+          { d: 'أنشئ مجلداً لتنظيم الأدلة: <code>mkdir evidence</code>', re: '^mkdir\\s+evidence' },
+          { d: 'انسخ ملف البيانات الخام إلى المجلد الجديد: <code>cp raw_data.txt evidence/</code>', re: '^cp\\s+raw_data\\.txt\\s+evidence/?\\s*$' },
+          { d: 'أنشئ ملف ملاحظات فارغاً داخل المجلد الجديد: <code>touch evidence/notes.txt</code>', re: '^touch\\s+evidence/notes\\.txt' },
+          { d: 'اعرض أول 5 أسطر فقط من البيانات: <code>head -n 5 raw_data.txt</code>', re: '^head\\s+-n\\s*5\\s+raw_data\\.txt' },
+          { d: 'اعرض آخر 5 أسطر فقط: <code>tail -n 5 raw_data.txt</code>', re: '^tail\\s+-n\\s*5\\s+raw_data\\.txt' },
+          { d: 'رتّب الأسطر أبجدياً: <code>sort raw_data.txt</code>', re: '^sort\\s+raw_data\\.txt\\s*$' },
+          { d: 'اعرض العناوين الفريدة فقط بعد الترتيب (بالأنبوب): <code>sort raw_data.txt | uniq</code>', re: '^sort\\s+raw_data\\.txt\\s*\\|\\s*uniq' },
+          { d: 'عُدّ عدد الأسطر الكلي في الملف: <code>wc -l raw_data.txt</code>', re: '^wc\\s+-l\\s+raw_data\\.txt' },
+          { d: 'انقل مسودة التقرير إلى مجلد الأدلة باسم أوضح: <code>mv draft_report.txt evidence/final_report.txt</code>', re: '^mv\\s+draft_report\\.txt\\s+evidence/final_report\\.txt' },
+          { d: 'بعد نسخه بأمان، احذف ملف البيانات الخام من المجلد الرئيسي: <code>rm raw_data.txt</code>', re: '^rm\\s+raw_data\\.txt\\s*$' }
+        ]
+      }) +
+      '<div class="tip">لاحظ الفرق المهم: <code>cp</code> يترك نسخة في المكان الأصلي، بينما <code>mv</code> و<code>rm</code> يزيلان الملف من مكانه الأول. لهذا يُنصَح دائماً بعمل <code>cp</code> لنسخة احتياطية قبل أي <code>rm</code> على دليل مهم.</div>' +
+      TK.check({ s: 'الأمر <code>cp</code> ينقل الملف من مكانه الأصلي فلا تبقى نسخة فيه بعد التنفيذ.', t: false, why: 'cp ينسخ فقط ويُبقي الأصل كما هو؛ الأمر الذي يزيل الملف من مكانه الأصلي بعد النقل هو mv.' })),
+    TK.s('🎭 سيناريو: ماذا تفعل عندما تجد ملفاً مريباً؟', 'Scenario — suspicious file',
+      TK.scenario({ steps: [
+        { s: 'وجدت داخل /tmp ملفاً اسمه <span class="code">update.sh</span> بصلاحية x لم تنشئه أنت. ماذا تفعل أولاً؟', o: [
+          { t: 'أشغّله لأرى ماذا يفعل', ok: false, fb: 'خطر! تشغيل ملف مجهول قد ينفّذ كوداً ضاراً. اقرأه أولاً.' },
+          { t: 'أقرأه بـ cat وأفحص محتواه دون تشغيله', ok: true, fb: 'صحيح — القراءة آمنة، وتكشف نيّة الملف.' },
+          { t: 'أتجاهله', ok: false, fb: 'ملف مجهول بصلاحية تنفيذ في /tmp مؤشر اختراق محتمل ويجب فحصه.' }] },
+        { s: 'قرأته فوجدت سطراً يحاول الاتصال بعنوان خارجي. الخطوة التالية؟', o: [
+          { t: 'أحذفه فوراً دون إخبار أحد', ok: false, fb: 'الحذف يضيّع الدليل. وثّق أولاً ثم أبلغ المسؤول.' },
+          { t: 'أوثّق (اسم الملف، المسار، الوقت) وأبلغ مسؤول الأمن', ok: true, fb: 'ممتاز — التوثيق والإبلاغ هما أساس الاستجابة للحوادث.' },
+          { t: 'أنسخه لجهازي الشخصي لأجرّبه', ok: false, fb: 'نقل ملف مشبوه لجهاز غير معزول يعرّض جهازك للخطر.' }] }
+      ] })),
+    TK.s('📋 ورقة الغش: أوامر اليوم', 'Cheat sheet',
+      TK.table(['الأمر', 'وظيفته', 'مثال'], [
+        ['<code>pwd</code>', 'أين أنا؟', 'pwd'], ['<code>ls -la</code>', 'اعرض كل الملفات بصلاحياتها', 'ls -la /etc'], ['<code>cd</code>', 'انتقل بين المجلدات', 'cd ~/docs'],
+        ['<code>cat</code>', 'اقرأ ملفاً', 'cat notes.txt'], ['<code>grep</code>', 'ابحث داخل النص', 'grep Failed auth.log'], ['<code>find</code>', 'ابحث عن ملفات', 'find / -name "*.conf"'],
+        ['<code>chmod</code>', 'غيّر الصلاحيات', 'chmod +x tool.sh'], ['<code>|</code>', 'مرّر ناتج أمر لآخر', 'cat log | grep root | wc -l'],
+        ['<code>sudo apt update</code>', 'حدّث قائمة البرامج المتاحة', 'sudo apt update'],
+        ['<code>sudo apt install</code>', 'ثبّت برنامجاً جديداً', 'sudo apt install nmap'],
+        ['<code>id</code>', 'هويتك وصلاحياتك بالتفصيل', 'id'], ['<code>mkdir</code>', 'أنشئ مجلداً جديداً', 'mkdir evidence'],
+        ['<code>touch</code>', 'أنشئ ملفاً فارغاً', 'touch notes.txt'], ['<code>cp</code>', 'انسخ ملفاً (الأصل يبقى)', 'cp a.txt b.txt'],
+        ['<code>mv</code>', 'انقل أو أعد تسمية ملف', 'mv old.txt new.txt'], ['<code>rm</code>', 'احذف ملفاً نهائياً', 'rm temp.txt'],
+        ['<code>head -n N</code>', 'أول N سطر من ملف', 'head -n 5 log.txt'], ['<code>tail -n N</code>', 'آخر N سطر من ملف', 'tail -n 5 log.txt'],
+        ['<code>sort</code>', 'رتّب أسطر الملف', 'sort data.txt'], ['<code>uniq</code>', 'احذف التكرار المتتالي', 'sort data.txt | uniq']
+      ]) + TK.terms([['Shell (الصدفة)', 'البرنامج الذي يقرأ أوامرك ويرسلها للنظام (bash مثلاً).'], ['Kernel (النواة)', 'الطبقة الوحيدة التي تتحدث مباشرة مع العتاد (المعالج والذاكرة والقرص).'], ['Root', 'المستخدم الأعلى صلاحية في Linux.'], ['Pipe (الأنبوب |)', 'يمرّر مخرجات أمر ليكون مدخلاً لأمر آخر.'], ['Repository (مستودع)', 'خادم رسمي موثوق تُحمَّل منه البرامج عبر apt.']]))
+  ],
+  quiz: [
+    { q: 'ماذا يفعل الأمر <code>pwd</code>؟', ok: 'يعرض المسار الكامل للمجلد الذي تقف فيه حالياً', no: ['يعرض محتويات المجلد الحالي', 'ينقلك إلى المجلد الرئيسي', 'يعرض صلاحيات الملفات'], why: 'pwd تعني print working directory — اطبع مجلد العمل الحالي.' },
+    { q: 'أي أمر يعرض الملفات المخفية (التي تبدأ أسماؤها بنقطة) داخل مجلد؟', ok: 'ls -a', no: ['ls -h', 'cat -a', 'pwd -a'], why: 'الخيار -a يعني all (أظهر الكل)، فيكشف الملفات المخفية أيضاً. -h يُستخدم لعرض الأحجام بصيغة مقروءة فقط.' },
+    { q: 'ما وظيفة الأمر <code>cat</code>؟', ok: 'قراءة محتوى ملف نصي وطباعته على الشاشة', no: ['إنشاء مجلد جديد', 'تغيير صلاحيات ملف', 'البحث داخل محتوى ملف'], why: 'cat تختصر concatenate، وأشهر استخداماتها طباعة محتوى الملف مباشرة.' },
+    { q: 'أين توجد سجلات دخول الخادم (Logs) عادة في Linux؟', ok: '/var/log', no: ['/bin', '/root', '/home'], why: 'السجلات توجد عادة في /var/log، أما /bin فيحوي البرامج التنفيذية الأساسية للنظام ولا علاقة له بالسجلات.' },
+    { q: 'ماذا يُظهر الأمر <code>grep Failed auth.log</code>؟', ok: 'فقط الأسطر التي تحتوي كلمة Failed داخل الملف', no: ['الملف كاملاً مع تمييز كلمة Failed', 'عدد مرات ظهور Failed فقط كرقم', 'يحذف كل الأسطر التي فيها Failed'], why: 'grep يبحث عن نمط نصي محدد ويطبع الأسطر المطابقة فقط، دون أن يغيّر الملف الأصلي.' },
+    { q: 'ما وظيفة الرمز <code>|</code> (الأنبوب) بين أمرين؟', ok: 'يمرّر ناتج الأمر الأول ليكون مدخلاً للأمر الثاني', no: ['يحذف ناتج الأمر الأول قبل تنفيذ الثاني', 'يشغّل الأمرين في الوقت نفسه دون علاقة بينهما', 'يحفظ ناتج الأمر الأول في ملف تلقائياً'], why: 'الأنبوب يصل الأوامر ببعضها، مثل grep Failed log | wc -l الذي يمرّر نتائج grep إلى wc -l لتُعدّ.' },
+    { q: 'في صلاحيات <code>-rwxr-xr-x</code>، ماذا يملك صاحب الملف (المالك)؟', ok: 'القراءة والكتابة والتنفيذ', no: ['القراءة والتنفيذ فقط دون كتابة', 'الكتابة فقط', 'لا صلاحيات له على ملفه'], why: 'المجموعة الثلاثية الأولى (rwx) تخص المالك دائماً، وهنا تملك الحروف الثلاثة كاملة: قراءة وكتابة وتنفيذ.' },
+    { q: 'لماذا يفحص محلل الأمن مجلد <code>/tmp</code> غالباً أثناء التحقيق؟', ok: 'لأنه مفتوح للكتابة من كل المستخدمين فيحبّه المهاجمون لإخفاء أدواتهم', no: ['لأنه محمي بالكامل ولا يصل إليه أحد', 'لأنه يحتوي سجلات النظام فقط', 'لأنه المجلد الوحيد القابل للتنفيذ'], why: '/tmp مفتوح للكتابة من كل المستخدمين عادة، ولهذا يستخدمه المهاجمون أحياناً لإخفاء أدوات أو ملفات مؤقتة.' },
+    { q: 'وجدت ملفاً تنفيذياً مجهول المصدر بصلاحية x في النظام. ما التصرف الآمن؟', ok: 'أقرأه بـ cat دون تشغيله، ثم أوثّقه وأبلغ المسؤول', no: ['أشغّله فوراً لأرى ماذا يفعل', 'أتجاهله لأنه غالباً غير مهم', 'أحذفه مباشرة دون توثيق'], why: 'تشغيل ملف مجهول قد ينفّذ كوداً ضاراً فوراً، والحذف يضيّع الدليل، فالقراءة والتوثيق والإبلاغ هي الخطوات الصحيحة.' },
+    { q: 'ما الفرق الجوهري بين الأمرين <code>cp</code> و<code>mv</code>؟', ok: 'cp ينسخ ويُبقي الملف الأصلي، بينما mv ينقل الملف فيختفي من مكانه الأول', no: ['لا فرق؛ الأمران متطابقان تماماً', 'cp يحذف الملف الأصلي بعد النسخ', 'mv يعمل فقط مع المجلدات لا الملفات'], why: 'cp نسخ حقيقي يترك الأصل كما هو، أما mv فينقل الملف (أو يعيد تسميته) ويزيله من موضعه القديم.' }
+  ],
+  audit: ['نفّذت ls و cd و pwd و cat في الطرفية التدريبية', 'عثرت على العلم المخفي باستخدام ls -a', 'استخدمت grep لتصفية سجل الدخول', 'استخدمت الأنبوب | مع wc -l', 'كشفت عنوان IP المهاجم من السجل', 'نظّمت ملفات بـ mkdir وcp وmv ورتّبت بياناتٍ بـ sort وuniq'],
+  recap: ['الطرفية أسرع وأدق من الواجهة الرسومية في الأمن', 'ls -a و cat و grep و find أدواتك الأربع الأولى للتحقيق', 'cp تنسخ وتُبقي الأصل، mv تنقل وتزيل الأصل، rm تحذف نهائياً', 'اقرأ الملف المجهول ولا تشغّله، ثم وثّق وأبلغ'],
+  homework: 'افتح طرفية المختبر ٣ من جديد ونفّذ تسلسلاً كاملاً بنفسك: أنشئ مجلداً، انسخ ملفاً إليه، رتّب بياناته، واحذف نسخة لم تعد تحتاجها. دوّن كل أمر استخدمته في ملف ملاحظات.',
+  resources: [{ t: 'Ubuntu — تعلّم الطرفية', u: 'https://ubuntu.com/tutorials/command-line-for-beginners' }, { t: 'picoCTF — General Skills', u: 'https://picoctf.org/' }, { t: 'Kali Linux — التوثيق الرسمي', u: 'https://www.kali.org/docs/' }],
+  next: 'في الوحدة القادمة: كلمات المرور والمصادقة — ستكسر Hash ضعيفاً داخل المختبر وتبني دفاعك.'
+});
+
+</script>
+<script>
+/* TweetKod engine — يبني الشرائح ويربط المكوّنات ويدير الثيم والتنقل */
+(function(){
+  'use strict';
+  const M = window.TK_MODULE, TK = window.TK;
+  const $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const esc = TK.esc;
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem('tk:' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v){ try { localStorage.setItem('tk:' + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  const LV = M.level === 1 ? 'المستوى الأول' : 'المستوى الثاني';
+  const KEY = M.id + ':';
+  const safe = (fn, name) => { try { fn(); } catch (e) { console.error('TK component failed:', name, e); } };
+
+  /* ---------- الثيم والخط ---------- */
+  const root = document.documentElement;
+  function setTheme(t){ root.setAttribute('data-theme', t); store.set('theme', t); const b = $('#tkTheme'); if (b) b.textContent = t === 'dark' ? '☀️' : '🌙'; }
+  let th = store.get('theme', null);
+  if (!th) th = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  let fs = store.get('fs', 1);
+  function setFs(v){ fs = Math.max(.85, Math.min(1.4, v)); root.style.setProperty('--fs', fs); store.set('fs', fs); }
+  setFs(fs);
+
+  /* ---------- بناء الشرائح ---------- */
+  const labs = TK.reg.filter(r => r.k === 'lab').length + TK.reg.filter(r => r.k === 'shell').length;
+  const chs = TK.reg.filter(r => r.k === 'challenge').length;
+  const anims = TK.reg.filter(r => ['steps', 'terminal', 'scan', 'transform', 'compare', 'cards', 'scenario', 'classify'].includes(r.k)).length;
+  const S = [];
+  S.push('<div class="in"><div class="center"><div class="big-emoji">' + (M.emoji || '🛡️') + '</div><div class="kicker">TweetKod · ' + LV + ' — الوحدة ' + M.num + '</div>' +
+    '<h1 class="tk-h1">' + M.title + '<span class="en">' + (M.en || '') + '</span></h1><p class="lead">' + (M.lead || '') + '</p><div class="mt">' +
+    '<span class="tag">⏱️ 90 دقيقة</span><span class="tag">🧪 ' + labs + ' مختبرات عملية</span><span class="tag">🏁 ' + chs + ' تحديات</span><span class="tag">🎬 ' + anims + ' تفاعلات</span>' +
+    (M.tags || []).map(t => '<span class="tag">' + t + '</span>').join('') + '</div></div></div>');
+  S.push(TK.s('خطة الجلسة', 'Session roadmap', '<div class="card"><ul class="agenda">' + (M.agenda || []).map(a => '<li><span>' + a.t + '</span><span class="t">' + a.time + '</span></li>').join('') + '</ul></div>' +
+    '<div class="flag">⚖️ <b>تذكير الأخلاقيات:</b> كل تطبيق عملي يتم داخل مختبر معزول أو منصة تدريب قانونية. لا تفحص أو تختبر أي نظام لا تملكه أو لا تملك إذناً كتابياً به.</div>'));
+  (M.slides || []).forEach(h => S.push(h));
+  S.push(TK.s('🎯 اختبار الوحدة (تدريبي)', M.quiz.length + ' أسئلة · أجوبة فورية مع تفسير', '<p class="lead">للمراجعة فقط — الاختبار الرسمي على منصة مودل. ترتيب الخيارات يتغيّر في كل محاولة.</p><div class="card" id="tkQuiz"></div>'));
+  S.push(TK.s('🏆 مشروع الوحدة: أشّر ما أنجزته فعلياً', 'Hands-on checklist', '<div class="card" id="tkAudit"></div><p id="tkAuditScore" class="tc" style="font-size:1.2rem;font-weight:900"></p>'));
+  S.push(TK.s('📌 الملخص والمراجع', 'Recap & resources', '<div class="grid g2"><div class="card"><b style="color:var(--blue)">تذكّر دائماً</b><ul class="clean">' + (M.recap || []).map(i => '<li>' + i + '</li>').join('') + '</ul></div>' +
+    '<div class="card"><b style="color:var(--yellow)">📝 الواجب</b><p class="sm muted">' + (M.homework || '') + '</p></div></div><div class="card"><b style="color:var(--blue)">📚 كل الروابط</b>' +
+    (M.resources || []).map(r => '<a class="reslink" href="' + r.u + '" target="_blank" rel="noopener">🔗 ' + r.t + '</a>').join('') + '</div>'));
+  S.push('<div class="in"><div class="center"><div class="big-emoji">🏁</div><h1 class="tk-h1">أحسنتم! أنجزتم الوحدة ' + M.num + '</h1><p class="lead">' + (M.next || '') + '</p><span class="tag mt">فريق تويتكود التعليمية 💙</span></div></div>');
+
+  const stage = $('#stage');
+  S.forEach(h => { const d = document.createElement('section'); d.className = 'slide'; d.innerHTML = h.indexOf('class="in"') === 0 || h.indexOf('<div class="in">') === 0 ? h : '<div class="in">' + h + '</div>'; stage.appendChild(d); });
+  const els = $$('.slide');
+  const titles = els.map((e, i) => { const h = $('h2.tk-h2,h1.tk-h1', e); if (!h) return 'شريحة ' + (i + 1); const c = h.cloneNode(true); const en = $('.en', c); if (en) en.remove(); return c.textContent.trim(); });
+
+  /* ---------- التنقل ---------- */
+  let cur = 0;
+  function render(){
+    els.forEach((e, i) => e.classList.toggle('on', i === cur));
+    $('#tkCount').textContent = (cur + 1) + ' / ' + els.length;
+    $('#tkBar').style.width = ((cur + 1) / els.length * 100) + '%';
+    $('#tkPrev').disabled = cur === 0; $('#tkNext').disabled = cur === els.length - 1;
+    els[cur].scrollTop = 0;
+    if (history.replaceState) history.replaceState(null, '', '#' + (cur + 1));
+    $$('.tk-drawer .it').forEach((b, i) => b.classList.toggle('cur', i === cur));
+  }
+  function go(d){ cur = Math.max(0, Math.min(els.length - 1, cur + d)); render(); }
+  function jump(i){ cur = i; render(); }
+  $('#tkPrev').onclick = () => go(-1); $('#tkNext').onclick = () => go(1);
+  document.addEventListener('keydown', e => {
+    if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    if (e.key === 'ArrowLeft' || e.key === 'PageDown') go(1);
+    if (e.key === 'ArrowRight' || e.key === 'PageUp') go(-1);
+    if (e.key === 'Home') jump(0); if (e.key === 'End') jump(els.length - 1);
+  });
+  let tx = null; stage.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 70 && !/INPUT|TEXTAREA/.test((e.target || {}).tagName || '')) go(dx < 0 ? 1 : -1); }, { passive: true });
+
+  /* ---------- الرأس: ثيم/خط/فهرس/طباعة ---------- */
+  $('#tkTheme').onclick = () => setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  $('#tkFm').onclick = () => setFs(fs - .08); $('#tkFp').onclick = () => setFs(fs + .08);
+  window.addEventListener('beforeprint', () => setTheme('light'));
+  const dr = $('#tkDrawer');
+  dr.querySelector('.pn').innerHTML = '<b>📑 فهرس الشرائح</b>' + titles.map((t, i) => '<button class="it"><span class="n">' + (i + 1) + '</span><span>' + esc(t) + '</span></button>').join('');
+  $$('.it', dr).forEach((b, i) => b.onclick = () => { jump(i); dr.classList.remove('open'); });
+  $('#tkMenu').onclick = () => dr.classList.add('open'); dr.querySelector('.bk').onclick = () => dr.classList.remove('open');
+  setTheme(th);
+
+  /* ---------- مؤقّت الاستراحة ---------- */
+  (function(){
+    let t = null, s = 600; const d = $('[data-tk-timer]'); if (!d) return;
+    const paint = () => { d.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+    $('[data-tk-timer-start]').onclick = () => { if (t) return; t = setInterval(() => { s--; if (s <= 0) { clearInterval(t); t = null; d.textContent = 'انتهت الاستراحة ⏰'; } else paint(); }, 1000); };
+    $('[data-tk-timer-reset]').onclick = () => { clearInterval(t); t = null; s = 600; paint(); };
+  })();
+
+  /* ---------- ربط المكوّنات ---------- */
+  const W = {};
+  W.steps = c => { const el = document.getElementById(c.id), st = $('.stage', el), mv = $('.mover', el), cap = $('.cap', el), dots = $('.dots', el); let i = 0;
+    const pos = { a: '22%', mid: '50%', b: '78%' };
+    function paint(){ const s = c.steps[i]; mv.textContent = s.icon || ''; mv.style.opacity = s.icon ? 1 : 0; mv.style.insetInlineStart = pos[s.at] || (typeof s.at === 'number' ? s.at + '%' : '50%');
+      cap.textContent = s.cap; st.classList.remove('ok', 'bad'); if (s.flash) st.classList.add(s.flash);
+      $$('.actor em', el).forEach((e, k) => { e.textContent = (k === 0 ? s.ba : s.bb) || ''; });
+      dots.innerHTML = c.steps.map((_, k) => '<i class="' + (k <= i ? 'on' : '') + '"></i>').join(''); }
+    el.addEventListener('click', e => { const a = e.target.getAttribute && e.target.getAttribute('data-a'); if (!a) return; if (a === 'next') i = Math.min(c.steps.length - 1, i + 1); if (a === 'prev') i = Math.max(0, i - 1); if (a === 'reset') i = 0; paint(); });
+    paint(); };
+  W.cards = c => { const el = document.getElementById(c.id); const cs = $$('.tk-card', el); cs.forEach(x => x.onclick = () => { const was = x.classList.contains('open'); cs.forEach(y => y.classList.remove('open')); if (!was) x.classList.add('open'); }); };
+  W.compare = c => { const el = document.getElementById(c.id), bs = $$('.seg button', el), ps = $$('.pane', el);
+    bs.forEach((b, i) => b.onclick = () => { bs.forEach((x, k) => { x.classList.toggle('blue', k === i); x.classList.toggle('ghost', k !== i); }); ps.forEach((p, k) => p.classList.toggle('on', k === i)); }); };
+  W.terminal = c => { const el = document.getElementById(c.id), pre = $('pre', el); const btn = document.querySelector('[data-tk-run="' + c.id + '"]'); let run = 0;
+    btn.onclick = () => { const my = ++run; pre.innerHTML = ''; let k = 0; (function next(){ if (my !== run || k >= c.lines.length) return; const l = c.lines[k++]; const sp = document.createElement('span'); sp.className = l[0]; sp.textContent = l[1] + '\n'; pre.appendChild(sp); pre.scrollTop = pre.scrollHeight; setTimeout(next, l[2] || c.ms); })(); }; };
+  W.scan = c => { const el = document.getElementById(c.id), cells = $$('.c', el), sum = $('.sum', el); let run = 0;
+    function reset(){ run++; cells.forEach(x => x.className = 'c'); sum.textContent = ''; }
+    el.addEventListener('click', e => { const a = e.target.getAttribute && e.target.getAttribute('data-a'); if (a === 'reset') reset(); if (a === 'go') { reset(); const my = run; let k = 0, cnt = {};
+      (function nx(){ if (my !== run) return; if (k > 0) { const p = cells[k - 1], s = c.cells[k - 1].s; p.className = 'c ' + s; cnt[s] = (cnt[s] || 0) + 1; }
+        if (k >= cells.length) { sum.textContent = Object.keys(cnt).map(s => (c.labels[s] || s) + ': ' + cnt[s]).join(' · '); return; }
+        cells[k].className = 'c scan'; k++; setTimeout(nx, c.ms); })(); } }); };
+  W.transform = c => { const el = document.getElementById(c.id), inp = $('input', el), out = $('.out', el), gear = $('.gear', el), after = $('.after', el);
+    el.addEventListener('click', e => { if (e.target.getAttribute('data-a') !== 'go') return; const v = inp ? inp.value : ''; out.textContent = '…'; gear.classList.add('spinning');
+      setTimeout(() => { gear.classList.remove('spinning'); out.textContent = c.fn === 'sha256' ? TK.sha256(v) : (c.output || '—'); out.classList.add('pop'); setTimeout(() => out.classList.remove('pop'), 500); if (c.after) after.textContent = c.after; }, 1000); }); };
+  W.lab = c => { const el = document.getElementById(c.id), st = $$('.stp', el), pm = $('.pm i', el); const k = KEY + c.id; let done = store.get(k, []);
+    const paint = () => { st.forEach((s, i) => s.classList.toggle('done', done.indexOf(i) > -1)); pm.style.width = (done.length / c.n * 100) + '%'; };
+    st.forEach((s, i) => s.onclick = () => { const p = done.indexOf(i); if (p > -1) done.splice(p, 1); else done.push(i); store.set(k, done); paint(); }); paint(); };
+  W.challenge = c => { const el = document.getElementById(c.id), inp = $('input', el), res = $('.res', el); const k = KEY + c.id; const norm = s => String(s).trim().toLowerCase().replace(/\s+/g, ' ');
+    const solved = () => { el.classList.add('solved'); res.innerHTML = '<span style="color:var(--ok)">✅ إجابة صحيحة! +' + c.pts + ' نقطة</span>' + (c.explain ? '<div class="sm muted" style="font-weight:600">' + c.explain + '</div>' : ''); };
+    if (store.get(k, false)) solved();
+    el.addEventListener('click', e => { const a = e.target.getAttribute && e.target.getAttribute('data-a'); if (a === 'hint') { const h = $('.hint', el); h.style.display = h.style.display === 'none' ? 'block' : 'none'; }
+      if (a === 'chk') { const v = norm(inp.value); const ok = c.re ? new RegExp(c.re, 'i').test(inp.value.trim()) : c.answer.some(x => norm(x) === v); if (ok) { store.set(k, true); solved(); updScore(); } else { res.innerHTML = '<span style="color:var(--bad)">❌ ليست صحيحة بعد — راجع الخطوات وجرّب مرة أخرى.</span>'; } } });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') $('[data-a=chk]', el).click(); }); };
+  W.scenario = c => { const el = document.getElementById(c.id), h = $('.sh', el), o = $('.so', el), f = $('.sf', el); let i = 0, score = 0;
+    function paint(){ if (i >= c.steps.length) { o.innerHTML = ''; h.innerHTML = '<div class="big" style="font-weight:900;font-size:1.4rem;text-align:center">النتيجة: ' + score + ' / ' + c.steps.length + '</div>'; f.innerHTML = '<div class="tc mt"><button class="btn blue s" data-a="re">↺ أعد المحاولة</button></div>'; return; }
+      const s = c.steps[i]; h.innerHTML = '<span class="tag">الموقف ' + (i + 1) + ' من ' + c.steps.length + '</span><p style="font-weight:800">' + s.s + '</p>'; f.innerHTML = '';
+      o.innerHTML = s.o.map((x, j) => '<button class="opt" dir="auto" data-j="' + j + '">' + x.t + '</button>').join(''); }
+    el.addEventListener('click', e => { const b = e.target.closest ? e.target.closest('[data-j]') : null; if (e.target.getAttribute && e.target.getAttribute('data-a') === 're') { i = 0; score = 0; paint(); return; }
+      if (!b || b.classList.contains('ok') || b.classList.contains('no') || f.getAttribute('data-l')) return; const s = c.steps[i], x = s.o[+b.getAttribute('data-j')]; b.classList.add(x.ok ? 'ok' : 'no'); if (x.ok) score++;
+      f.setAttribute('data-l', 1); f.innerHTML = '<div class="' + (x.ok ? 'tip' : 'warn') + '">' + (x.ok ? '✅ ' : '❌ ') + x.fb + '</div><div class="tc"><button class="btn blue s" data-a="nx">' + (i === c.steps.length - 1 ? 'عرض النتيجة' : 'الموقف التالي ▶') + '</button></div>'; });
+    el.addEventListener('click', e => { if (e.target.getAttribute && e.target.getAttribute('data-a') === 'nx') { f.removeAttribute('data-l'); i++; paint(); } });
+    paint(); };
+  W.classify = c => { const el = document.getElementById(c.id), its = $('.its', el), bks = $('.bks', el), fb = $('.fb', el); let sel = null, ok = 0, tot = c.items.length;
+    its.innerHTML = c.items.map((x, i) => '<button class="it" dir="auto" data-i="' + i + '">' + x.t + '</button>').join('');
+    bks.innerHTML = c.buckets.map((b, i) => '<div class="bk" data-b="' + i + '"><b>' + (b.e || '') + ' ' + b.t + '</b><div class="got"></div></div>').join('');
+    el.addEventListener('click', e => { const it = e.target.closest('.it'), bk = e.target.closest('.bk');
+      if (it && !it.classList.contains('done')) { $$('.it', el).forEach(x => x.classList.remove('sel')); it.classList.add('sel'); sel = +it.getAttribute('data-i'); fb.textContent = ''; return; }
+      if (bk && sel !== null) { const b = +bk.getAttribute('data-b'), item = c.items[sel], btn = $$('.it', el)[sel];
+        if (item.b === b) { btn.classList.add('done'); btn.classList.remove('sel'); $('.got', bk).innerHTML += '✔ ' + item.t + '<br>'; ok++; sel = null; fb.innerHTML = '<span style="color:var(--ok)">✅ صحيح!' + (item.why ? ' ' + item.why : '') + '</span>'; if (ok === tot) fb.innerHTML = '<span style="color:var(--ok)">🎉 صنّفت كل العناصر بنجاح!</span>'; }
+        else fb.innerHTML = '<span style="color:var(--bad)">❌ ليس هنا — فكّر مرة أخرى.' + (item.hint ? ' 💡 ' + item.hint : '') + '</span>'; } }); };
+
+  /* تحقّق سريع صح/خطأ بعد كل موضوع — تنشيط فوري، لا يُحتسب في الاختبار النهائي */
+  W.check = c => { const el = document.getElementById(c.id), fb = $('.fb', el); let picked = false;
+    el.addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b || picked) return; picked = true;
+      const v = b.getAttribute('data-v') === '1';
+      $$('[data-v]', el).forEach(x => { if ((x.getAttribute('data-v') === '1') === c.t) x.classList.add('correct'); });
+      if (v === c.t) { fb.innerHTML = '<div class="tip">✅ صحيح! ' + (c.why || '') + '</div>'; }
+      else { b.classList.add('wrong'); fb.innerHTML = '<div class="warn">❌ ' + (c.t ? 'العبارة صحيحة فعلياً.' : 'العبارة خاطئة فعلياً.') + ' ' + (c.why || '') + '</div>'; } }); };
+
+  /* طرفية Linux تفاعلية */
+  W.shell = c => {
+    const el = document.getElementById(c.id), out = $('.out', el), inp = $('input', el), pr = $('.pr', el), tasks = $$('.tk-tasks .t', el);
+    const norm = p => { const parts = []; p.split('/').forEach(s => { if (!s || s === '.') return; if (s === '..') parts.pop(); else parts.push(s); }); return '/' + parts.join('/'); };
+    const mk = (o) => (typeof o === 'string') ? { t: 'f', d: o, p: '-rw-r--r--' } : Array.isArray(o) ? { t: 'f', d: o[0], p: o[1] || '-rw-r--r--' } : { t: 'd', c: Object.keys(o).reduce((a, k) => { a[k] = mk(o[k]); return a; }, {}) };
+    const fsr = mk(c.fs); let cwd = c.cwd; const home = c.cwd;
+    const find = p => { let n = fsr; for (const s of p.split('/').filter(Boolean)) { if (!n || n.t !== 'd' || !n.c[s]) return null; n = n.c[s]; } return n; };
+    const abs = p => p.charAt(0) === '/' ? norm(p) : (p === '~' ? home : norm(cwd + '/' + p));
+    const tok = l => (l.match(/"[^"]*"|'[^']*'|\S+/g) || []).map(x => x.replace(/^["']|["']$/g, ''));
+    const hist = []; let hi = 0; const done = tasks.map(() => false);
+    const print = (t, cls) => { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = t; out.appendChild(s); out.scrollTop = out.scrollHeight; };
+    const prompt = () => { pr.textContent = c.user + '@' + c.host + ':' + (cwd === home ? '~' : cwd) + '$'; };
+    const dirList = (d, all) => Object.keys(d.c).filter(k => all || k[0] !== '.').sort();
+    function runCmd(a, stdin){ // يعيد نصاً
+      const cmd = a[0], args = a.slice(1), flags = args.filter(x => x[0] === '-'), rest = args.filter(x => x[0] !== '-'); const has = f => flags.some(x => x.indexOf(f) > -1);
+      switch (cmd) {
+        case 'pwd': return cwd;
+        case 'whoami': return c.user;
+        case 'id': return 'uid=1000(' + c.user + ') gid=1000(' + c.user + ') groups=1000(' + c.user + ')';
+        case 'hostname': return c.host;
+        case 'echo': return args.join(' ');
+        case 'clear': out.textContent = ''; return null;
+        case 'help': return 'الأوامر المتاحة: ls cd pwd cat head tail grep find wc echo mkdir touch rm cp mv chmod whoami id clear\nالمسارات: ~ هو مجلدك، .. المجلد الأعلى. جرّب الأنبوب: cat file | grep كلمة';
+        case 'ls': { const n = find(abs(rest[0] || '.')); if (!n) return 'ls: cannot access \'' + (rest[0] || '') + '\': No such file or directory'; if (n.t === 'f') return rest[0];
+          const names = dirList(n, has('a')); if (has('l')) return names.map(k => { const x = n.c[k]; return (x.t === 'd' ? 'drwxr-xr-x' : x.p) + ' 1 ' + c.user + ' ' + c.user + ' ' + String(x.t === 'd' ? 4096 : x.d.length).padStart(5) + ' ' + k + (x.t === 'd' ? '/' : ''); }).join('\n');
+          return names.map(k => k + (n.c[k].t === 'd' ? '/' : '')).join('  '); }
+        case 'cd': { const p = rest[0] ? abs(rest[0]) : home; const n = find(p); if (!n) return 'bash: cd: ' + rest[0] + ': No such file or directory'; if (n.t !== 'd') return 'bash: cd: ' + rest[0] + ': Not a directory'; cwd = p; prompt(); return null; }
+        case 'cat': { if (!rest.length && stdin != null) return stdin; return rest.map(r => { const n = find(abs(r)); return !n ? 'cat: ' + r + ': No such file or directory' : n.t === 'd' ? 'cat: ' + r + ': Is a directory' : n.d; }).join('\n'); }
+        case 'head': case 'tail': { let nn = 10; const ix = args.indexOf('-n'); if (ix > -1) nn = +args[ix + 1] || 10; const file = rest.filter(x => x !== String(nn))[0]; let txt = stdin; if (file) { const n = find(abs(file)); if (!n || n.t !== 'f') return cmd + ': cannot open \'' + file + '\''; txt = n.d; } const ls = String(txt || '').split('\n'); return (cmd === 'head' ? ls.slice(0, nn) : ls.slice(-nn)).join('\n'); }
+        case 'wc': { let txt = stdin; if (rest[0]) { const n = find(abs(rest[0])); if (!n || n.t !== 'f') return 'wc: ' + rest[0] + ': No such file'; txt = n.d; } txt = String(txt || ''); const l = txt.split('\n').length, w = txt.split(/\s+/).filter(Boolean).length; return has('l') ? String(l) : has('w') ? String(w) : l + ' ' + w + ' ' + txt.length; }
+        case 'sort': return String(stdin || '').split('\n').sort().join('\n');
+        case 'uniq': return String(stdin || '').split('\n').filter((x, i, ar) => i === 0 || x !== ar[i - 1]).join('\n');
+        case 'grep': { if (!rest.length) return 'usage: grep [-irn] pattern [file]'; const pat = rest[0], ic = has('i'), rr = has('r') || has('R'); const re = new RegExp(pat.replace(/[.*+?^${}()|[\]\\]/g, m => m), ic ? 'i' : '');
+          let re2; try { re2 = new RegExp(pat, ic ? 'i' : ''); } catch (e) { re2 = re; } const res = [];
+          const scan = (txt, label) => String(txt).split('\n').forEach((ln, i) => { if (re2.test(ln)) res.push((label ? label + ':' : '') + (has('n') ? (i + 1) + ':' : '') + ln); });
+          const walk = (n, p) => { if (n.t === 'f') scan(n.d, p); else Object.keys(n.c).sort().forEach(k => walk(n.c[k], p + (p === '/' ? '' : '/') + k)); };
+          if (rest.length < 2) { if (stdin == null) return 'grep: missing file'; scan(stdin, ''); } else rest.slice(1).forEach(r => { const n = find(abs(r)); if (!n) { res.push('grep: ' + r + ': No such file or directory'); return; } if (n.t === 'd') { if (rr) walk(n, abs(r)); else res.push('grep: ' + r + ': Is a directory'); } else scan(n.d, rest.length > 2 ? r : ''); });
+          return res.join('\n'); }
+        case 'find': { const start = abs(rest[0] && rest[0][0] !== '-' ? rest[0] : '.'); const ni = args.indexOf('-name'); const pat = ni > -1 ? args[ni + 1] : null; const n = find(start); if (!n) return 'find: \'' + rest[0] + '\': No such file or directory';
+          const re = pat ? new RegExp('^' + pat.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$') : null; const res = [];
+          const walk = (nd, p) => { if (!re || re.test(p.split('/').pop())) res.push(p); if (nd.t === 'd') Object.keys(nd.c).sort().forEach(k => walk(nd.c[k], p + (p === '/' ? '' : '/') + k)); }; walk(n, start); return res.join('\n'); }
+        case 'mkdir': { rest.forEach(r => { const p = abs(r), par = find(norm(p + '/..')); if (par && par.t === 'd') par.c[p.split('/').pop()] = { t: 'd', c: {} }; }); return null; }
+        case 'touch': { rest.forEach(r => { const p = abs(r), par = find(norm(p + '/..')); const nm = p.split('/').pop(); if (par && par.t === 'd' && !par.c[nm]) par.c[nm] = { t: 'f', d: '', p: '-rw-r--r--' }; }); return null; }
+        case 'rm': { rest.forEach(r => { const p = abs(r), par = find(norm(p + '/..')); const nm = p.split('/').pop(); if (par && par.c && par.c[nm]) delete par.c[nm]; }); return null; }
+        case 'cp': case 'mv': { const s = find(abs(rest[0])); if (!s) return cmd + ': cannot stat \'' + rest[0] + '\''; const p = abs(rest[1]), par = find(norm(p + '/..')); par.c[p.split('/').pop()] = JSON.parse(JSON.stringify(s)); if (cmd === 'mv') { const sp = abs(rest[0]); delete find(norm(sp + '/..')).c[sp.split('/').pop()]; } return null; }
+        case 'chmod': { const n = find(abs(rest[1] || '')); if (!n) return 'chmod: cannot access \'' + (rest[1] || '') + '\''; if (n.t === 'f') { const m = rest[0]; if (m === '+x') n.p = '-rwxr-xr-x'; else if (m === '-x') n.p = '-rw-r--r--'; else if (/^[0-7]{3}$/.test(m)) { const f = d => (d & 4 ? 'r' : '-') + (d & 2 ? 'w' : '-') + (d & 1 ? 'x' : '-'); n.p = '-' + m.split('').map(d => f(+d)).join(''); } } return null; }
+        default: return 'bash: ' + cmd + ': command not found';
+      }
+    }
+    function exec(line){
+      const raw = line.trim(); if (!raw) return;
+      for (const cm of c.cmds) { if (new RegExp(cm.re, 'i').test(raw)) { print(cm.out + '\n', cm.cls || ''); return; } }
+      const stages = []; let cur2 = []; tok(raw).forEach(t => { if (t === '|') { stages.push(cur2); cur2 = []; } else cur2.push(t); }); stages.push(cur2);
+      let redir = null; const last = stages[stages.length - 1]; const ri = last.findIndex(t => t === '>' || t === '>>'); if (ri > -1) { redir = { f: last[ri + 1], app: last[ri] === '>>' }; stages[stages.length - 1] = last.slice(0, ri); }
+      let data = null; for (let i = 0; i < stages.length; i++) { if (!stages[i].length) continue; data = runCmd(stages[i], data); if (data === null && i < stages.length - 1) data = ''; }
+      if (redir && redir.f) { const p = abs(redir.f), par = find(norm(p + '/..')), nm = p.split('/').pop(); if (par && par.t === 'd') { const old = par.c[nm]; par.c[nm] = { t: 'f', d: (redir.app && old ? old.d + '\n' : '') + (data || ''), p: '-rw-r--r--' }; } data = null; }
+      if (data !== null && data !== undefined) print(data + '\n');
+    }
+    function check(line){ tasks.forEach((t, i) => { if (!done[i] && new RegExp(c.tasks[i].re, 'i').test(line.trim())) { done[i] = true; t.classList.add('done'); } }); }
+    prompt(); print(c.motd + '\n', 'dim');
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { const l = inp.value; print(pr.textContent + ' ', 'hl'); print(l + '\n', 'cmd'); hist.push(l); hi = hist.length; inp.value = ''; safe(() => { exec(l); check(l); }, 'shell'); prompt(); }
+      else if (e.key === 'ArrowUp') { if (hi > 0) inp.value = hist[--hi]; e.preventDefault(); } else if (e.key === 'ArrowDown') { inp.value = hi < hist.length - 1 ? hist[++hi] : ''; if (hi >= hist.length - 1) hi = hist.length; e.preventDefault(); } });
+    el.querySelector('.tk-shell').addEventListener('click', () => inp.focus());
+  };
+
+  /* أدوات حيّة */
+  W.live = c => { const el = document.getElementById(c.id), inp = $('input', el);
+    if (c.name === 'hash') { const o = $('.out', el); const f = () => { o.textContent = TK.sha256(inp.value); }; inp.oninput = f; f(); }
+    if (c.name === 'entropy') { const m = $('.meter i', el), r = $('.res', el), tg = $$('.tag', el);
+      const common = ['password', '123456', '12345678', 'qwerty', 'admin', 'letmein', 'iloveyou', 'welcome', 'abc123', 'password1', '111111', 'football', 'tweetkod'];
+      const f = () => { const p = inp.value; let pool = 0; if (/[a-z]/.test(p)) pool += 26; if (/[A-Z]/.test(p)) pool += 26; if (/[0-9]/.test(p)) pool += 10; if (/[^a-zA-Z0-9]/.test(p)) pool += 33; const L = p.length; let H = L && pool ? L * Math.log2(pool) : 0;
+        const isCommon = common.some(w => p.toLowerCase().indexOf(w) > -1); if (isCommon) H = Math.min(H, 20);
+        const secs = Math.pow(2, H) / 1e10, hum = s => s < 1 ? 'أقل من ثانية' : s < 60 ? Math.round(s) + ' ثانية' : s < 3600 ? Math.round(s / 60) + ' دقيقة' : s < 86400 ? Math.round(s / 3600) + ' ساعة' : s < 31536000 ? Math.round(s / 86400) + ' يوم' : s < 3.15e9 ? Math.round(s / 31536000) + ' سنة' : 'أكثر من 100 سنة';
+        m.style.width = Math.min(100, H / 80 * 100) + '%'; m.style.background = H < 40 ? 'var(--bad)' : H < 60 ? 'var(--warn)' : 'var(--ok)';
+        r.textContent = !L ? '—' : (H < 40 ? '🔴 ضعيفة' : H < 60 ? '🟡 متوسطة' : '🟢 قوية') + (isCommon ? ' — تحتوي كلمة شائعة معروفة في قوائم الكسر!' : '');
+        tg[0].textContent = 'الطول: ' + L; tg[1].textContent = 'الإنتروبيا: ' + Math.round(H) + ' بت'; tg[2].textContent = 'زمن الكسر التقريبي: ' + hum(secs); };
+      inp.oninput = f; f(); }
+    if (c.name === 'caesar') { const wo = $('.ring.o', el), wi = $('.ring.i', el), lbl = $('.lbl', el), o = $('.out', el); let k = 3; const AL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let ho = '', hi2 = ''; for (let i = 0; i < 26; i++) { const a = (i * 360 / 26 - 90) * Math.PI / 180; const xo = 130 + 112 * Math.cos(a) - 11, yo = 130 + 112 * Math.sin(a) - 11, xi = 130 + 76 * Math.cos(a) - 11, yi = 130 + 76 * Math.sin(a) - 11;
+        ho += '<div class="l" style="left:' + xo + 'px;top:' + yo + 'px;color:#7ee787">' + AL[i] + '</div>'; hi2 += '<div class="l" style="left:' + xi + 'px;top:' + yi + 'px;background:#F7B228;color:#0c1f28;border-radius:50%">' + AL[i] + '</div>'; }
+      wo.innerHTML = ho; wi.innerHTML = hi2; const f = () => { wi.style.transform = 'rotate(' + (k * 360 / 26) + 'deg)'; lbl.textContent = 'الإزاحة: ' + k; o.textContent = TK.caesar(inp.value, k); };
+      $$('[data-d]', el).forEach(b => b.onclick = () => { k = (k + (+b.getAttribute('data-d')) + 26) % 26; f(); }); inp.oninput = f; f(); }
+    if (c.name === 'convert') { const o = [1, 2, 3, 4].map(i => $('.o' + i, el)); const f = () => { const v = inp.value; let b64 = ''; try { b64 = btoa(unescape(encodeURIComponent(v))); } catch (e) { b64 = '—'; }
+      o[0].textContent = b64; o[1].textContent = Array.from(unescape(encodeURIComponent(v))).map(ch => ch.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+      o[2].textContent = Array.from(unescape(encodeURIComponent(v))).map(ch => ch.charCodeAt(0).toString(2).padStart(8, '0')).join(' '); o[3].textContent = TK.caesar(v, 13); }; inp.oninput = f; f(); } };
+
+  TK.reg.forEach(c => safe(() => W[c.k] && W[c.k](c), c.k));
+
+  /* ---------- الاختبار ---------- */
+  (function(){
+    const box = $('#tkQuiz'); let qi = 0, sc = 0, picked = false;
+    const shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    function paint(){
+      if (qi >= M.quiz.length) { const p = Math.round(sc / M.quiz.length * 100), g = p >= 80 ? ['🏆', 'ممتاز!', 'var(--ok)'] : p >= 60 ? ['👍', 'جيد', 'var(--yellow)'] : ['📖', 'يحتاج مراجعة', 'var(--bad)'];
+        box.innerHTML = '<div class="tc"><div class="big-emoji">' + g[0] + '</div><div style="font-size:2rem;font-weight:900;color:' + g[2] + '">' + sc + ' / ' + M.quiz.length + '</div><p class="lead" style="margin:auto;color:' + g[2] + ';font-weight:900">' + g[1] + ' — ' + p + '%</p><button class="btn blue mt" id="tkQRe">↺ أعد المحاولة</button></div>'; $('#tkQRe').onclick = () => { qi = 0; sc = 0; paint(); }; return; }
+      const q = M.quiz[qi], opts = shuf([{ t: q.ok, c: 1 }].concat(q.no.map(t => ({ t, c: 0 })))); picked = false;
+      box.innerHTML = '<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="tag">السؤال ' + (qi + 1) + ' من ' + M.quiz.length + '</span><div class="dots">' + M.quiz.map((_, k) => '<i class="' + (k <= qi ? 'on' : '') + '"></i>').join('') + '</div></div>' +
+        '<p style="font-weight:900;font-size:1.05rem">' + q.q + '</p>' + opts.map((o, j) => '<button class="quiz-opt" dir="auto" data-j="' + j + '">' + o.t + '</button>').join('') + '<div id="tkQF"></div><div style="text-align:end"><button class="btn ghost" id="tkQN" style="display:none">' + (qi === M.quiz.length - 1 ? 'النتيجة 🏁' : 'التالي ▶') + '</button></div>';
+      $$('.quiz-opt', box).forEach(b => b.onclick = () => { if (picked) return; picked = true; const o = opts[+b.getAttribute('data-j')]; $$('.quiz-opt', box).forEach((x, k) => { if (opts[k].c) x.classList.add('correct'); });
+        if (o.c) { sc++; $('#tkQF').innerHTML = '<div class="tip">✅ صحيح! ' + (q.why || '') + '</div>'; } else { b.classList.add('wrong'); $('#tkQF').innerHTML = '<div class="warn">❌ ليست صحيحة. ' + (q.why || '') + '</div>'; } $('#tkQN').style.display = 'inline-block'; });
+      $('#tkQN').onclick = () => { qi++; paint(); };
+    }
+    paint();
+  })();
+
+  /* ---------- قائمة الإنجاز + النقاط ---------- */
+  function updScore(){ const n = TK.reg.filter(r => r.k === 'challenge' && store.get(KEY + r.id, false)).length; const b = $('#tkPts'); if (b) b.textContent = '🏅 ' + (n * 10); }
+  (function(){
+    const box = $('#tkAudit'); const k = KEY + 'audit'; let on = store.get(k, []);
+    box.innerHTML = (M.audit || []).map((a, i) => '<div class="toggle' + (on.indexOf(i) > -1 ? ' on' : '') + '" data-i="' + i + '"><span>' + a + '</span><span class="sw"></span></div>').join('');
+    const sc = () => { const n = $$('.toggle.on', box).length, t = (M.audit || []).length; const e = $('#tkAuditScore'); e.textContent = 'أنجزت: ' + n + ' / ' + t + (n === t ? ' 🎉 أحسنت! أنهيت كل مهام الوحدة' : ''); e.style.color = n >= t * .8 ? 'var(--ok)' : n >= t * .4 ? 'var(--yellow)' : 'var(--bad)'; };
+    box.addEventListener('click', e => { const t = e.target.closest('.toggle'); if (!t) return; t.classList.toggle('on'); store.set(k, $$('.toggle', box).map((x, i) => x.classList.contains('on') ? i : -1).filter(x => x > -1)); sc(); }); sc();
+  })();
+  updScore();
+
+  const h0 = parseInt((location.hash || '').slice(1), 10); if (h0 > 0 && h0 <= els.length) cur = h0 - 1;
+  render();
+})();
+
+</script>
+</body>
+</html>

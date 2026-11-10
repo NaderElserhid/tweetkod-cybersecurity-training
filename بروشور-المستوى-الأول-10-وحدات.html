@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأمن السيبراني — المستوى الأول (10 وحدات) | TweetKod</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#157A73; --teal2:#1C9089; --orange:#F4A623; --dark:#20343A; --muted:#5C6E70; --line:#E3E6E1; --bg:#FAFAF8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#e9e9e6;font-family:'Tajawal',sans-serif;color:var(--dark);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{position:relative;width:210mm;min-height:297mm;margin:22px auto;background:var(--bg);overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+  .topbar{height:10mm;background:linear-gradient(90deg,var(--orange),#f7c15c)}
+  .content{padding:10mm 16mm 20mm}
+  .headrow{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8mm}
+  .logo{width:56px;height:56px;border-radius:14px;background:var(--orange);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;flex:none}
+  .logo b{font-size:20px;font-weight:900;line-height:1}
+  .logo span{font-size:6px;letter-spacing:1px;font-weight:700;margin-top:2px}
+  .titleblock{text-align:left}
+  .titleblock h1{font-family:'Poppins',sans-serif;font-size:28px;font-weight:800;color:var(--teal);line-height:1.15}
+  .titleblock h1 .sub{color:var(--orange)}
+  .banner{display:flex;align-items:center;gap:10px;margin:7mm 0 3mm}
+  .banner .label{background:var(--teal);color:#fff;font-weight:800;font-size:14px;border-radius:10px;padding:9px 18px;flex:1}
+  .banner .icon{width:38px;height:38px;border-radius:10px;background:#fff;border:1.5px solid var(--teal2);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+  ul.blt{list-style:none;padding:0;margin:0 0 2mm}
+  ul.blt li{position:relative;padding-right:16px;margin:3mm 0;font-size:12.5px;color:var(--dark);line-height:1.6}
+  ul.blt li::before{content:"";position:absolute;right:0;top:6px;width:6px;height:6px;background:var(--teal2)}
+  .valuebox{display:flex;align-items:center;gap:8px;margin:7mm 0 3mm}
+  .valuebox .label{background:var(--teal);color:#fff;font-weight:800;font-size:14px;border-radius:10px;padding:9px 18px}
+  .valuebox .val{font-size:13px;font-weight:800;color:var(--dark);display:flex;align-items:center;gap:5px}
+  .miniband{display:inline-block;background:#1B4F63;color:#fff;font-size:11px;font-weight:700;letter-spacing:.5px;padding:5px 12px;border-radius:6px;margin-top:8mm}
+  .cheading{color:var(--teal);font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;margin:4mm 0 1mm}
+  .item{margin:3.2mm 0}
+  .item .num{color:var(--teal);font-weight:800;font-size:13px}
+  .item .name{color:var(--teal);font-weight:800;font-size:13px}
+  .item .desc{font-size:11.5px;color:var(--muted);margin-top:1mm;direction:rtl;text-align:right;line-height:1.55}
+  .item .desc::before{content:"▪ "}
+  .footer{position:absolute;bottom:0;left:0;right:0;background:var(--teal);color:#fff;display:flex;align-items:center;gap:12px;padding:5mm 16mm;font-size:12px}
+  .pnum{width:26px;height:26px;background:#fff;color:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex:none}
+  .foottext{display:flex;flex-direction:column;gap:1px;font-weight:700;letter-spacing:.3px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14mm;margin-top:6mm}
+  .smallband{display:flex;align-items:center;gap:8px;margin:6mm 0 2mm}
+  .smallband .l{background:var(--teal);color:#fff;font-weight:800;font-size:12.5px;border-radius:8px;padding:7px 14px;flex:1}
+  .smallband .i{width:30px;height:30px;border-radius:8px;background:#fff;border:1.5px solid var(--teal2);display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+  .para{font-size:11.5px;color:var(--muted);line-height:1.75;margin-top:1mm}
+  .certbox{display:flex;align-items:center;gap:10px;margin-top:2mm}
+  .certbox .ribbon{width:44px;height:44px;flex:none}
+  @media print{ body{background:#fff} .page{margin:0;box-shadow:none;page-break-after:always} }
+  @page{ size:A4; margin:0 }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 — COVER ============ -->
+<section class="page">
+  <div class="topbar"></div>
+  <div class="content">
+    <div class="headrow">
+      <div class="logo"><b>TK</b><span>TWEETKOD</span></div>
+      <div class="titleblock">
+        <h1>الأمن السيبراني<br><span class="sub">المستوى الأول — 10 وحدات</span></h1>
+      </div>
+    </div>
+
+    <div class="valuebox">
+      <div class="label">عدد الساعات</div>
+      <div class="val">⏱️ 15 ساعة (10 وحدات × 90 دقيقة)</div>
+    </div>
+
+    <div class="banner">
+      <div class="label">الفئة المستهدفة</div>
+      <div class="icon">👥</div>
+    </div>
+    <ul class="blt">
+      <li>اليافعون من عمر 13 إلى 18 سنة المهتمون بالأمن الرقمي</li>
+      <li>لا تتطلب أي خبرة تقنية سابقة — تبدأ من الصفر</li>
+      <li>تركيز عملي كامل: كل وحدة فيها مختبرات وتحديات حقيقية</li>
+      <li>بيئة تعليمية آمنة ومعزولة عبر منصة مودل التعليمية</li>
+    </ul>
+
+    <div class="banner">
+      <div class="label">المحاور الرئيسية</div>
+      <div class="icon">🧭</div>
+    </div>
+    <ul class="blt">
+      <li>انطلاقة المدافع وبناء مختبرك الآمن المعزول</li>
+      <li>Linux من الصفر عبر تحديات Bandit الشهيرة</li>
+      <li>كلمات المرور والمصادقة الثنائية وكسر الهاشات ضعيفة التصميم</li>
+      <li>استخبارات المصادر المفتوحة (OSINT) والبصمة الرقمية</li>
+      <li>الشبكات من الداخل: حزم البيانات وWireshark</li>
+      <li>مختبر الخداع الرقمي: تشريح رسائل التصيّد عملياً</li>
+      <li>البرمجيات الخبيثة والملفات المشبوهة</li>
+      <li>أمن الويب والتصفح وكشف المواقع المزيفة</li>
+      <li>أمن الجوال والألعاب والخصوصية الرقمية</li>
+      <li>التحدي الختامي CTF ومشروع التخرّج والشهادة</li>
+    </ul>
+
+    <div class="miniband">CONTENT OF THE COURSE — LEVEL 1</div>
+    <div class="cheading">الأمن السيبراني</div>
+    <div class="item">
+      <span class="num">01.</span> <span class="name">The Defender's Start — Mindset &amp; Safe Lab</span>
+      <div class="desc">مثلث CIA ببساطة، سلسلة الهجوم السيبراني، وبناء أول مختبر معزول بـVirtualBox وKali.</div>
+    </div>
+  </div>
+  <div class="footer"><div class="pnum">1</div><div class="foottext"><span>00905518781574</span><span>WWW.TWEETKOD.COM</span></div></div>
+</section>
+
+<!-- ============ PAGE 2 — ITEMS 2-6 ============ -->
+<section class="page">
+  <div class="topbar"></div>
+  <div class="content">
+    <div class="headrow">
+      <div class="logo"><b>TK</b><span>TWEETKOD</span></div>
+      <div class="titleblock">
+        <h1>الأمن السيبراني<br><span class="sub">المستوى الأول — 10 وحدات</span></h1>
+      </div>
+    </div>
+
+    <div class="item" style="margin-top:2mm">
+      <span class="num">02.</span> <span class="name">Linux From Zero</span>
+      <div class="desc">أوامر الطرفية الأساسية، الصلاحيات، وتحديات Bandit من OverTheWire داخل مختبر تفاعلي.</div>
+    </div>
+    <div class="item">
+      <span class="num">03.</span> <span class="name">Passwords &amp; Authentication</span>
+      <div class="desc">الإنتروبيا، تخزين الهاش، كسر كلمات مرور ضعيفة بـJohn the Ripper، وإعداد مصادقة ثنائية حقيقية.</div>
+    </div>
+    <div class="item">
+      <span class="num">04.</span> <span class="name">Open-Source Intelligence (OSINT)</span>
+      <div class="desc">Google Dorking، البحث العكسي بالصور، بيانات EXIF وWHOIS، وبناء بروفايل OSINT عن نفسك فقط.</div>
+    </div>
+    <div class="item">
+      <span class="num">05.</span> <span class="name">Networks From the Inside</span>
+      <div class="desc">رحلة الحزمة عبر الشبكة، DNS، المنافذ والخدمات، ومختبر Wireshark حقيقي لتحليل حركة البيانات.</div>
+    </div>
+    <div class="item">
+      <span class="num">06.</span> <span class="name">The Digital Deception Lab</span>
+      <div class="desc">تشريح رسائل التصيّد عملياً: رؤوس البريد، SPF/DKIM/DMARC، الروابط المزيفة، وبروتوكول التحقق الشخصي.</div>
+    </div>
+  </div>
+  <div class="footer"><div class="pnum">2</div><div class="foottext"><span>00905518781574</span><span>WWW.TWEETKOD.COM</span></div></div>
+</section>
+
+<!-- ============ PAGE 3 — ITEMS 7-10 ============ -->
+<section class="page">
+  <div class="topbar"></div>
+  <div class="content">
+    <div class="headrow">
+      <div class="logo"><b>TK</b><span>TWEETKOD</span></div>
+      <div class="titleblock">
+        <h1>الأمن السيبراني<br><span class="sub">المستوى الأول — 10 وحدات</span></h1>
+      </div>
+    </div>
+
+    <div class="item" style="margin-top:2mm">
+      <span class="num">07.</span> <span class="name">Malware &amp; Suspicious Files</span>
+      <div class="desc">أنواع البرمجيات الخبيثة، فحص الهاش عبر VirusTotal، حيلة الامتداد المزدوج، وقاعدة النسخ الاحتياطي 3-2-1.</div>
+    </div>
+    <div class="item">
+      <span class="num">08.</span> <span class="name">Web Safety &amp; Spotting Fake Sites</span>
+      <div class="desc">مصافحة HTTPS، شهادات المواقع، أدوات المطوّر في المتصفح، والنطاقات المزيّفة المتشابهة بصرياً.</div>
+    </div>
+    <div class="item">
+      <span class="num">09.</span> <span class="name">Mobile, Gaming &amp; Privacy</span>
+      <div class="desc">تدقيق صلاحيات التطبيقات، التطبيقات المستنسخة، احتيال الألعاب الإلكترونية، والمصادقة الثنائية للحسابات.</div>
+    </div>
+    <div class="item">
+      <span class="num">10.</span> <span class="name">Final CTF, Capstone &amp; Certificate</span>
+      <div class="desc">ساحة تحدٍّ CTF من 10+ أعلام (Flags)، تجربة حقيقية على picoCTF، ومشروع التخرّج الذي يُتوَّج بالشهادة.</div>
+    </div>
+
+    <div class="banner" style="margin-top:14mm">
+      <div class="label">أهداف المستوى</div>
+      <div class="icon">🎯</div>
+    </div>
+    <ul class="blt">
+      <li>بناء مختبر رقمي آمن ومعزول واستخدامه في كل وحدة عملياً</li>
+      <li>إتقان أوامر Linux الأساسية وحل تحديات Bandit الشهيرة</li>
+      <li>تقييم وتقوية كلمات المرور والحسابات الرقمية بالأدوات الحقيقية</li>
+      <li>كشف التصيّد والمواقع المزيفة والبرمجيات الخبيثة قبل وقوع الضرر</li>
+      <li>فهم حركة البيانات عبر الشبكة وقراءتها بأدوات مثل Wireshark</li>
+      <li>حماية الجوال والألعاب والخصوصية الرقمية اليومية</li>
+      <li>حل تحديات CTF حقيقية وإنجاز مشروع تخرّج تطبيقي شامل</li>
+    </ul>
+  </div>
+  <div class="footer"><div class="pnum">3</div><div class="foottext"><span>00905518781574</span><span>WWW.TWEETKOD.COM</span></div></div>
+</section>
+
+<!-- ============ PAGE 4 — FEATURES / OUTCOMES / REQUIREMENTS / CERTIFICATE ============ -->
+<section class="page">
+  <div class="topbar"></div>
+  <div class="content">
+    <div class="headrow">
+      <div class="logo"><b>TK</b><span>TWEETKOD</span></div>
+      <div class="titleblock">
+        <h1>الأمن السيبراني<br><span class="sub">المستوى الأول — 10 وحدات</span></h1>
+      </div>
+    </div>
+
+    <div class="banner">
+      <div class="label">مميزات الدورة</div>
+      <div class="icon">✨</div>
+    </div>
+    <ul class="blt">
+      <li>محتوى عملي بالكامل: مفهوم نظري موجز ثم مختبرات وتحديات حقيقية</li>
+      <li>رسوم متحركة تفاعلية تشرح كل فكرة رئيسية خطوة بخطوة</li>
+      <li>طرفية Linux افتراضية داخل الصفحة لتجربة الأوامر مباشرة</li>
+      <li>اختبار تفاعلي (10 أسئلة) بنهاية كل وحدة مع تغذية راجعة فورية</li>
+      <li>وضع ليلي/نهاري، وميزة طباعة/حفظ PDF لكل وحدة</li>
+      <li>نقاط وتحديات (🏅) تحفّز التقدّم داخل كل وحدة</li>
+      <li>تصميم متجاوب بالكامل يعمل على الجوال والكمبيوتر</li>
+      <li>مشروع تخرّج تطبيقي + شهادة إتمام من تويتكود</li>
+    </ul>
+
+    <div class="cols">
+      <div>
+        <div class="smallband"><div class="l">النتائج المتوقعة</div><div class="i">📈</div></div>
+        <ul class="blt">
+          <li>بناء مختبر آمن واستخدام Linux بثقة لحل مهام حقيقية</li>
+          <li>تدقيق أمني لكلمات المرور والحسابات بالأدوات الصحيحة</li>
+          <li>كشف التصيّد وفحص الملفات والمواقع المشبوهة قبل الثقة بها</li>
+          <li>فهم أساسي لحركة الشبكة وقراءة التقاطات Wireshark</li>
+          <li>حماية الجوال والحسابات والخصوصية الرقمية اليومية</li>
+        </ul>
+
+        <div class="smallband"><div class="l">مشروع التخرّج</div><div class="i">🎓</div></div>
+        <p class="para">تقرير تطبيقي شامل يجمع نتائج 10 مهام عملية من الوحدات العشر، مع خطة تحسين أمني شخصي لمدة 30 يوماً.</p>
+
+        <div class="smallband"><div class="l">الشهادة</div><div class="i">📜</div></div>
+        <div class="certbox">
+          <div class="ribbon">🏅</div>
+          <div class="para" style="margin-top:0">شهادة من منصة<br><b style="color:var(--teal);font-size:14px">TweetKod</b></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="smallband"><div class="l">متطلبات الدورة</div><div class="i">💻</div></div>
+        <ul class="blt">
+          <li>جهاز كمبيوتر (ويندوز أو ماك) بذاكرة 4GB فأكثر</li>
+          <li>اتصال إنترنت مستقر وحساب بريد إلكتروني فعّال</li>
+          <li>لا يتطلب أي خبرة تقنية سابقة</li>
+        </ul>
+
+        <div class="smallband"><div class="l">نظام التدريب</div><div class="i">🗂️</div></div>
+        <ul class="blt">
+          <li>10 وحدات، كل وحدة 90 دقيقة، عبر منصة مودل التعليمية — شرح موجز ثم تطبيق عملي مباشر</li>
+        </ul>
+
+        <div class="smallband"><div class="l">المهارات المكتسبة</div><div class="i">💡</div></div>
+        <ul class="blt">
+          <li>أساسيات Linux والطرفية</li>
+          <li>البحث والاستقصاء الرقمي (OSINT)</li>
+          <li>تحليل حركة الشبكة الأساسي</li>
+          <li>كشف التصيّد والبرمجيات الخبيثة</li>
+          <li>التفكير الأمني النقدي والتدقيق الذاتي</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><div class="pnum">4</div><div class="foottext"><span>00905518781574</span><span>WWW.TWEETKOD.COM</span></div></div>
+</section>
+
+<!-- ============ PAGE 5 — TOOLS & PLATFORMS ============ -->
+<section class="page">
+  <div class="topbar"></div>
+  <div class="content">
+    <div class="headrow">
+      <div class="logo"><b>TK</b><span>TWEETKOD</span></div>
+      <div class="titleblock">
+        <h1>الأمن السيبراني<br><span class="sub">المستوى الأول — 10 وحدات</span></h1>
+      </div>
+    </div>
+
+    <div class="banner" style="margin-top:14mm">
+      <div class="label">الأدوات والمنصات المستخدمة في المستوى الأول</div>
+      <div class="icon">🧰</div>
+    </div>
+
+    <div class="smallband" style="margin-top:6mm"><div class="l">بيئة العمل والمختبر الآمن</div><div class="i">🖥️</div></div>
+    <ul class="blt">
+      <li>VirtualBox وتوزيعة Kali/Ubuntu لبناء مختبر معزول</li>
+      <li>طرفية Linux تفاعلية داخل كل وحدة لتجربة الأوامر بأمان</li>
+      <li>تحديات Bandit من OverTheWire وتحديات picoCTF للمبتدئين</li>
+    </ul>
+
+    <div class="smallband"><div class="l">أدوات البحث والاستقصاء الرقمي (OSINT)</div><div class="i">🔎</div></div>
+    <ul class="blt">
+      <li>Google Dorking — عوامل البحث المتقدمة</li>
+      <li>البحث العكسي بالصور وفحص بيانات EXIF المخفية</li>
+      <li>WHOIS Lookup وHave I Been Pwned</li>
+    </ul>
+
+    <div class="smallband"><div class="l">أدوات الشبكات والتحقق الأمني</div><div class="i">🛡️</div></div>
+    <ul class="blt">
+      <li>Wireshark لتحليل حركة البيانات والتقاطات الشبكة</li>
+      <li>VirusTotal لفحص هاش الملفات المشبوهة</li>
+      <li>فاحص شهادات SSL/TLS ومعاينة النطاقات المزيّفة</li>
+    </ul>
+
+    <div class="smallband"><div class="l">أدوات كلمات المرور والمصادقة</div><div class="i">🔑</div></div>
+    <ul class="blt">
+      <li>John the Ripper لفهم كسر الهاشات الضعيفة داخل المختبر</li>
+      <li>حاسبة الإنتروبيا ومولّد Hash حي (SHA-256)</li>
+      <li>تطبيق Authenticator حقيقي (مبدأ TOTP) ومدير كلمات مرور</li>
+    </ul>
+  </div>
+  <div class="footer"><div class="pnum">5</div><div class="foottext"><span>00905518781574</span><span>WWW.TWEETKOD.COM</span></div></div>
+</section>
+
+</body>
+</html>

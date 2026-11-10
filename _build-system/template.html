@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>{{LEVEL}} — الوحدة {{NUM}}: {{TITLE}} | تويتكود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script>(function(){try{var t=JSON.parse(localStorage.getItem('tk:theme'));if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<style>
+{{CSS}}
+</style>
+<style>
+{{EXTRA_CSS}}
+</style>
+</head>
+<body>
+<div id="deck">
+  <div class="tk-topbar"></div>
+  <header class="tk-head">
+    <div class="tk-logo"><img src="https://tweetkod.com/wp-content/uploads/2024/05/Tweetkod.png" alt="TweetKod" onerror="this.outerHTML='<b style=&quot;color:#009EE2;font-size:.9rem&quot;>TweetKod</b>'"></div>
+    <div class="tk-titles"><div class="l">{{LEVEL}} · الوحدة {{NUM}}</div><div class="m">{{TITLE}}</div></div>
+    <div class="tk-prog"><div class="bar"><i id="tkBar"></i></div><span id="tkCount">1 / 1</span></div>
+    <span class="tag" id="tkPts" title="نقاط التحديات">🏅 0</span>
+    <button class="tk-ic" id="tkMenu" title="فهرس الشرائح" aria-label="فهرس الشرائح">☰</button>
+    <button class="tk-ic" id="tkFm" title="تصغير الخط" aria-label="تصغير الخط">أ-</button>
+    <button class="tk-ic" id="tkFp" title="تكبير الخط" aria-label="تكبير الخط">أ+</button>
+    <button class="tk-ic" id="tkTheme" title="ليل / نهار" aria-label="تبديل الوضع الليلي">🌙</button>
+  </header>
+  <div class="tk-stage" id="stage"></div>
+  <div class="tk-nav"><button class="btn ghost" id="tkPrev">◀ السابق</button><button class="btn blue" id="tkNext">التالي ▶</button></div>
+</div>
+<div class="tk-drawer" id="tkDrawer"><div class="bk"></div><div class="pn"></div></div>
+<script>
+{{LIB}}
+</script>
+<script>
+{{MODULE}}
+</script>
+<script>
+{{ENGINE}}
+</script>
+</body>
+</html>
